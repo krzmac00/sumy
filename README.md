@@ -1,2 +1,1 @@
-# sumy
-PoliConnect - projekt aplikacji webowej dla studentów
+## PoliConnect - projekt aplikacji webowej dla studentów
