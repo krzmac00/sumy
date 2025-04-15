@@ -1,4 +1,6 @@
 ## PoliConnect - projekt aplikacji webowej dla studentów
 ### Wymagania:
-- Java 24
+- Python
+- Django
+- psycopg2
 - Node.js
