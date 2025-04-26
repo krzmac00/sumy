@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-u9@4=tb@n)@e_b9103x)3=%o9a-xqvm5hh(rb#jy0_v$vp^h!x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "rest_framework",
     "mainapp"
 ]
 
@@ -127,3 +128,6 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
+GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal310.dll'
