@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista wydarzeń</title>
+</head>
+<body>
+    <h1>Wszystkie wydarzenia</h1>
+    <a href="{% url 'add_event' %}">Dodaj wydarzenie</a>
+    <ul>
+        {% for event in events %}
+            <li style="color: {{ event.color }}">
+                <strong>{{ event.title }}</strong> - {{ event.date }} {{ event.time }} 
+                ({{ event.get_category_display }})
+            </li>
+        {% empty %}
+            <li>Brak wydarzeń.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

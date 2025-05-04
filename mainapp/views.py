@@ -3,9 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from datetime import date
 from .models import Event
+from .forms import EventForm
 from .serializers import EventSerializer
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
+from django.shortcuts import render, redirect
 
 
 def home(request):
@@ -44,4 +46,18 @@ def get_events_for_month(request):
     events_data = [{"title": event.title, "date": event.date} for event in events]
     return Response(events_data)
     
+
+def add_event(request):
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('event_list')
+    else:
+        form = EventForm()
+    return render(request, 'add_event.html', {'form': form})
+
+def event_list(request):
+    events = Event.objects.all().order_by('date', 'time')
+    return render(request, 'event_list.html', {'events': events})
 
