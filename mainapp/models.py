@@ -5,8 +5,7 @@ CATEGORIES = [
     ('private', 'Private'),
     ('exam', 'Exam'),
     ('club', 'Scientific Club'),
-    ('student_council', 'Student Council'),
-    ('university', 'University-wide'),
+    ('university', 'University-events'),
 ]
 
 REPEAT_TYPES = [

@@ -1,14 +1,14 @@
 from django import forms
-from .models import Wydarzenie
+from .models import Event
 
-class WydarzenieForm(forms.ModelForm):
+class EventForm(forms.ModelForm):
     class Meta:
-        model = Wydarzenie
+        model = Event
         fields = '__all__'
         widgets = {
-            'godzina_rozpoczecia': forms.TimeInput(attrs={'type': 'time'}),
-            'data_rozpoczecia': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'godzina_zakonczenia': forms.TimeInput(attrs={'type': 'time'}),
-            'data_zakonczenia': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'tytuł': forms.Textarea(attrs={'rows': 3}),
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
+            'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+            'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'title': forms.Textarea(attrs={'rows': 3}),
         }
