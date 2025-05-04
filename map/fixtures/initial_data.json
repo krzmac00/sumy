@@ -1,0 +1,52 @@
+[
+  {
+    "model": "map.building",
+    "pk": 1,
+    "fields": {
+      "name": "Centrum Technologii Informatycznych",
+      "short_name": "CTI"
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 2,
+    "fields": {
+      "name": "Budynek B9",
+      "short_name": "B9"
+    }
+  },
+  {
+    "model": "map.floor",
+    "pk": 1,
+    "fields": {
+      "number": 0,
+      "building": 1
+    }
+  },
+  {
+    "model": "map.floor",
+    "pk": 2,
+    "fields": {
+      "number": 1,
+      "building": 1
+    }
+  },
+  {
+    "model": "map.room",
+    "pk": 1,
+    "fields": {
+      "number": "001",
+      "room_type": "lecture",
+      "floor": 1
+    }
+  },
+  {
+    "model": "map.room",
+    "pk": 2,
+    "fields": {
+      "number": "002",
+      "room_type": "lab",
+      "floor": 2
+    }
+  }
+]

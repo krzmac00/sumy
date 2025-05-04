@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+import os
+# Ustawienie ścieżki do GDAL na poziomie ustawień Django
+GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
+GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal310.dll'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,7 +43,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
-    "mainapp"
+    "mainapp",
+    'rest_framework',
+    'map',
 ]
 
 MIDDLEWARE = [
@@ -120,6 +127,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+
 
 STATIC_URL = "static/"
 
