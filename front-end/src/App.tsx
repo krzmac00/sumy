@@ -6,6 +6,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Home from './pages/Home';
 import './App.css';
+import MapPage from './pages/MapPage';
 
 const AuthLayout: React.FC = () => {
   const { t } = useTranslation();
@@ -109,6 +110,7 @@ const App: React.FC = () => {
         <Route path="/auth" element={<AuthLayout />} />
         <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
         <Route path="/" element={<Navigate to="/auth" replace />} />
+        <Route path="/map" element={<ProtectedRoute element={<MapPage />} />} />
       </Routes>
     </Router>
   );
