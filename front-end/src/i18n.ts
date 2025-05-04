@@ -74,7 +74,18 @@ const resources = {
       "home.features.navbar": "Responsive navigation bar",
       "home.features.sidebar": "Toggleable sidebar",
       "home.features.i18n": "Internationalization support",
-      "home.features.userMenu": "User settings dropdown"
+      "home.features.userMenu": "User settings dropdown",
+
+      //Calendar
+      "calendar.enterClass": "Enter class title",
+      "calendar.enterCategory": "Category key (e.g. 'exam')",
+      "calendar.enterColor": "Color key (e.g. '#FF0000')",
+      "calendar.deleteClass": "Delete class '{{title}}'?",
+      "calendar.previous": "Back",
+      "calendar.next": "Next",
+      "calendar.month": "Month",
+      "calendar.week": "Week",
+      "calendar.day": "Day",
     }
   },
   pl: {
@@ -146,7 +157,18 @@ const resources = {
       "home.features.navbar": "Responsywny pasek nawigacji",
       "home.features.sidebar": "Wysuwany pasek boczny",
       "home.features.i18n": "Wsparcie dla wielu języków",
-      "home.features.userMenu": "Rozwijane menu użytkownika"
+      "home.features.userMenu": "Rozwijane menu użytkownika",
+
+      //Calendar
+      "calendar.enterClass": "Wprowadź tytuł zajęć",
+      "calendar.enterCategory": "Klucz kategorii (np. 'exam')",
+      "calendar.enterColor": "Klucz koloru (np. '#FF0000')",
+      "calendar.deleteClass": "Usuń zajęcia '{{title}}'?",
+      "calendar.previous": "Wstecz",
+      "calendar.next": "Dalej",
+      "calendar.month": "Miesiąc",
+      "calendar.week": "Tydzień",
+      "calendar.day": "Dzień",
     }
   }
 };
