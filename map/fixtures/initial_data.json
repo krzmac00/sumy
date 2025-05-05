@@ -4,7 +4,9 @@
     "pk": 1,
     "fields": {
       "name": "Centrum Technologii Informatycznych",
-      "short_name": "CTI"
+      "short_name": "CTI",
+      "latitude": 50.288850,
+      "longitude": 18.677060
     }
   },
   {
@@ -12,7 +14,9 @@
     "pk": 2,
     "fields": {
       "name": "Budynek B9",
-      "short_name": "B9"
+      "short_name": "B9",
+      "latitude": 50.488850,
+      "longitude": 18.377060
     }
   },
   {

@@ -18,4 +18,4 @@ class BuildingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Building
-        fields = ['id', 'name', 'short_name', 'floors']
+        fields = ['id', 'name', 'short_name', 'latitude', 'longitude', 'floors']

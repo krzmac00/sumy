@@ -3,9 +3,12 @@ from django.db import models
 class Building(models.Model):
     name = models.CharField(max_length=100, unique=True)
     short_name = models.CharField(max_length=10)  # np. B9, CTI
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
     def __str__(self):
         return self.name
+
 
 class Floor(models.Model):
     number = models.IntegerField()

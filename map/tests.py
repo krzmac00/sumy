@@ -8,8 +8,10 @@ class BuildingTests(APITestCase):
 
     def setUp(self):
         # Tworzymy dane testowe
-        self.building_1 = Building.objects.create(name="Centrum Technologii Informatycznych", short_name="CTI")
-        self.building_2 = Building.objects.create(name="Budynek B9", short_name="B9")
+        self.building_1 = Building.objects.create(name="Centrum Technologii Informatycznych",
+                                                  short_name="CTI",latitude=50.2, longitude=45.4)
+        self.building_2 = Building.objects.create(name="Budynek B9", short_name="B9",
+                                                  latitude=52.2, longitude=47.4)
 
         # Tworzymy piętra
         self.floor_1 = Floor.objects.create(number=0, building=self.building_1)
@@ -36,6 +38,8 @@ class BuildingTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Centrum Technologii Informatycznych')
         self.assertEqual(len(response.data['floors']), 1)
+        self.assertIn('latitude', response.data)
+        self.assertIn('longitude', response.data)
 
     def test_search_building(self):
         url = reverse('search') + '?q=CTI'
