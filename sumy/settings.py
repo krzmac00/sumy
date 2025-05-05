@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "rest_framework",
+    "corsheaders",
     "mainapp"
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -129,5 +131,23 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
-GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal310.dll'
+GDAL_LIBRARY_PATH = r"C:\ProgramData\anaconda3\Library\bin\gdal.dll"
+GEOS_LIBRARY_PATH = r"C:\ProgramData\anaconda3\Library\bin\geos_c.dll"
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Vite development server
+    "http://127.0.0.1:5173",  # Alternative localhost
+]
+
+# Also update CSRF if you're using it:
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+
+# Optional: Allow credentials if needed
+CORS_ALLOW_CREDENTIALS = True
+
+# Optional: Allow all origins during development (not recommended for production)
+# CORS_ALLOW_ALL_ORIGINS = True  # Use only in development!
