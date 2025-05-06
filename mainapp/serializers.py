@@ -10,7 +10,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'description', 'start', 'end', 'category', 'color']
+        fields = ['title', 'description', 'start_date', 'start_time', 'end_date', 'end_time', 'category', 'repeat_type']
         #nie jestem pewna czy wysylac id osoby do ktorej jest przypisane wydarzenie
 
     def get_start(self, obj):

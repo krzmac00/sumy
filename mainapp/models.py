@@ -7,7 +7,7 @@ CATEGORIES = [
     ('important', 'Important'),
     ('private', 'Private'),
     ('exam', 'Exam'),
-    ('club', 'Scientific Club'),
+    ('club', 'Science Club'),
     ('university', 'University-events'),
 ]
 
