@@ -20,5 +20,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("mainapp.urls"))
+    path("api/", include([
+        path("accounts/", include("accounts.urls")),
+        path("v1/", include("mainapp.urls")),  # Versioned API
+    ])),
+    path("", include("mainapp.urls"))  # Legacy non-versioned API
 ]

@@ -4,54 +4,21 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useTranslation } from 'react-i18next';
 import Login from './components/Login';
 import Register from './components/Register';
+import ActivateAccount from './components/ActivateAccount';
 import Home from './pages/Home';
 import ForumPage from './pages/forum/ForumPage';
 import ThreadViewPage from './pages/forum/ThreadViewPage';
 import ThreadCreatePage from './pages/forum/ThreadCreatePage';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import './App.css';
 
 const AuthLayout: React.FC = () => {
   const { t } = useTranslation();
   const [message, setMessage] = useState<string>('');
   const [isLoginView, setIsLoginView] = useState<boolean>(true);
-  const [users, setUsers] = useState<Array<{
-    email: string;
-    firstName: string;
-    lastName: string;
-    password: string;
-  }>>([]);
-
-  const handleLogin = (username: string, password: string): void => {
-    const user = users.find(user => 
-      user.email.split('@')[0] === username && 
-      user.password === password
-    );
-    
-    if (user) {
-      setMessage(t('message.loginSuccess', { name: `${user.firstName} ${user.lastName}` }));
-      // In a real app, you would set authentication state and redirect
-      localStorage.setItem('isAuthenticated', 'true');
-      window.location.href = '/home';
-    } else {
-      setMessage(t('message.loginError'));
-    }
-  };
-
-  const handleRegister = (userData: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    password: string;
-  }): void => {
-    // Check if user already exists
-    if (users.some(user => user.email === userData.email)) {
-      setMessage(t('message.emailExists'));
-      return;
-    }
-
-    // Add new user
-    setUsers([...users, userData]);
-    setMessage(t('message.registerSuccess'));
+  
+  const handleRegisterSuccess = (successMessage: string) => {
+    setMessage(successMessage || t('register.accountCreated'));
     setIsLoginView(true);
   };
 
@@ -80,13 +47,12 @@ const AuthLayout: React.FC = () => {
         
         {isLoginView ? (
           <Login 
-            onLogin={handleLogin} 
             onSwitchToRegister={() => setIsLoginView(false)} 
           />
         ) : (
           <Register 
-            onRegister={handleRegister} 
             onSwitchToLogin={() => setIsLoginView(true)} 
+            onRegisterSuccess={handleRegisterSuccess}
           />
         )}
       </div>
@@ -96,7 +62,11 @@ const AuthLayout: React.FC = () => {
 
 // Protected route component
 const ProtectedRoute: React.FC<{element: React.ReactNode}> = ({ element }) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   
   return isAuthenticated ? (
     <>{element}</>
@@ -105,26 +75,35 @@ const ProtectedRoute: React.FC<{element: React.ReactNode}> = ({ element }) => {
   );
 };
 
+const AppRoutes: React.FC = () => {
+  return (
+    <Routes>
+      {/* Auth Routes */}
+      <Route path="/auth" element={<AuthLayout />} />
+      <Route path="/activate/:token" element={<ActivateAccount />} />
+      
+      {/* Protected Routes */}
+      <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
+      
+      {/* Forum Routes */}
+      <Route path="/forum" element={<ProtectedRoute element={<ForumPage />} />} />
+      <Route path="/forum/threads/:threadId" element={<ProtectedRoute element={<ThreadViewPage />} />} />
+      <Route path="/forum/create-thread" element={<ProtectedRoute element={<ThreadCreatePage />} />} />
+      
+      {/* Default Routes */}
+      <Route path="/" element={<Navigate to="/auth" replace />} />
+      <Route path="*" element={<Navigate to="/home" replace />} />
+    </Routes>
+  );
+};
+
 const App: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        {/* Auth Routes */}
-        <Route path="/auth" element={<AuthLayout />} />
-        
-        {/* Protected Routes */}
-        <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
-        
-        {/* Forum Routes */}
-        <Route path="/forum" element={<ProtectedRoute element={<ForumPage />} />} />
-        <Route path="/forum/threads/:threadId" element={<ProtectedRoute element={<ThreadViewPage />} />} />
-        <Route path="/forum/create-thread" element={<ProtectedRoute element={<ThreadCreatePage />} />} />
-        
-        {/* Default Routes */}
-        <Route path="/" element={<Navigate to="/auth" replace />} />
-        <Route path="*" element={<Navigate to="/home" replace />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
   );
 };
 

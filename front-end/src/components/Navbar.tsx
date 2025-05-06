@@ -1,6 +1,8 @@
 // src/components/Navbar.tsx
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Navbar.css';
 import pcLogo from '../assets/pc-logo.svg';
 
@@ -10,6 +12,9 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const { t, i18n } = useTranslation();
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+  
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   
@@ -28,6 +33,15 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const toggleUserDropdown = () => {
     setIsUserDropdownOpen(!isUserDropdownOpen);
     if (isLanguageDropdownOpen) setIsLanguageDropdownOpen(false);
+  };
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
@@ -75,13 +89,17 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
         <div className="user-menu">
           <button onClick={toggleUserDropdown} className="user-button">
             <span className="user-icon">👤</span>
-            <span className="username">username</span>
+            <span className="username">
+              {currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'User'}
+            </span>
           </button>
           {isUserDropdownOpen && (
             <div className="dropdown-menu user-dropdown">
               <a href="#profile">{t('user.profile')}</a>
               <a href="#settings">{t('user.settings')}</a>
-              <a href="#logout">{t('user.logout')}</a>
+              <button onClick={handleLogout} className="dropdown-button">
+                {t('user.logout')}
+              </button>
             </div>
           )}
         </div>

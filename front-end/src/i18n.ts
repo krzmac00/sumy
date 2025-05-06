@@ -14,17 +14,19 @@ const resources = {
 
       // Login page
       "login.title": "Login",
-      "login.username": "Username",
-      "login.username.placeholder": "Enter your student ID",
+      "login.email": "Email",
+      "login.email.placeholder": "Enter your university email",
       "login.password": "Password",
       "login.password.placeholder": "Enter your password",
       "login.button": "Login",
+      "login.loading": "Logging in...",
       "login.noAccount": "Don't have an account?",
       
       // Register page
       "register.title": "Register",
       "register.email": "Email",
-      "register.email.placeholder": "123456@edu.p.lodz.pl",
+      "register.email.placeholder": "123456@edu.p.lodz.pl or firstname.lastname@edu.p.lodz.pl",
+      "register.emailHelp": "Use your university email (123456@edu.p.lodz.pl for students, firstname.lastname@edu.p.lodz.pl for lecturers)",
       "register.firstName": "First Name",
       "register.firstName.placeholder": "Enter your first name",
       "register.lastName": "Last Name",
@@ -34,19 +36,24 @@ const resources = {
       "register.confirmPassword": "Confirm Password",
       "register.confirmPassword.placeholder": "Confirm your password",
       "register.button": "Register",
+      "register.registering": "Registering...",
       "register.haveAccount": "Already have an account?",
+      "register.accountCreated": "Account created! Check your email to activate your account.",
 
       // Validation messages
       "validation.required": "{{field}} is required",
-      "validation.email.format": "Email must be in format XXXXXX@edu.p.lodz.pl where X is a number",
-      "validation.password.length": "Password must be at least 6 characters",
+      "validation.email.format": "Email must be in format 123456@edu.p.lodz.pl (for students) or firstname.lastname@edu.p.lodz.pl (for lecturers)",
+      "validation.password.length": "Password must be at least 8 characters",
       "validation.password.match": "Passwords do not match",
 
       // Success/Error messages
       "message.loginSuccess": "Welcome, {{name}}!",
       "message.loginError": "Invalid login credentials",
-      "message.registerSuccess": "Registration successful! You can now login with your credentials.",
+      "message.registerSuccess": "Registration successful! Please check your email to activate your account.",
       "message.emailExists": "Email already registered",
+      "message.activation": "Account activation",
+      "message.activationSuccess": "Your account has been activated successfully! You can now log in.",
+      "message.activationError": "Failed to activate account. The activation link may be expired or invalid.",
       
       // Navigation
       "nav.home": "Home",
@@ -111,7 +118,7 @@ const resources = {
       "forum.thread.reply": "reply",
       "forum.thread.replies": "replies",
       "forum.thread.noReplies": "No replies yet. Be the first to reply!",
-      "forum.thread.visibleForTeachers": "Visible for Teachers Only",
+      "forum.thread.visibleForTeachers": "Visible for Teachers",
       "forum.thread.canBeAnswered": "Can Be Answered",
       
       // Forum - Post
@@ -156,7 +163,7 @@ const resources = {
       "forum.create.contentPlaceholder": "Describe your question or topic in detail...",
       "forum.create.nickname": "Your Nickname",
       "forum.create.nicknamePlaceholder": "Enter your nickname",
-      "forum.create.visibleForTeachers": "Visible for teachers only",
+      "forum.create.visibleForTeachers": "Visible for teachers",
       "forum.create.canBeAnswered": "Allow replies to this thread",
       "forum.create.cancel": "Cancel",
       "forum.create.submit": "Create Thread",
@@ -179,17 +186,19 @@ const resources = {
 
       // Login page
       "login.title": "Logowanie",
-      "login.username": "Nazwa użytkownika",
-      "login.username.placeholder": "Wprowadź ID studenta",
+      "login.email": "Email",
+      "login.email.placeholder": "Wprowadź swój email uniwersytecki",
       "login.password": "Hasło",
       "login.password.placeholder": "Wprowadź hasło",
       "login.button": "Zaloguj się",
+      "login.loading": "Logowanie...",
       "login.noAccount": "Nie masz konta?",
       
       // Register page
       "register.title": "Rejestracja",
       "register.email": "Email",
-      "register.email.placeholder": "123456@edu.p.lodz.pl",
+      "register.email.placeholder": "123456@edu.p.lodz.pl lub imie.nazwisko@edu.p.lodz.pl",
+      "register.emailHelp": "Użyj emaila uniwersyteckiego (123456@edu.p.lodz.pl dla studentów, imie.nazwisko@edu.p.lodz.pl dla wykładowców)",
       "register.firstName": "Imię",
       "register.firstName.placeholder": "Wprowadź swoje imię",
       "register.lastName": "Nazwisko",
@@ -199,19 +208,24 @@ const resources = {
       "register.confirmPassword": "Potwierdź hasło",
       "register.confirmPassword.placeholder": "Potwierdź hasło",
       "register.button": "Zarejestruj się",
+      "register.registering": "Rejestrowanie...",
       "register.haveAccount": "Masz już konto?",
+      "register.accountCreated": "Konto utworzone! Sprawdź swój email, aby je aktywować.",
 
       // Validation messages
       "validation.required": "Pole {{field}} jest wymagane",
-      "validation.email.format": "Email musi być w formacie XXXXXX@edu.p.lodz.pl gdzie X to liczba",
-      "validation.password.length": "Hasło musi mieć co najmniej 6 znaków",
+      "validation.email.format": "Email musi być w formacie 123456@edu.p.lodz.pl (dla studentów) lub imie.nazwisko@edu.p.lodz.pl (dla wykładowców)",
+      "validation.password.length": "Hasło musi mieć co najmniej 8 znaków",
       "validation.password.match": "Hasła nie są takie same",
 
       // Success/Error messages
       "message.loginSuccess": "Witaj, {{name}}!",
       "message.loginError": "Nieprawidłowe dane logowania",
-      "message.registerSuccess": "Rejestracja zakończona pomyślnie! Możesz teraz zalogować się używając swoich danych.",
+      "message.registerSuccess": "Rejestracja zakończona pomyślnie! Sprawdź swoją skrzynkę email, aby aktywować konto.",
       "message.emailExists": "Email jest już zarejestrowany",
+      "message.activation": "Aktywacja konta",
+      "message.activationSuccess": "Twoje konto zostało pomyślnie aktywowane! Możesz się teraz zalogować.",
+      "message.activationError": "Nie udało się aktywować konta. Link aktywacyjny może być wygasły lub nieprawidłowy.",
       
       // Navigation
       "nav.home": "Strona główna",
@@ -276,7 +290,7 @@ const resources = {
       "forum.thread.reply": "odpowiedź",
       "forum.thread.replies": "odpowiedzi",
       "forum.thread.noReplies": "Brak odpowiedzi. Bądź pierwszy i odpowiedz!",
-      "forum.thread.visibleForTeachers": "Widoczne tylko dla nauczycieli",
+      "forum.thread.visibleForTeachers": "Widoczne dla nauczycieli",
       "forum.thread.canBeAnswered": "Można odpowiadać",
       
       // Forum - Post
@@ -321,7 +335,7 @@ const resources = {
       "forum.create.contentPlaceholder": "Opisz swoje pytanie lub temat szczegółowo...",
       "forum.create.nickname": "Twój pseudonim",
       "forum.create.nicknamePlaceholder": "Wpisz swój pseudonim",
-      "forum.create.visibleForTeachers": "Widoczne tylko dla nauczycieli",
+      "forum.create.visibleForTeachers": "Widoczne dla nauczycieli",
       "forum.create.canBeAnswered": "Zezwalaj na odpowiedzi w tym wątku",
       "forum.create.cancel": "Anuluj",
       "forum.create.submit": "Utwórz wątek",
