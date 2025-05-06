@@ -41,4 +41,18 @@ class Migration(migrations.Migration):
                 ('replies_to', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='replied_by', to='mainapp.post')),
             ],
         ),
+        migrations.CreateModel(
+            name='Wydarzenie',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('tytul', models.CharField(max_length=200)),
+                ('opis', models.TextField(blank=True)),
+                ('data', models.DateField()),
+                ('godzina', models.TimeField()),
+                ('miejsce', models.CharField(blank=True, max_length=200)),
+                ('kategoria', models.CharField(choices=[('ważne', 'Ważne'), ('prywatne', 'Prywatne'), ('egzamin', 'Egzamin'), ('inne', 'Inne')], default='inne', max_length=20)),
+                ('kolor', models.CharField(choices=[('#FF0000', 'Czerwony'), ('#00FF00', 'Zielony'), ('#0000FF', 'Niebieski'), ('#FFFF00', 'Żółty')], default='#0000FF', max_length=7)),
+                ('cykliczne', models.BooleanField(default=False)),
+            ],
+        ),
     ]
