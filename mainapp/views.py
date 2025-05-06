@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from datetime import date
 from .models import Event
+from .constants import CATEGORY_COLORS
 from .forms import EventForm
 from .serializers import EventSerializer
 from django.http import HttpResponse
@@ -36,6 +37,13 @@ class EventViewSet(viewsets.ModelViewSet):
             events = self.queryset.none()
         serializer = self.get_serializer(events, many=True)
         return Response(serializer.data)
+
+    def get_queryset(self):
+        profile_id = self.request.query_params.get('profile_id')
+        if profile_id:
+            return Event.objects.filter(profile_id=profile_id)
+        return Event.objects.all()
+
     
 
 @api_view(['GET'])
@@ -46,18 +54,21 @@ def get_events_for_month(request):
     events_data = [{"title": event.title, "date": event.date} for event in events]
     return Response(events_data)
     
-
+# @login_required
 def add_event(request):
     if request.method == 'POST':
         form = EventForm(request.POST)
         if form.is_valid():
-            form.save()
+            event = form.save(commit=False)
+            event.profile = request.user 
+            event.save()
             return redirect('event_list')
     else:
         form = EventForm()
     return render(request, 'add_event.html', {'form': form})
 
+
 def event_list(request):
     events = Event.objects.all().order_by('date', 'time')
-    return render(request, 'event_list.html', {'events': events})
+    return render(request, 'event_list.html', {'events': events, 'category_colors': CATEGORY_COLORS})
 

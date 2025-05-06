@@ -8,13 +8,13 @@
     <a href="{% url 'add_event' %}">Dodaj wydarzenie</a>
     <ul>
         {% for event in events %}
-            <li style="color: {{ event.color }}">
-                <strong>{{ event.title }}</strong> - {{ event.date }} {{ event.time }} 
-                ({{ event.get_category_display }})
-            </li>
-        {% empty %}
-            <li>Brak wydarzeń.</li>
-        {% endfor %}
+        <div style="border-left: 5px solid {{ category_colors[event.category] }}; padding-left: 10px; margin-bottom: 10px;">
+          <strong>{{ event.title }}</strong><br>
+          {{ event.date }} {{ event.time }}<br>
+          <em>{{ event.category }}</em> – 
+          <span style="color: {{ category_colors[event.category] }};">{{ category_colors[event.category] }}</span>
+        </div>
+      {% endfor %}
     </ul>
 </body>
 </html>

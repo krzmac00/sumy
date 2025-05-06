@@ -1,7 +1,24 @@
 from django import forms
 from .models import Event
 
-# class EventForm(forms.ModelForm):
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = '__all__'
+        widgets = {
+            'time': forms.TimeInput(attrs={'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'repeat_type': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+
+        # class EventForm(forms.ModelForm):
 #     class Meta:
 #         model = Event
 #         fields = '__all__'
@@ -12,15 +29,3 @@ from .models import Event
 #             'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
 #             'title': forms.Textarea(attrs={'rows': 3}),
 #         }
-
-
-class EventForm(forms.ModelForm):
-    class Meta:
-        model = Event
-        fields = '__all__'
-        widgets = {
-            'time': forms.TimeInput(attrs={'type': 'time'}),
-            'date': forms.DateInput(attrs={'type': 'date'}),
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'rows': 3}),
-        }

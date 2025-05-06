@@ -1,4 +1,7 @@
 from django.db import models
+from .constants import CATEGORY_COLORS
+from datetime import date, time, datetime
+from datetime import *
 
 CATEGORIES = [
     ('important', 'Important'),
@@ -14,22 +17,33 @@ REPEAT_TYPES = [
     ('monthly', 'Monthly'),
 ]
 
-COLORS = [
-    ('#FF0000', 'Red'),
-    ('#00FF00', 'Green'),
-    ('#0000FF', 'Blue'),
-    ('#FFFF00', 'Yellow'),
+REPEAT_TYPES = [
+    ('none', 'None'),
+    ('weekly', 'Weekly'),
+    ('monthly', 'Monthly'),
 ]
+
+def get_today():
+    return date.today()
 
 class Event(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     date = models.DateField()
+    end_time = models.TimeField(default=(datetime.combine(datetime.today(), datetime.min.time()) + timedelta(hours=1)).time())
     time = models.TimeField()
+    end_time = models.TimeField()
     location = models.CharField(max_length=200, blank=True)
-    category = models.CharField(max_length=20, choices=CATEGORIES, default='private')
-    color = models.CharField(max_length=7, choices=COLORS, default='#0000FF')
-    is_recurring = models.BooleanField(default=False)
+    category = models.CharField(max_length=20, choices=CATEGORIES)
+    color = models.CharField(max_length=10, choices=[(k, v) for k, v in CATEGORY_COLORS.items()]) ##choices=CATEGORY_COLORS
+    repeat_type = models.CharField(max_length=10, choices=REPEAT_TYPES)
+    #profile = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        self.color = CATEGORY_COLORS.get(self.category, '#808080')
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.title} ({self.date} {self.time})"
+
+
