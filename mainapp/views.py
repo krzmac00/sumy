@@ -69,6 +69,9 @@ def add_event(request):
 
 
 def event_list(request):
-    events = Event.objects.all().order_by('date', 'time')
-    return render(request, 'event_list.html', {'events': events, 'category_colors': CATEGORY_COLORS})
+    events = Event.objects.all().order_by('start_date', 'start_time')
+    return render(request, 'event_list.html', {
+        'events': events,
+        'category_colors': CATEGORY_COLORS
+    })
 

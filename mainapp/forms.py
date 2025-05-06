@@ -7,10 +7,10 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = '__all__'
         widgets = {
-            'time': forms.TimeInput(attrs={'type': 'time'}),
-            'end_time': forms.TimeInput(attrs={'type': 'time'}),
-            'date': forms.DateInput(attrs={'type': 'date'}),
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
             'end_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'rows': 3}),
             'category': forms.Select(attrs={'class': 'form-select'}),
