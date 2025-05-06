@@ -5,6 +5,9 @@ import { useTranslation } from 'react-i18next';
 import Login from './components/Login';
 import Register from './components/Register';
 import Home from './pages/Home';
+import ForumPage from './pages/forum/ForumPage';
+import ThreadViewPage from './pages/forum/ThreadViewPage';
+import ThreadCreatePage from './pages/forum/ThreadCreatePage';
 import './App.css';
 
 const AuthLayout: React.FC = () => {
@@ -106,9 +109,20 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
+        {/* Auth Routes */}
         <Route path="/auth" element={<AuthLayout />} />
+        
+        {/* Protected Routes */}
         <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
+        
+        {/* Forum Routes */}
+        <Route path="/forum" element={<ProtectedRoute element={<ForumPage />} />} />
+        <Route path="/forum/threads/:threadId" element={<ProtectedRoute element={<ThreadViewPage />} />} />
+        <Route path="/forum/create-thread" element={<ProtectedRoute element={<ThreadCreatePage />} />} />
+        
+        {/* Default Routes */}
         <Route path="/" element={<Navigate to="/auth" replace />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </Router>
   );
