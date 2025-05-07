@@ -4,7 +4,7 @@ import './MapFilterPanel.css';
 const MapFilterPanel: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [type, setType] = useState('');
-  const [radius, setRadius] = useState(5);
+  const [radius] = useState(5);
 
   const handleCheckboxChange = (value: string) => {
     setSelectedCategories((prev) =>
@@ -22,43 +22,39 @@ const MapFilterPanel: React.FC = () => {
       <h2>Filtry mapy</h2>
 
       <div className="filter-group">
-        <label>Kategorie:</label>
+        <label>Typ budynku:</label>
         <div className="checkbox-group">
           <label>
             <input type="checkbox" onChange={() => handleCheckboxChange('faculty')} />
-            Budynki wydziału
+            Wydziałowy
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => handleCheckboxChange('non-faculty')} />
+            Pozawydziałowy
           </label>
           <label>
             <input type="checkbox" onChange={() => handleCheckboxChange('academic')} />
-            Budynki ogólnoakademickie
+            Ogólnoakademicki
           </label>
           <label>
             <input type="checkbox" onChange={() => handleCheckboxChange('administration')} />
-            Administracja
+            Administracja i władze
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => handleCheckboxChange('lodge')} />
+            Portiernia
           </label>
         </div>
       </div>
 
       <div className="filter-group">
-        <label>Typ obiektu:</label>
+        <label>Typ pomieszczenia:</label>
         <select value={type} onChange={(e) => setType(e.target.value)}>
           <option value="">-- wybierz --</option>
-          <option value="academic">Akademicki</option>
-          <option value="dorm">Akademik</option>
-          <option value="facility">Obiekt sportowy</option>
+          <option value="auditorium">Aula</option>
+          <option value="class">Sala</option>
+          <option value="lab">Laboratorium</option>
         </select>
-      </div>
-
-      <div className="filter-group">
-        <label>Promień (km):</label>
-        <input
-          type="range"
-          min="1"
-          max="20"
-          value={radius}
-          onChange={(e) => setRadius(Number(e.target.value))}
-        />
-        <span>{radius} km</span>
       </div>
 
       <button className="apply-button" onClick={handleApply}>
