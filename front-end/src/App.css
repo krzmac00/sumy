@@ -42,9 +42,13 @@ body {
 .app-container {
   width: 100%;
   max-width: 100%;
-  min-width: 800px;
+  min-width: 1000px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0 auto;
   padding: 20px;
 }
 
@@ -52,8 +56,8 @@ body {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 100% !important;
-  max-width: 1200px !important;  /* Increased from 900px to 1200px */
+  width: 100%;
+  max-width: 600px;
   padding: 30px;
   overflow: hidden;
 }

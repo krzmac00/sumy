@@ -5,8 +5,9 @@ from rest_framework.response import Response
 from django.db import transaction
 from datetime import date, datetime
 
-from .models import Event, Post, Thread
-from .serializers import EventSerializer, PostSerializer, ThreadSerializer
+from .post import Post, Thread, PostSerializer, ThreadSerializer
+from .models import Event
+from .serializers import EventSerializer
 from .forms import EventForm
 from .post import create_thread
 

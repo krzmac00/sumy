@@ -30,7 +30,7 @@ This project provides a secure, robust authentication system for the PoliConnect
 1. Clone the repository
 ```bash
 git clone <repository-url>
-cd sumy_auth
+cd sumy
 ```
 
 2. Create a virtual environment
@@ -130,3 +130,26 @@ See [settings.py](sumy/settings.py) for all configurable options, including:
 - Session security parameters
 - Email configuration
 - API throttling rates
+
+
+## 🔄 Development notes:
+
+When major problems with running occurs:
+
+### Backend > database related:
+
+- delete docker volume
+
+- run:
+```bash
+docker-compose up -d
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Frontend:
+- run:
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```

@@ -24,7 +24,7 @@ const AuthLayout: React.FC = () => {
 
   return (
     <div className="app-container">
-      <div className="auth-container" style={{ maxWidth: '900px', width: '100%' }}>
+      <div className="auth-container">
         <div className="auth-header">
           <h1>{isLoginView ? t('login.title') : t('register.title')}</h1>
           <div className="tab-switcher">
