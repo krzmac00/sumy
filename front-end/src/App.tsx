@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import './App.css';
 import MapPage from './pages/MapPage';
 import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
 
 const AuthLayout: React.FC = () => {
   const { t } = useTranslation();
@@ -113,6 +114,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Navigate to="/auth" replace />} />
         <Route path="/map" element={<ProtectedRoute element={<MapPage />} />} />
         <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+        <Route path="/profile/edit" element={<ProtectedRoute element={<EditProfile />} />} />
       </Routes>
     </Router>
   );
