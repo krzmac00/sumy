@@ -1,17 +1,17 @@
-import { CustomCalendarEvent } from "@/types/event";
-import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData } from "../types/forum";
+import { CustomCalendarEvent } from '@/types/event';
+import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData } from '../types/forum';
 
 /**
  * Base API URL
  * In development, this should point to your Django backend
  */
-const API_BASE = "http://localhost:8000";
+const API_BASE = 'http://localhost:8000';
 
 /**
  * Headers for JSON requests
  */
 const JSON_HEADERS = {
-  "Content-Type": "application/json",
+  'Content-Type': 'application/json',
 };
 
 /**
@@ -102,16 +102,16 @@ create: async (data: ThreadCreateData): Promise<Thread> => {
    */
   create: async (data: ThreadCreateData): Promise<Thread> => {
     const response = await fetch(`${API_BASE}/create-thread/`, {
-      method: "POST",
+      method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(data),
     });
-
+    
     if (!response.ok) {
       const error = await response.text();
       throw new Error(`Failed to create thread: ${error}`);
     }
-
+    
     return response.json();
   },
 
@@ -120,7 +120,7 @@ create: async (data: ThreadCreateData): Promise<Thread> => {
    */
   update: async (id: number, data: Partial<ThreadCreateData>): Promise<Thread> => {
     const response = await fetch(`${API_BASE}/threads/${id}/`, {
-      method: "PATCH",
+      method: 'PATCH',
       headers: JSON_HEADERS,
       body: JSON.stringify(data),
     });
@@ -135,7 +135,7 @@ create: async (data: ThreadCreateData): Promise<Thread> => {
    */
   delete: async (id: number): Promise<void> => {
     const response = await fetch(`${API_BASE}/threads/${id}/`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
     if (!response.ok) {
       throw new Error(`Failed to delete thread ${id}: ${response.statusText}`);
@@ -174,7 +174,7 @@ export const postAPI = {
    */
   create: async (data: PostCreateData): Promise<Post> => {
     const response = await fetch(`${API_BASE}/posts/`, {
-      method: "POST",
+      method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(data),
     });
@@ -189,7 +189,7 @@ export const postAPI = {
    */
   update: async (id: number, data: PostUpdateData): Promise<Post> => {
     const response = await fetch(`${API_BASE}/posts/${id}/`, {
-      method: "PATCH",
+      method: 'PATCH',
       headers: JSON_HEADERS,
       body: JSON.stringify(data),
     });
@@ -204,7 +204,7 @@ export const postAPI = {
    */
   delete: async (id: number): Promise<void> => {
     const response = await fetch(`${API_BASE}/posts/${id}/`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
     if (!response.ok) {
       throw new Error(`Failed to delete post ${id}: ${response.statusText}`);
