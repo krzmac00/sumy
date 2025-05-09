@@ -35,20 +35,94 @@ const Calendar: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<CategoryKey[]>(allCategories);
   const [view, setView] = useState<View>(Views.MONTH);
   const [date, setDate] = useState<Date>(new Date());
-
   const [events, setEvents] = useState<CustomCalendarEvent[]>([]);
 
   useEffect(() => {
     eventAPI
       .getAll()
-      .then((loadedEvents: any) => setEvents(loadedEvents))
+      .then((rawEvents: any[]) => {
+        const normalizedEvents: CustomCalendarEvent[] = [];
+
+        const endOfView = new Date(date);
+        endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+
+        rawEvents.forEach((event) => {
+          const base: CustomCalendarEvent = {
+            id: event.id,
+            title: event.title,
+            description: event.description,
+            start: new Date(event.start),
+            end: new Date(event.end),
+            category: event.category,
+            color: event.color,
+            repeatType: event.repeat_type as RepeatType,
+          };
+
+          normalizedEvents.push(base);
+
+          if (base.repeatType === RepeatType.Weekly) {
+            let current = new Date(base.start as Date);
+            const endRepeat = new Date(endOfView);
+
+            while (true) {
+              current = new Date(current.getTime() + 7 * 24 * 60 * 60 * 1000);
+              if (current > endRepeat) break;
+
+              normalizedEvents.push({
+                ...base,
+                id: `${base.id}-weekly-${current.toISOString()}`,
+                start: new Date(current),
+                end: new Date(current.getTime() + (base.end!.getTime() - base.start!.getTime())),
+              });
+            }
+          }
+
+          if (base.repeatType === RepeatType.Monthly) {
+            const baseStart = base.start!;
+            const baseEnd = base.end!;
+            const eventDuration = baseEnd.getTime() - baseStart.getTime();
+
+            const dayOfWeek = baseStart.getDay();
+            const nth = Math.floor((baseStart.getDate() - 1) / 7) + 1;
+
+            let current = new Date(baseStart);
+            const endRepeat = new Date(endOfView);
+
+            while (true) {
+              current.setMonth(current.getMonth() + 1);
+              current.setDate(1);
+
+              let weekdayCount = 0;
+              while (current.getMonth() === current.getMonth()) {
+                if (current.getDay() === dayOfWeek) {
+                  weekdayCount += 1;
+                  if (weekdayCount === nth) break;
+                }
+                current.setDate(current.getDate() + 1);
+              }
+
+              if (current > endRepeat) break;
+
+              normalizedEvents.push({
+                ...base,
+                id: `${base.id}-monthly-${current.toISOString()}`,
+                start: new Date(current),
+                end: new Date(current.getTime() + eventDuration),
+              });
+            }
+          }
+        });
+
+        setEvents(normalizedEvents);
+      })
       .catch((err: any) => console.error("Failed to load events:", err));
-  }, []);
+  }, [date, view]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingSlot, setPendingSlot] = useState<{ start: Date; end: Date } | null>(null);
   const [newTitle, setNewTitle] = useState("");
   const [newCategory, setNewCategory] = useState<CategoryKey>(allCategories[0]);
+  const [newRepeatType, setNewRepeatType] = useState<RepeatType>(RepeatType.None);
 
   const toggleCategory = (cat: CategoryKey) =>
     setSelectedCategories((prev) =>
@@ -59,6 +133,8 @@ const Calendar: React.FC = () => {
 
   const handleEventDrop = ({ event, start, end }: any) => {
     const ev = event as CustomCalendarEvent;
+    if (typeof ev.id !== "number") return;
+
     const updated = { ...ev, start: new Date(start), end: new Date(end) };
 
     eventAPI
@@ -71,6 +147,8 @@ const Calendar: React.FC = () => {
 
   const handleEventResize = ({ event, start, end }: any) => {
     const ev = event as CustomCalendarEvent;
+    if (typeof ev.id !== "number") return;
+
     const updated = { ...ev, start: new Date(start), end: new Date(end) };
 
     eventAPI
@@ -85,31 +163,88 @@ const Calendar: React.FC = () => {
     setPendingSlot({ start: new Date(start), end: new Date(end) });
     setNewTitle("");
     setNewCategory(allCategories[0]);
+    setNewRepeatType(RepeatType.None);
     setModalOpen(true);
   };
 
-  const handleModalSave = () => {
-    if (!pendingSlot) return;
+const handleModalSave = () => {
+  if (!pendingSlot) return;
 
-    const newEvent: Omit<CustomCalendarEvent, "id"> = {
-      title: newTitle,
-      description: "",
-      start: pendingSlot.start,
-      end: new Date(pendingSlot.start.getTime() + 30 * 60 * 1000),
-      category: newCategory,
-      color: ColorKey.Blue,
-      repeatType: RepeatType.None,
-    };
+  const start = new Date(pendingSlot.start);
+  start.setHours(8, 0, 0, 0);
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
 
-    eventAPI
-      .create(newEvent)
-      .then((savedEvent: any) => {
-        setEvents((prev) => [...prev, savedEvent]);
-        setModalOpen(false);
-        setPendingSlot(null);
-      })
-      .catch((err: any) => console.error("Failed to create event:", err));
+  const newEvent: Omit<CustomCalendarEvent, "id"> = {
+    title: newTitle,
+    description: "",
+    start,
+    end,
+    category: newCategory,
+    color: ColorKey.Blue,
+    repeatType: newRepeatType,
   };
+
+  eventAPI
+    .create(newEvent)
+    .then((savedEvent: CustomCalendarEvent) => {
+      const expandedEvents: CustomCalendarEvent[] = [savedEvent];
+
+      const endOfView = new Date(date);
+      endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+      const duration = savedEvent.end!.getTime() - savedEvent.start!.getTime();
+
+      if (savedEvent.repeatType === RepeatType.Weekly) {
+        let current = new Date(savedEvent.start as Date);
+        while (true) {
+          current = new Date(current.getTime() + 7 * 24 * 60 * 60 * 1000);
+          if (current > endOfView) break;
+
+          expandedEvents.push({
+            ...savedEvent,
+            id: `${savedEvent.id}-weekly-${current.toISOString()}`,
+            start: new Date(current),
+            end: new Date(current.getTime() + duration),
+          });
+        }
+      }
+
+      if (savedEvent.repeatType === RepeatType.Monthly) {
+        const baseStart = new Date(savedEvent.start as Date);
+        const dayOfWeek = baseStart.getDay();
+        const nth = Math.floor((baseStart.getDate() - 1) / 7) + 1;
+
+        let current = new Date(baseStart);
+        while (true) {
+          current.setMonth(current.getMonth() + 1);
+          current.setDate(1);
+
+          let weekdayCount = 0;
+          while (current.getMonth() === current.getMonth()) {
+            if (current.getDay() === dayOfWeek) {
+              weekdayCount += 1;
+              if (weekdayCount === nth) break;
+            }
+            current.setDate(current.getDate() + 1);
+          }
+
+          if (current > endOfView) break;
+
+          expandedEvents.push({
+            ...savedEvent,
+            id: `${savedEvent.id}-monthly-${current.toISOString()}`,
+            start: new Date(current),
+            end: new Date(current.getTime() + duration),
+          });
+        }
+      }
+
+      setEvents((prev) => [...prev, ...expandedEvents]);
+      setModalOpen(false);
+      setPendingSlot(null);
+    })
+    .catch((err: any) => console.error("Failed to create event:", err));
+};
+
 
   const handleModalCancel = () => {
     setModalOpen(false);
@@ -118,11 +253,18 @@ const Calendar: React.FC = () => {
 
   const handleSelectEvent = (event: CalendarEvent) => {
     const ev = event as CustomCalendarEvent;
+    const numericId = typeof ev.id === "number" ? ev.id : parseInt((ev.id as string).split("-")[0]);
+
+    if (!Number.isFinite(numericId)) return;
+
     if (window.confirm(t("calendar.deleteClass", { title: ev.title }))) {
       eventAPI
-        .delete(ev.id)
+        .delete(numericId)
         .then(() => {
-          setEvents((prev) => prev.filter((e) => e.id !== ev.id));
+          setEvents((prev) => prev.filter((e) => {
+            const eId = typeof e.id === "number" ? e.id : parseInt((e.id as string).split("-")[0]);
+            return eId !== numericId;
+          }));
         })
         .catch((err: any) => console.error("Failed to delete event:", err));
     }
@@ -132,12 +274,12 @@ const Calendar: React.FC = () => {
   const handleView = (v: View) => setView(v);
 
   function CustomToolbar(toolbar: ToolbarProps) {
-    const { t } = useTranslation();
     const prev = () => toolbar.onNavigate("PREV");
     const next = () => toolbar.onNavigate("NEXT");
     const views = Array.isArray(toolbar.views)
       ? (toolbar.views as View[])
       : (Object.keys(toolbar.views) as View[]);
+
     return (
       <>
         <div className="rbc-toolbar">
@@ -178,14 +320,20 @@ const Calendar: React.FC = () => {
   }
 
   function EventRenderer({ event }: EventProps<CalendarEvent>) {
-    const { t } = useTranslation();
-    const customEvent = event as CustomCalendarEvent; // 👈 safely cast
+    const customEvent = event as CustomCalendarEvent;
+    const repeatLabel =
+      customEvent.repeatType !== RepeatType.None
+        ? ` (${t(`calendar.repeat.${customEvent.repeatType}`, customEvent.repeatType)})`
+        : "";
 
     return (
       <span>
         <strong>{customEvent.title}</strong>
         <div style={{ fontSize: "0.85em", opacity: 0.75 }}>
-          {t(`calendar.category.${customEvent.category}`, customEvent.category as string)}
+          {t(`calendar.category.${customEvent.category ?? "undefined"}`, customEvent.category ?? "")}
+        </div>
+        <div style={{ fontSize: "0.85em", opacity: 0.75 }}>
+          {repeatLabel}
         </div>
       </span>
     );
@@ -211,9 +359,9 @@ const Calendar: React.FC = () => {
         onSelectEvent={handleSelectEvent}
         components={{
           toolbar: CustomToolbar,
-          event: EventRenderer
+          event: EventRenderer,
         }}
-        views={[Views.MONTH, Views.WEEK, Views.DAY]}
+        views={[Views.MONTH, Views.WEEK]}
         step={15}
         timeslots={2}
         eventPropGetter={(evt) => ({
@@ -276,6 +424,23 @@ const Calendar: React.FC = () => {
             {allCategories.map((cat) => (
               <option key={cat} value={cat}>
                 {t(`calendar.category.${cat}`, cat)}
+              </option>
+            ))}
+          </select>
+          <select
+            value={newRepeatType}
+            onChange={(e) => setNewRepeatType(e.target.value as RepeatType)}
+            style={{
+              padding: "8px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+              fontSize: "1rem",
+              width: "100%",
+            }}
+          >
+            {Object.values(RepeatType).map((type) => (
+              <option key={type} value={type}>
+                {t(`calendar.repeat.${type}`, type)}
               </option>
             ))}
           </select>

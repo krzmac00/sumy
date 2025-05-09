@@ -3,7 +3,7 @@ import { RepeatType } from "@/enums/RepeatType";
 import { Event as CalendarEvent } from "react-big-calendar";
 
 export interface CustomCalendarEvent extends CalendarEvent {
-  id: number;
+  id: number | string;
   description: string;
   category?: CategoryKey;
   color?: string;

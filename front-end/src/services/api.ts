@@ -223,11 +223,11 @@ export const eventAPI = {
     }
     const data = await response.json();
 
-    // Convert date strings to Date objects
-    return data.results.map((event: CustomCalendarEvent) => ({
+    return data.results.map((event: any) => ({
       ...event,
-      start: new Date(event.start as Date),
-      end: new Date(event.end as Date),
+      start: new Date(event.start),
+      end: new Date(event.end),
+      repeatType: event.repeat_type
     }));
   },
 
@@ -244,6 +244,7 @@ export const eventAPI = {
       ...event,
       start: new Date(event.start),
       end: new Date(event.end),
+      repeatType: event.repeat_type
     };
   },
 
@@ -254,7 +255,10 @@ export const eventAPI = {
     const response = await fetch(`${API_BASE}/events/`, {
       method: "POST",
       headers: JSON_HEADERS,
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...data,
+        repeat_type: data.repeatType,
+      }),
     });
     if (!response.ok) {
       throw new Error(`Failed to create event: ${response.statusText}`);
@@ -264,6 +268,7 @@ export const eventAPI = {
       ...event,
       start: new Date(event.start),
       end: new Date(event.end),
+      repeatType: event.repeat_type,
     };
   },
 
@@ -274,7 +279,10 @@ export const eventAPI = {
     const response = await fetch(`${API_BASE}/events/${id}/`, {
       method: "PUT",
       headers: JSON_HEADERS,
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...data,
+        repeat_type: data.repeatType
+      }),
     });
     if (!response.ok) {
       throw new Error(`Failed to update event ${id}: ${response.statusText}`);
@@ -284,6 +292,7 @@ export const eventAPI = {
       ...event,
       start: new Date(event.start),
       end: new Date(event.end),
+      repeatType: event.repeat_type,
     };
   },
 

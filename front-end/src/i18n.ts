@@ -176,7 +176,7 @@ const resources = {
       "forum.create.validation.contentLength": "Content must be at least 10 characters",
       "forum.create.validation.nicknameRequired": "Nickname is required",
 	  
-	  //Calendar
+	    //Calendar
       "calendar.enterClass": "Enter class title",
       "calendar.enterCategory": "Category key (e.g. 'exam')",
       "calendar.enterColor": "Color key (e.g. '#FF0000')",
@@ -191,7 +191,10 @@ const resources = {
       "calendar.category.club": "Science Club",
       "calendar.category.student_council": "Student Council",
       "calendar.category.tul_events": "TUL Events",
-      "calendar.newEvent": "New event"
+      "calendar.newEvent": "New event",
+      "calendar.repeat.none": "Once",
+      "calendar.repeat.weekly": "Weekly",
+      "calendar.repeat.monthly": "Monthly"
     }
   },
   pl: {
@@ -365,7 +368,7 @@ const resources = {
       "forum.create.validation.contentLength": "Treść musi mieć co najmniej 10 znaków",
       "forum.create.validation.nicknameRequired": "Pseudonim jest wymagany",
 	  
-	  //Calendar
+	    //Calendar
       "calendar.enterClass": "Wprowadź tytuł zajęć",
       "calendar.enterCategory": "Klucz kategorii (np. 'exam')",
       "calendar.enterColor": "Klucz koloru (np. '#FF0000')",
@@ -380,7 +383,10 @@ const resources = {
       "calendar.category.club": "Koło naukowe",
       "calendar.category.student_council": "Samorząd Studencki",
       "calendar.category.tul_events": "Wydarzenia PŁ",
-      "calendar.newEvent": "Nowe wydarzenie"
+      "calendar.newEvent": "Nowe wydarzenie",
+      "calendar.repeat.none": "Jednorazowo",
+      "calendar.repeat.weekly": "Co tydzień",
+      "calendar.repeat.monthly": "Co miesiąc"
     }
   }
 };
