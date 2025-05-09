@@ -174,7 +174,25 @@ const resources = {
       "forum.create.validation.categoryRequired": "Please select a category",
       "forum.create.validation.contentRequired": "Thread content is required",
       "forum.create.validation.contentLength": "Content must be at least 10 characters",
-      "forum.create.validation.nicknameRequired": "Nickname is required"
+      "forum.create.validation.nicknameRequired": "Nickname is required",
+	  
+	    //Calendar
+      "calendar.enterClass": "Enter class title",
+      "calendar.deleteClass": "Delete event '{{title}}'?",
+      "calendar.previous": "Back",
+      "calendar.next": "Next",
+      "calendar.month": "Month",
+      "calendar.week": "Week",
+      "calendar.day": "Day",
+      "calendar.category.important": "Important",
+      "calendar.category.private": "Private",
+      "calendar.category.club": "Science Club",
+      "calendar.category.student_council": "Student Council",
+      "calendar.category.tul_events": "TUL Events",
+      "calendar.newEvent": "New event",
+      "calendar.repeat.none": "Once",
+      "calendar.repeat.weekly": "Weekly",
+      "calendar.repeat.monthly": "Monthly"
     }
   },
   pl: {
@@ -346,7 +364,25 @@ const resources = {
       "forum.create.validation.categoryRequired": "Wybierz kategorię",
       "forum.create.validation.contentRequired": "Treść wątku jest wymagana",
       "forum.create.validation.contentLength": "Treść musi mieć co najmniej 10 znaków",
-      "forum.create.validation.nicknameRequired": "Pseudonim jest wymagany"
+      "forum.create.validation.nicknameRequired": "Pseudonim jest wymagany",
+	  
+	    //Calendar
+      "calendar.enterClass": "Wprowadź tytuł zajęć",
+      "calendar.deleteClass": "Usunąć wydarzenie '{{title}}'?",
+      "calendar.previous": "Wstecz",
+      "calendar.next": "Dalej",
+      "calendar.month": "Miesiąc",
+      "calendar.week": "Tydzień",
+      "calendar.day": "Dzień",
+      "calendar.category.important": "Ważne",
+      "calendar.category.private": "Prywatne",
+      "calendar.category.club": "Koło naukowe",
+      "calendar.category.student_council": "Samorząd Studencki",
+      "calendar.category.tul_events": "Wydarzenia PŁ",
+      "calendar.newEvent": "Nowe wydarzenie",
+      "calendar.repeat.none": "Jednorazowo",
+      "calendar.repeat.weekly": "Co tydzień",
+      "calendar.repeat.monthly": "Co miesiąc"
     }
   }
 };

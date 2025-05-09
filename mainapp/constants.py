@@ -1,7 +1,7 @@
 CATEGORY_COLORS = {
-    'important': '#FF0000',
-    'private': '#00FF00',
-    'exam': '#0000FF',
-    'club': '#FFFF00',
-    'university': '#FFA500',
+    'important': '#e11d48',         # red
+    'private': '#6b7280',           # gray
+    'club': '#2563eb',              # blue
+    'student_council': '#10b981',   # green
+    'tul_events': '#f59e0b',        # amber
 }
