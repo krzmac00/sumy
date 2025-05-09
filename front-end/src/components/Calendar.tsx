@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Calendar as BigCalendar,
-  Views,
-  dateFnsLocalizer,
-  Event as CalendarEvent,
-  View,
-  ToolbarProps,
-  EventProps,
-} from "react-big-calendar";
+import { Calendar as BigCalendar, Views, dateFnsLocalizer, Event as CalendarEvent, View, ToolbarProps, EventProps } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -17,7 +9,6 @@ import { enUS } from "date-fns/locale/en-US";
 import { pl } from "date-fns/locale/pl";
 import { useTranslation } from "react-i18next";
 import { CategoryKey } from "@/enums/CategoryKey";
-import { ColorKey } from "@/enums/ColorKey";
 import { RepeatType } from "@/enums/RepeatType";
 import { CustomCalendarEvent } from "@/types/event";
 import { eventAPI } from "@/services/api";
@@ -180,7 +171,7 @@ const handleModalSave = () => {
     start,
     end,
     category: newCategory,
-    color: ColorKey.Blue,
+    color: '#2563eb',
     repeatType: newRepeatType,
   };
 
