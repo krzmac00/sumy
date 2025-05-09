@@ -5,9 +5,9 @@ from datetime import date
 CATEGORIES = [
     ('important', 'Important'),
     ('private', 'Private'),
-    ('exam', 'Exam'),
     ('club', 'Science Club'),
-    ('university', 'University-events'),
+    ('student_council', 'Student Council'),
+    ('tul_events', 'TUL Events'),
 ]
 
 REPEAT_TYPES = [

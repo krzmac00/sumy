@@ -6,6 +6,7 @@ import {
   Event as CalendarEvent,
   View,
   ToolbarProps,
+  EventProps,
 } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -176,6 +177,20 @@ const Calendar: React.FC = () => {
     );
   }
 
+  function EventRenderer({ event }: EventProps<CalendarEvent>) {
+    const { t } = useTranslation();
+    const customEvent = event as CustomCalendarEvent; // 👈 safely cast
+
+    return (
+      <span>
+        <strong>{customEvent.title}</strong>
+        <div style={{ fontSize: "0.85em", opacity: 0.75 }}>
+          {t(`calendar.category.${customEvent.category}`, customEvent.category as string)}
+        </div>
+      </span>
+    );
+  }
+
   return (
     <>
       <DragAndDropCalendar
@@ -184,6 +199,8 @@ const Calendar: React.FC = () => {
         events={filtered}
         view={view}
         date={date}
+        min={new Date(1, 1, 1, 8, 0, 0)}
+        max={new Date(1, 1, 1, 22, 0, 0)}
         onNavigate={handleNavigate}
         onView={handleView}
         selectable
@@ -192,7 +209,10 @@ const Calendar: React.FC = () => {
         onEventResize={handleEventResize}
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
-        components={{ toolbar: CustomToolbar }}
+        components={{
+          toolbar: CustomToolbar,
+          event: EventRenderer
+        }}
         views={[Views.MONTH, Views.WEEK, Views.DAY]}
         step={15}
         timeslots={2}

@@ -188,9 +188,9 @@ const resources = {
       "calendar.day": "Day",
       "calendar.category.important": "Important",
       "calendar.category.private": "Private",
-      "calendar.category.exam": "Exam",
-      "calendar.category.club": "Club",
-      "calendar.category.university": "University",
+      "calendar.category.club": "Science Club",
+      "calendar.category.student_council": "Student Council",
+      "calendar.category.tul_events": "TUL Events",
       "calendar.newEvent": "New event"
     }
   },
@@ -377,9 +377,9 @@ const resources = {
       "calendar.day": "Dzień",
       "calendar.category.important": "Ważne",
       "calendar.category.private": "Prywatne",
-      "calendar.category.exam": "Egzamin",
-      "calendar.category.club": "Klub",
-      "calendar.category.university": "Uniwersytet",
+      "calendar.category.club": "Koło naukowe",
+      "calendar.category.student_council": "Samorząd Studencki",
+      "calendar.category.tul_events": "Wydarzenia PŁ",
       "calendar.newEvent": "Nowe wydarzenie"
     }
   }
