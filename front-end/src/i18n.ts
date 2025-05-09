@@ -178,9 +178,7 @@ const resources = {
 	  
 	    //Calendar
       "calendar.enterClass": "Enter class title",
-      "calendar.enterCategory": "Category key (e.g. 'exam')",
-      "calendar.enterColor": "Color key (e.g. '#FF0000')",
-      "calendar.deleteClass": "Delete class '{{title}}'?",
+      "calendar.deleteClass": "Delete event '{{title}}'?",
       "calendar.previous": "Back",
       "calendar.next": "Next",
       "calendar.month": "Month",
@@ -370,9 +368,7 @@ const resources = {
 	  
 	    //Calendar
       "calendar.enterClass": "Wprowadź tytuł zajęć",
-      "calendar.enterCategory": "Klucz kategorii (np. 'exam')",
-      "calendar.enterColor": "Klucz koloru (np. '#FF0000')",
-      "calendar.deleteClass": "Usuń zajęcia '{{title}}'?",
+      "calendar.deleteClass": "Usunąć wydarzenie '{{title}}'?",
       "calendar.previous": "Wstecz",
       "calendar.next": "Dalej",
       "calendar.month": "Miesiąc",
