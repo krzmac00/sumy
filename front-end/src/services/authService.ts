@@ -134,9 +134,19 @@ export const authService = {
     const refreshToken = localStorage.getItem('refresh_token');
     const token = getAuthToken();
     
-    try {
-      // Only attempt to blacklist token if we have both tokens
-      if (refreshToken && token) {
+    // First clean up all auth-related local storage to prevent further API calls
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('user_data');
+    localStorage.removeItem('token_expires_at');
+    
+    // Then blacklist token on the server if available
+    if (refreshToken && token) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+        
         const response = await fetch(`${AUTH_BASE}/logout/`, {
           method: 'POST',
           headers: {
@@ -144,21 +154,20 @@ export const authService = {
             'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ refresh_token: refreshToken }),
+          signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         
         if (!response.ok) {
           console.warn('Failed to blacklist token, status:', response.status);
         }
+      } catch (error) {
+        // Don't let API errors prevent logout completion
+        if (error instanceof Error) {
+          console.error('Error during logout API call:', error.message);
+        }
       }
-    } catch (error) {
-      console.error('Error during logout API call:', error);
-    } finally {
-      // Clear storage regardless of API response
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('isAuthenticated');
-      localStorage.removeItem('user_data');
-      localStorage.removeItem('token_expires_at');
     }
   },
 
@@ -170,36 +179,60 @@ export const authService = {
       const refreshToken = localStorage.getItem('refresh_token');
       
       if (!refreshToken) {
+        // Clear any remaining tokens
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('token_expires_at');
+        localStorage.removeItem('user_data');
         throw new Error('No refresh token available');
       }
+      
+      // Use AbortController to set timeout for refresh requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
       
       const response = await fetch(`${AUTH_BASE}/token/refresh/`, {
         method: 'POST',
         headers: JSON_HEADERS,
         body: JSON.stringify({ refresh: refreshToken }),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
-        // If refresh fails, logout user
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('token_expires_at');
-        localStorage.removeItem('user_data');
+        // Clean up tokens when refresh fails
+        await authService.logout();
         throw new Error('Token refresh failed');
       }
 
       const tokens = await response.json();
-      localStorage.setItem('auth_token', tokens.access);
       
-      // Set new expiration time (default 30 minutes from now)
-      const expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + 30);
-      localStorage.setItem('token_expires_at', expiresAt.toISOString());
-      
-      return tokens;
+      // Only set tokens if we actually got them
+      if (tokens && tokens.access) {
+        localStorage.setItem('auth_token', tokens.access);
+        
+        // Set new expiration time (default 30 minutes from now)
+        const expiresAt = new Date();
+        expiresAt.setMinutes(expiresAt.getMinutes() + 30);
+        localStorage.setItem('token_expires_at', expiresAt.toISOString());
+        
+        return tokens;
+      } else {
+        // If response doesn't contain expected tokens, logout
+        await authService.logout();
+        throw new Error('Invalid token response');
+      }
     } catch (error) {
-      console.error('Token refresh error:', error);
+      // Any errors during refresh should result in logout
+      if (error instanceof Error) {
+        console.error('Token refresh error:', error.message);
+      } else {
+        console.error('Unknown token refresh error');
+      }
+      
+      // Make sure tokens are cleared on any error
+      await authService.logout();
       throw error;
     }
   },
@@ -243,8 +276,13 @@ export const authService = {
    * Check if user is authenticated
    */
   isAuthenticated: (): boolean => {
-    return localStorage.getItem('isAuthenticated') === 'true' && 
-           !!localStorage.getItem('auth_token');
+    // Check both token and isAuthenticated flag
+    const hasToken = !!localStorage.getItem('auth_token');
+    const hasRefreshToken = !!localStorage.getItem('refresh_token');
+    const isAuthFlag = localStorage.getItem('isAuthenticated') === 'true';
+    
+    // All three conditions must be true
+    return isAuthFlag && hasToken && hasRefreshToken;
   },
 
   /**
@@ -255,18 +293,28 @@ export const authService = {
     const userData = localStorage.getItem('user_data');
     
     if (userData) {
-      return JSON.parse(userData);
+      try {
+        return JSON.parse(userData);
+      } catch (error) {
+        console.error('Error parsing stored user data:', error);
+        localStorage.removeItem('user_data');
+      }
     }
     
     // If not in localStorage and user is authenticated, fetch from API
     if (authService.isAuthenticated()) {
       try {
         const user = await authService.getCurrentUser();
-        localStorage.setItem('user_data', JSON.stringify(user));
-        return user;
+        if (user) {
+          localStorage.setItem('user_data', JSON.stringify(user));
+          return user;
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        return null;
+        // If API call fails, don't try additional calls
+        if (error instanceof Error && error.message.includes('Failed to get user information')) {
+          authService.logout();
+        }
       }
     }
     
@@ -281,23 +329,32 @@ export const setupAuthInterceptor = () => {
   const originalFetch = window.fetch;
   
   window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-    // Check if we need to refresh the token before making any request
-    if (authService.isAuthenticated() && authService.shouldRefreshToken()) {
+    const url = typeof input === 'string' ? input : input.url;
+    const isAuthPage = url.includes('/auth') || window.location.pathname.includes('/auth');
+    
+    // Skip token refresh logic for auth-related pages to prevent infinite loops
+    if (!isAuthPage && authService.isAuthenticated() && authService.shouldRefreshToken()) {
       try {
         // Proactively refresh the token
         await authService.refreshToken();
       } catch (error) {
-        // If refresh fails, logout and redirect
+        // If refresh fails, logout but don't redirect if we're already on auth page
         console.error('Token refresh failed:', error);
-        authService.logout();
-        window.location.href = '/auth';
-        return originalFetch(input, init); // Continue with original request
+        await authService.logout();
+        
+        // Only redirect if we're not already on the auth page and this isn't an auth request
+        if (!isAuthPage) {
+          window.location.href = '/auth';
+        }
+        
+        // For auth-related requests, continue without redirecting
+        return originalFetch(input, init);
       }
     }
     
-    // Add auth token to request if it's an API call and token exists
+    // Add auth token to request if it's an API call, token exists, and not auth-related
     const token = getAuthToken();
-    if (token && typeof input === 'string' && input.includes(API_BASE)) {
+    if (token && typeof url === 'string' && url.includes(API_BASE) && !url.includes('/token/')) {
       // Create new headers with auth token
       const newInit: RequestInit = { ...(init || {}) };
       newInit.headers = {
@@ -310,29 +367,38 @@ export const setupAuthInterceptor = () => {
     // Make the actual request
     let response = await originalFetch(input, init);
     
-    // If response is 401 Unauthorized, try to refresh the token
-    if (response.status === 401 && authService.isAuthenticated()) {
-      try {
-        // Refresh the token
-        await authService.refreshToken();
-        
-        // Retry the original request with the new token
-        const newToken = getAuthToken();
-        if (newToken) {
-          const newInit: RequestInit = { ...(init || {}) };
-          newInit.headers = {
-            ...(newInit.headers || {}),
-            'Authorization': `Bearer ${newToken}`
-          };
+    // Handle 401 Unauthorized, but avoid infinite loops on auth pages
+    if (response.status === 401 && authService.isAuthenticated() && !isAuthPage) {
+      // Skip retry for token-related endpoints to prevent loops
+      const isTokenEndpoint = typeof url === 'string' && 
+        (url.includes('/token/') || url.includes('/logout/'));
+      
+      if (!isTokenEndpoint) {
+        try {
+          // Refresh the token
+          await authService.refreshToken();
           
-          // Retry the request with the new token
-          return originalFetch(input, newInit);
+          // Retry the original request with the new token
+          const newToken = getAuthToken();
+          if (newToken) {
+            const newInit: RequestInit = { ...(init || {}) };
+            newInit.headers = {
+              ...(newInit.headers || {}),
+              'Authorization': `Bearer ${newToken}`
+            };
+            
+            // Retry the request with the new token
+            return originalFetch(input, newInit);
+          }
+        } catch (error) {
+          // If refresh fails, logout but only redirect if not on auth page
+          console.error('Token refresh failed during retry:', error);
+          await authService.logout();
+          
+          if (!isAuthPage) {
+            window.location.href = '/auth';
+          }
         }
-      } catch (error) {
-        // If refresh fails, logout
-        console.error('Token refresh failed during retry:', error);
-        authService.logout();
-        window.location.href = '/auth';
       }
     }
     
