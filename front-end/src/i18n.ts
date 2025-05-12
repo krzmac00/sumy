@@ -182,7 +182,28 @@ const resources = {
       "forum.create.validation.categoryRequired": "Please select a category",
       "forum.create.validation.contentRequired": "Thread content is required",
       "forum.create.validation.contentLength": "Content must be at least 10 characters",
-      "forum.create.validation.nicknameRequired": "Nickname is required for anonymous posting"
+      "forum.create.validation.nicknameRequired": "Nickname is required for anonymous posting",
+
+      // Time ago formatting
+      "time.minutesAgo_one": "min ago",
+      "time.minutesAgo_other": "mins ago",
+      "time.hoursAgo_one": "hr ago",
+      "time.hoursAgo_other": "hrs ago",
+      "time.daysAgo_one": "day ago",
+      "time.daysAgo_other": "days ago",
+      "time.weeksAgo_one": "week ago",
+      "time.weeksAgo_other": "weeks ago",
+      "time.monthsAgo_one": "month ago",
+      "time.monthsAgo_other": "months ago",
+      "time.yearsAgo_one": "year ago",
+      "time.yearsAgo_other": "years ago",
+      
+      // Thread card actions
+      "forum.action.share": "Share",
+      "forum.action.save": "Save",
+      "forum.action.info": "More Info",
+      "forum.action.upvote": "Upvote",
+      "forum.action.downvote": "Downvote"
     }
   },
   pl: {
@@ -362,7 +383,28 @@ const resources = {
       "forum.create.validation.categoryRequired": "Wybierz kategorię",
       "forum.create.validation.contentRequired": "Treść wątku jest wymagana",
       "forum.create.validation.contentLength": "Treść musi mieć co najmniej 10 znaków",
-      "forum.create.validation.nicknameRequired": "Pseudonim jest wymagany dla anonimowych postów"
+      "forum.create.validation.nicknameRequired": "Pseudonim jest wymagany dla anonimowych postów",
+      
+      // Time ago formatting
+      "time.minutesAgo_one": "min temu",
+      "time.minutesAgo_other": "min temu",
+      "time.hoursAgo_one": "godz temu",
+      "time.hoursAgo_other": "godz temu",
+      "time.daysAgo_one": "dzień temu",
+      "time.daysAgo_other": "dni temu",
+      "time.weeksAgo_one": "tydzień temu",
+      "time.weeksAgo_other": "tygodni temu",
+      "time.monthsAgo_one": "miesiąc temu",
+      "time.monthsAgo_other": "miesięcy temu",
+      "time.yearsAgo_one": "rok temu",
+      "time.yearsAgo_other": "lat temu",
+      
+      // Thread card actions
+      "forum.action.share": "Udostępnij",
+      "forum.action.save": "Zapisz",
+      "forum.action.info": "Więcej Informacji",
+      "forum.action.upvote": "Głosuj za",
+      "forum.action.downvote": "Głosuj przeciw"
     }
   }
 };
