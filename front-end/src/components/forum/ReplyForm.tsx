@@ -59,20 +59,29 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
         localStorage.setItem('forumNickname', nickname);
       }
       
-      await postAPI.create({
-        nickname: isAnonymous ? nickname : "",
+      const postData = {
+        // Use a default nickname if not anonymous or nickname is empty
+        nickname: isAnonymous ? nickname : "Anonymous User",
         content,
         thread: threadId,
-        replying_to: replyingTo,
+        replying_to: replyingTo.length > 0 ? replyingTo : [],
         is_anonymous: isAnonymous
-      });
+      };
+      
+      console.log('Submitting post data:', postData);
+      
+      await postAPI.create(postData);
       
       // Clear form and notify parent
       setContent('');
       onSubmitSuccess();
     } catch (err) {
       console.error('Error creating reply:', err);
-      setError(t('forum.reply.errorSubmit'));
+      if (err instanceof Error) {
+        setError(`${t('forum.reply.errorSubmit')}: ${err.message}`);
+      } else {
+        setError(t('forum.reply.errorSubmit'));
+      }
     } finally {
       setIsSubmitting(false);
     }

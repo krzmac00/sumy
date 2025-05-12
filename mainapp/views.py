@@ -79,6 +79,53 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     
+    def create(self, request, *args, **kwargs):
+        try:
+            print("Post creation request data:", request.data)
+            
+            # Make a mutable copy of the request data
+            request_data = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
+            
+            # Ensure nickname is not blank
+            if 'nickname' not in request_data or not request_data['nickname']:
+                request_data['nickname'] = 'Anonymous User'
+            
+            # Get replying_to ids if present and remove from request data temporarily
+            replying_to_ids = request_data.get('replying_to', [])
+            if 'replying_to' in request_data:
+                del request_data['replying_to']
+            
+            # Create serializer without replying_to
+            serializer = self.get_serializer(data=request_data)
+            
+            if not serializer.is_valid():
+                print("Serializer validation errors:", serializer.errors)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Add user and is_anonymous
+            user = request.user if request.user.is_authenticated else None
+            is_anonymous = request_data.get('is_anonymous', False)
+            
+            # Save the post
+            post = serializer.save(user=user, is_anonymous=is_anonymous)
+            
+            # Add replying_to after post is created
+            if replying_to_ids:
+                # Convert string IDs to integers if needed
+                if isinstance(replying_to_ids, list):
+                    try:
+                        replying_to_ids = [int(id) for id in replying_to_ids]
+                    except (ValueError, TypeError):
+                        pass  # Keep original if conversion fails
+                post.replying_to.set(replying_to_ids)
+            
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        
+        except Exception as e:
+            print(f"Error creating post: {str(e)}")
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
     def perform_create(self, serializer):
         user = self.request.user if self.request.user.is_authenticated else None
         is_anonymous = self.request.data.get('is_anonymous', False)
@@ -139,7 +186,7 @@ def create_thread_with_post(request):
                 user=user,
                 is_anonymous=is_anonymous
             )
-            thread = Thread.objects.get(id=thread_id)
+            thread = Thread.objects.get(post_id=thread_id)
             thread_data = ThreadSerializer(thread).data
 
             return Response(thread_data, status=status.HTTP_201_CREATED)

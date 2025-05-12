@@ -6,7 +6,7 @@ from rest_framework import serializers
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
                            related_name='posts', null=True, blank=True)
-    nickname = models.CharField(max_length=63)
+    nickname = models.CharField(max_length=63, default="Anonymous User")
     content = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     was_edited = models.BooleanField(default=False)
@@ -18,7 +18,8 @@ class Post(models.Model):
 class PostSerializer(serializers.ModelSerializer):
     replies = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     replying_to = serializers.PrimaryKeyRelatedField(many=True,
-                                                     queryset=Post.objects.all())
+                                                    queryset=Post.objects.all(),
+                                                    required=False)
     user_display_name = serializers.SerializerMethodField()
     
     def get_user_display_name(self, obj):
