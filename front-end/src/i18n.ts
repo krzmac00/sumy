@@ -117,6 +117,17 @@ const resources = {
       "forum.threadList.noThreadsInCategory": "No threads found in the '{{category}}' category.",
       "forum.filter.category": "Category",
       "forum.filter.allCategories": "All Categories",
+
+      // Thread Categories
+      "categories.general": "General",
+      "categories.exams": "Exams",
+      "categories.assignments": "Assignments",
+      "categories.materials": "Course Materials",
+      "categories.courses": "Courses",
+      "categories.lecturers": "Lecturers",
+      "categories.events": "Events",
+      "categories.technical": "Technical Issues",
+      "categories.other": "Other",
       
       // Forum - Thread View
       "forum.thread.newReply": "New Reply",
@@ -326,6 +337,17 @@ const resources = {
       "forum.threadList.noThreadsInCategory": "Nie znaleziono wątków w kategorii '{{category}}'.",
       "forum.filter.category": "Kategoria",
       "forum.filter.allCategories": "Wszystkie kategorie",
+
+      // Thread Categories
+      "categories.general": "Ogólne",
+      "categories.exams": "Zaliczenia",
+      "categories.assignments": "Zadania",
+      "categories.materials": "Notatki",
+      "categories.courses": "Przedmioty",
+      "categories.lecturers": "Prowadzący",
+      "categories.events": "Wydarzenia",
+      "categories.technical": "Problemy techniczne",
+      "categories.other": "Inne",
       
       // Forum - Thread View
       "forum.thread.newReply": "Nowa odpowiedź",

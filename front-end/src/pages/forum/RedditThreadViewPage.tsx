@@ -7,7 +7,9 @@ import ReplyForm from '../../components/forum/ReplyForm';
 import { Thread, Post } from '../../types/forum';
 import { threadAPI } from '../../services/api';
 import { formatTimeAgo } from '../../utils/dateUtils';
+import { translateCategory } from '../../utils/categories';
 import './ThreadViewPage.css';
+import './RedditThreadViewPage.css';
 
 const RedditThreadViewPage: React.FC = () => {
   const { t } = useTranslation();
@@ -162,7 +164,7 @@ const RedditThreadViewPage: React.FC = () => {
           <Link to="/forum" className="back-to-forum-link">
             ← {t('forum.backToList')}
           </Link>
-          <div className="thread-category">{thread.category}</div>
+          <div className="thread-category">{translateCategory(thread.category, t)}</div>
         </div>
         
         {/* Original Post as Reddit Card */}
@@ -188,7 +190,7 @@ const RedditThreadViewPage: React.FC = () => {
           <div className="thread-content">
             <div className="thread-header">
               <Link to={`/forum/category/${thread.category}`} className="thread-category">
-                r/{thread.category}
+                r/{translateCategory(thread.category, t)}
               </Link>
               <span className="thread-separator">•</span>
               <img src={userImagePath} alt="User" className="thread-author-image" />

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Thread } from '../../types/forum';
 import { formatTimeAgo } from '../../utils/dateUtils';
+import { translateCategory } from '../../utils/categories';
 import './RedditThreadCard.css';
 
 interface RedditThreadCardProps {
@@ -62,7 +63,7 @@ const RedditThreadCard: React.FC<RedditThreadCardProps> = ({ thread }) => {
       <div className="thread-content">
         <div className="thread-header">
           <Link to={`/forum/category/${thread.category}`} className="thread-category">
-            r/{thread.category}
+            r/{translateCategory(thread.category, t)}
           </Link>
           <span className="thread-separator">•</span>
           <img src={userImagePath} alt="User" className="thread-author-image" />

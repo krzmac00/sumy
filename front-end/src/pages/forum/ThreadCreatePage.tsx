@@ -5,6 +5,7 @@ import MainLayout from '../../layouts/MainLayout';
 import { threadAPI } from '../../services/api';
 import { ThreadCreateData } from '../../types/forum';
 import { useAuth } from '../../contexts/AuthContext';
+import { THREAD_CATEGORIES, getTranslatedCategories } from '../../utils/categories';
 import './ThreadCreatePage.css';
 
 const ThreadCreatePage: React.FC = () => {
@@ -24,15 +25,8 @@ const ThreadCreatePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   
-  // Default categories - in a real app, these would come from the backend
-  const categories = [
-    'General', 
-    'Assignments', 
-    'Course Materials', 
-    'Technical Issues', 
-    'Events', 
-    'Other'
-  ];
+  // Get translated categories
+  const categories = getTranslatedCategories(t);
 
   // Try to get the nickname from localStorage if it exists
   useEffect(() => {
@@ -152,7 +146,7 @@ const ThreadCreatePage: React.FC = () => {
             >
               <option value="">{t('forum.create.selectCategory')}</option>
               {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat.value} value={cat.value}>{cat.label}</option>
               ))}
             </select>
             {formErrors.category && (

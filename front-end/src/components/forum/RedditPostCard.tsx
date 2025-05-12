@@ -4,6 +4,7 @@ import { Post } from '../../types/forum';
 import { postAPI } from '../../services/api';
 import { formatTimeAgo } from '../../utils/dateUtils';
 import './PostCard.css';
+import './RedditPostCard.css';
 
 interface RedditPostCardProps {
   post: Post;
