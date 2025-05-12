@@ -25,7 +25,21 @@ export const threadAPI = {
     if (!response.ok) {
       throw new Error(`Failed to fetch threads: ${response.statusText}`);
     }
-    return response.json();
+    const data = await response.json();
+    
+    // Check if response is paginated (Django REST Framework pagination)
+    if (data && typeof data === 'object' && 'results' in data && Array.isArray(data.results)) {
+      return data.results;
+    }
+    
+    // If it's a direct array
+    if (Array.isArray(data)) {
+      return data;
+    }
+    
+    // If neither condition is met, return empty array to prevent errors
+    console.warn('Unexpected response format from threads API:', data);
+    return [];
   },
 
   /**
@@ -155,7 +169,22 @@ export const postAPI = {
     if (!response.ok) {
       throw new Error(`Failed to fetch posts: ${response.statusText}`);
     }
-    return response.json();
+    
+    const data = await response.json();
+    
+    // Check if response is paginated (Django REST Framework pagination)
+    if (data && typeof data === 'object' && 'results' in data && Array.isArray(data.results)) {
+      return data.results;
+    }
+    
+    // If it's a direct array
+    if (Array.isArray(data)) {
+      return data;
+    }
+    
+    // If neither condition is met, return empty array to prevent errors
+    console.warn('Unexpected response format from posts API:', data);
+    return [];
   },
 
   /**

@@ -78,6 +78,11 @@ def event_list(request):
 class PostListCreateAPIView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    
+    def perform_create(self, serializer):
+        user = self.request.user if self.request.user.is_authenticated else None
+        is_anonymous = self.request.data.get('is_anonymous', False)
+        serializer.save(user=user, is_anonymous=is_anonymous)
 
 class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
@@ -88,35 +93,53 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 # ---------- THREAD SECTION ----------
 class ThreadListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Thread.objects.select_related('post').all()
+    queryset = Thread.objects.all()
     serializer_class = ThreadSerializer
     filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['last_activity_date', 'post__date']
+    ordering_fields = ['last_activity_date', 'date']
     ordering = ['-last_activity_date']
 
 class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Thread.objects.select_related('post').all()
+    queryset = Thread.objects.all()
     serializer_class = ThreadSerializer
 
 @api_view(['POST'])
 def create_thread_with_post(request):
     try:
         data = request.data
-        required_fields = ['nickname', 'content', 'category', 'title']
+        required_fields = ['content', 'category', 'title']
         for field in required_fields:
             if field not in data:
                 return Response({'error': f'Missing required field: {field}'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Determine if anonymous post or authenticated user post
+        is_anonymous = data.get('is_anonymous', False)
+        user = request.user if request.user.is_authenticated else None
+        
+        # Need nickname for anonymous posts
+        if is_anonymous and 'nickname' not in data:
+            return Response({'error': 'Nickname required for anonymous posts'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Use user name as default nickname if not anonymous
+        nickname = data.get('nickname', '')
+        if not is_anonymous and user and not nickname:
+            if user.role == 'student':
+                nickname = f"{user.first_name} {user.last_name} {user.login}"
+            else:
+                nickname = f"{user.first_name} {user.last_name}"
+            
         with transaction.atomic():
             thread_id = create_thread(
-                nickname=data['nickname'],
+                nickname=nickname,
                 content=data['content'],
                 category=data['category'],
                 title=data['title'],
                 visibleforteachers=data.get('visible_for_teachers', False),
-                canbeanswered=data.get('can_be_answered', True)
+                canbeanswered=data.get('can_be_answered', True),
+                user=user,
+                is_anonymous=is_anonymous
             )
-            thread = Thread.objects.select_related('post').get(post_id=thread_id)
+            thread = Thread.objects.get(id=thread_id)
             thread_data = ThreadSerializer(thread).data
 
             return Response(thread_data, status=status.HTTP_201_CREATED)

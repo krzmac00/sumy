@@ -61,6 +61,43 @@
   border: 1px solid #c8e6c9;
 }
 
+.thread-author-info {
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.thread-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.anonymous-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background-color: #f0f0f0;
+  color: #666;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.thread-content-text {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
 .thread-reply-actions {
   display: flex;
   justify-content: space-between;

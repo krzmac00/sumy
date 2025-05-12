@@ -111,11 +111,8 @@ const ThreadViewPage: React.FC = () => {
     );
   }
 
-  // Find the original post (the one directly associated with the thread)
-  const originalPost = thread.posts.find(post => post.id === thread.post);
-  
-  // All other posts in the thread
-  const replies = thread.posts.filter(post => post.id !== thread.post);
+  // All posts in the thread are replies
+  const replies = thread.posts;
 
   // Count how many posts are replying to each post
   const postReplyCounts = new Map<number, Post[]>();
@@ -153,6 +150,19 @@ const ThreadViewPage: React.FC = () => {
               {t('forum.thread.canBeAnswered')}
             </div>
           )}
+          
+          {/* Thread author info */}
+          <div className="thread-author-info">
+            <span className="thread-author">
+              {thread.author_display_name}
+              {thread.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+            </span>
+          </div>
+          
+          {/* Thread content */}
+          <div className="thread-content-text">
+            {thread.content}
+          </div>
         </div>
 
         <div className="thread-reply-actions">
@@ -201,31 +211,6 @@ const ThreadViewPage: React.FC = () => {
         </div>
 
         <div className="thread-content">
-          {/* Original Post */}
-          {originalPost && (
-            <div className={multiSelectMode ? 'selectable-post' : ''}>
-              {multiSelectMode && (
-                <label className="post-select-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={selectedPosts.includes(originalPost.id)}
-                    onChange={() => togglePostSelection(originalPost.id)}
-                  />
-                  {t('forum.thread.selectPost')}
-                </label>
-              )}
-              <PostCard
-                post={originalPost}
-                isOriginalPost={true}
-                replyingToPosts={postReplyCounts.get(originalPost.id) || []}
-                allPosts={thread.posts}
-                onReply={handleReply}
-                onReplyMultiple={() => {}}
-                onRefresh={fetchThread}
-              />
-            </div>
-          )}
-
           {/* Replies */}
           {replies.length > 0 ? (
             <div className="thread-replies">

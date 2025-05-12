@@ -4,16 +4,19 @@ import { useTranslation } from 'react-i18next';
 import MainLayout from '../../layouts/MainLayout';
 import { threadAPI } from '../../services/api';
 import { ThreadCreateData } from '../../types/forum';
+import { useAuth } from '../../contexts/AuthContext';
 import './ThreadCreatePage.css';
 
 const ThreadCreatePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   
   const [title, setTitle] = useState<string>('');
   const [category, setCategory] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [nickname, setNickname] = useState<string>('');
+  const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
   const [visibleForTeachers, setVisibleForTeachers] = useState<boolean>(false);
   const [canBeAnswered, setCanBeAnswered] = useState<boolean>(true);
   
@@ -58,7 +61,8 @@ const ThreadCreatePage: React.FC = () => {
       errors.content = t('forum.create.validation.contentLength');
     }
     
-    if (!nickname.trim()) {
+    // Only require nickname if anonymous posting is selected
+    if (isAnonymous && !nickname.trim()) {
       errors.nickname = t('forum.create.validation.nicknameRequired');
     }
     
@@ -77,16 +81,19 @@ const ThreadCreatePage: React.FC = () => {
       setSubmitting(true);
       setError(null);
       
-      // Save nickname for future use
-      localStorage.setItem('forumNickname', nickname);
+      // Only save nickname for future use if anonymous posting
+      if (isAnonymous && nickname) {
+        localStorage.setItem('forumNickname', nickname);
+      }
       
       const threadData: ThreadCreateData = {
         title,
         category,
         content,
-        nickname,
+        nickname: isAnonymous ? nickname : undefined, // Only send nickname if anonymous
         visible_for_teachers: visibleForTeachers,
-        can_be_answered: canBeAnswered
+        can_be_answered: canBeAnswered,
+        is_anonymous: isAnonymous
       };
       
       const newThread = await threadAPI.create(threadData);
@@ -170,20 +177,41 @@ const ThreadCreatePage: React.FC = () => {
           </div>
           
           <div className="form-group">
-            <label htmlFor="thread-nickname">{t('forum.create.nickname')}</label>
-            <input
-              id="thread-nickname"
-              type="text"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              placeholder={t('forum.create.nicknamePlaceholder')}
-              className={`form-control ${formErrors.nickname ? 'is-invalid' : ''}`}
-              disabled={submitting}
-            />
-            {formErrors.nickname && (
-              <div className="invalid-feedback">{formErrors.nickname}</div>
-            )}
+            <div className="form-check">
+              <input
+                id="is-anonymous"
+                type="checkbox"
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+                className="form-check-input"
+                disabled={submitting}
+              />
+              <label className="form-check-label" htmlFor="is-anonymous">
+                {t('forum.create.postAnonymously')}
+              </label>
+              <small className="form-text text-muted">
+                {currentUser ? t('forum.create.anonymousDescription') : t('forum.create.anonymousRequired')}
+              </small>
+            </div>
           </div>
+          
+          {isAnonymous && (
+            <div className="form-group">
+              <label htmlFor="thread-nickname">{t('forum.create.nickname')}</label>
+              <input
+                id="thread-nickname"
+                type="text"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                placeholder={t('forum.create.nicknamePlaceholder')}
+                className={`form-control ${formErrors.nickname ? 'is-invalid' : ''}`}
+                disabled={submitting}
+              />
+              {formErrors.nickname && (
+                <div className="invalid-feedback">{formErrors.nickname}</div>
+              )}
+            </div>
+          )}
           
           <div className="thread-options">
             <div className="form-check">

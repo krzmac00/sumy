@@ -79,7 +79,10 @@ const PostCard: React.FC<PostCardProps> = ({
           <div className="replied-to-posts">
             {repliedToPosts.map(repliedPost => (
               <div key={repliedPost.id} className="replied-to-post">
-                <span className="replied-to-author">{repliedPost.nickname}</span>
+                <span className="replied-to-author">
+                  {repliedPost.user_display_name || repliedPost.nickname}
+                  {repliedPost.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+                </span>
                 <span className="replied-to-preview">
                   {repliedPost.content.length > 50
                     ? `${repliedPost.content.substring(0, 50)}...`
@@ -103,7 +106,10 @@ const PostCard: React.FC<PostCardProps> = ({
       )}
 
       <div className="post-header">
-        <div className="post-author">{post.nickname}</div>
+        <div className="post-author">
+          {post.user_display_name || post.nickname}
+          {post.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+        </div>
         <div className="post-meta">
           <div className="post-date">{formatDate(post.date)}</div>
           {post.was_edited && (

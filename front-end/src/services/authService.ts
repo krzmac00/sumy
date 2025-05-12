@@ -352,28 +352,35 @@ export const setupAuthInterceptor = () => {
       }
     }
     
-    // Add auth token to request if it's an API call, token exists, and not auth-related
+    // Add auth token to request if it's an API call, token exists, and not an open endpoint
     const token = getAuthToken();
-    if (token && typeof url === 'string' && url.includes(API_BASE) && !url.includes('/token/')) {
-      // Create new headers with auth token
-      const newInit: RequestInit = { ...(init || {}) };
-      newInit.headers = {
-        ...(newInit.headers || {}),
-        'Authorization': `Bearer ${token}`
-      };
-      init = newInit;
+    if (token && typeof url === 'string' && url.includes(API_BASE)) {
+      // Skip adding auth token for endpoints that don't require authentication
+      const openEndpoints = ['/token/', '/register/', '/activate/', '/verify-password/'];
+      const isOpenEndpoint = openEndpoints.some(endpoint => url.includes(endpoint));
+      
+      if (!isOpenEndpoint) {
+        // Create new headers with auth token
+        const newInit: RequestInit = { ...(init || {}) };
+        newInit.headers = {
+          ...(newInit.headers || {}),
+          'Authorization': `Bearer ${token}`
+        };
+        init = newInit;
+      }
     }
     
     // Make the actual request
     let response = await originalFetch(input, init);
     
-    // Handle 401 Unauthorized, but avoid infinite loops on auth pages
+    // Handle 401 Unauthorized, but avoid infinite loops on auth pages or open endpoints
     if (response.status === 401 && authService.isAuthenticated() && !isAuthPage) {
-      // Skip retry for token-related endpoints to prevent loops
-      const isTokenEndpoint = typeof url === 'string' && 
-        (url.includes('/token/') || url.includes('/logout/'));
+      // Skip retry for endpoints that don't need authentication or token-related endpoints
+      const skipRetryEndpoints = ['/token/', '/register/', '/activate/', '/verify-password/', '/logout/'];
+      const shouldSkipRetry = typeof url === 'string' && 
+        skipRetryEndpoints.some(endpoint => url.includes(endpoint));
       
-      if (!isTokenEndpoint) {
+      if (!shouldSkipRetry) {
         try {
           // Refresh the token
           await authService.refreshToken();

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Post } from '../../types/forum';
 import { postAPI } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 import './ReplyForm.css';
 
 interface ReplyFormProps {
@@ -20,8 +21,10 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
   onCancel
 }) => {
   const { t } = useTranslation();
+  const { currentUser } = useAuth();
   const [nickname, setNickname] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -37,7 +40,7 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
     e.preventDefault();
     
     // Validate input
-    if (!nickname.trim()) {
+    if (isAnonymous && !nickname.trim()) {
       setError(t('forum.reply.errorNickname'));
       return;
     }
@@ -51,14 +54,17 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
       setIsSubmitting(true);
       setError(null);
       
-      // Save nickname for future use
-      localStorage.setItem('forumNickname', nickname);
+      // Save nickname for future use if anonymous
+      if (isAnonymous && nickname) {
+        localStorage.setItem('forumNickname', nickname);
+      }
       
       await postAPI.create({
-        nickname,
+        nickname: isAnonymous ? nickname : "",
         content,
         thread: threadId,
-        replying_to: replyingTo
+        replying_to: replyingTo,
+        is_anonymous: isAnonymous
       });
       
       // Clear form and notify parent
@@ -103,17 +109,38 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
         </h3>
         
         <div className="form-group">
-          <label htmlFor="reply-nickname">{t('forum.reply.nickname')}</label>
-          <input
-            id="reply-nickname"
-            type="text"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            placeholder={t('forum.reply.nicknamePlaceholder')}
-            className="reply-input"
-            disabled={isSubmitting}
-          />
+          <div className="form-check">
+            <input
+              id="reply-anonymous"
+              type="checkbox"
+              checked={isAnonymous}
+              onChange={(e) => setIsAnonymous(e.target.checked)}
+              className="form-check-input"
+              disabled={isSubmitting}
+            />
+            <label className="form-check-label" htmlFor="reply-anonymous">
+              {t('forum.reply.postAnonymously')}
+            </label>
+            <small className="form-text text-muted">
+              {currentUser ? t('forum.reply.anonymousDescription') : t('forum.reply.anonymousRequired')}
+            </small>
+          </div>
         </div>
+        
+        {isAnonymous && (
+          <div className="form-group">
+            <label htmlFor="reply-nickname">{t('forum.reply.nickname')}</label>
+            <input
+              id="reply-nickname"
+              type="text"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              placeholder={t('forum.reply.nicknamePlaceholder')}
+              className="reply-input"
+              disabled={isSubmitting}
+            />
+          </div>
+        )}
         
         <div className="form-group">
           <label htmlFor="reply-content">{t('forum.reply.content')}</label>

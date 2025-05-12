@@ -91,6 +91,8 @@ const resources = {
       "forum.description": "Engage with other students, ask questions, and share knowledge",
       "forum.loading": "Loading...",
       "forum.backToList": "Back to Thread List",
+      "forum.refresh": "Refresh threads",
+      "forum.anonymous": "anonymous",
       "forum.error.title": "Error",
       "forum.error.fetchThreads": "Error loading threads. Please try again later.",
       "forum.error.fetchThread": "Error loading thread. Please try again later.",
@@ -144,12 +146,15 @@ const resources = {
       "forum.reply.replyingTo": "Replying to",
       "forum.reply.nickname": "Your Nickname",
       "forum.reply.nicknamePlaceholder": "Enter your nickname",
+      "forum.reply.postAnonymously": "Post anonymously",
+      "forum.reply.anonymousDescription": "Your real name will be hidden. Enter a nickname below.",
+      "forum.reply.anonymousRequired": "Anonymous posting requires you to provide a nickname.",
       "forum.reply.content": "Your Reply",
       "forum.reply.contentPlaceholder": "Enter your reply here...",
       "forum.reply.cancel": "Cancel",
       "forum.reply.submit": "Post Reply",
       "forum.reply.submitting": "Posting...",
-      "forum.reply.errorNickname": "Nickname is required",
+      "forum.reply.errorNickname": "Nickname is required for anonymous posting",
       "forum.reply.errorContent": "Reply content is required",
       "forum.reply.errorSubmit": "Error posting reply",
       
@@ -163,6 +168,9 @@ const resources = {
       "forum.create.contentPlaceholder": "Describe your question or topic in detail...",
       "forum.create.nickname": "Your Nickname",
       "forum.create.nicknamePlaceholder": "Enter your nickname",
+      "forum.create.postAnonymously": "Post anonymously",
+      "forum.create.anonymousDescription": "Your real name will be hidden. Enter a nickname below.",
+      "forum.create.anonymousRequired": "Anonymous posting requires you to provide a nickname.",
       "forum.create.visibleForTeachers": "Visible for teachers",
       "forum.create.canBeAnswered": "Allow replies to this thread",
       "forum.create.cancel": "Cancel",
@@ -174,7 +182,7 @@ const resources = {
       "forum.create.validation.categoryRequired": "Please select a category",
       "forum.create.validation.contentRequired": "Thread content is required",
       "forum.create.validation.contentLength": "Content must be at least 10 characters",
-      "forum.create.validation.nicknameRequired": "Nickname is required"
+      "forum.create.validation.nicknameRequired": "Nickname is required for anonymous posting"
     }
   },
   pl: {
@@ -263,6 +271,8 @@ const resources = {
       "forum.description": "Rozmawiaj z innymi studentami, zadawaj pytania i dziel się wiedzą",
       "forum.loading": "Ładowanie...",
       "forum.backToList": "Powrót do listy wątków",
+      "forum.refresh": "Odśwież wątki",
+      "forum.anonymous": "anonimowy",
       "forum.error.title": "Błąd",
       "forum.error.fetchThreads": "Błąd podczas ładowania wątków. Spróbuj ponownie później.",
       "forum.error.fetchThread": "Błąd podczas ładowania wątku. Spróbuj ponownie później.",
@@ -316,12 +326,15 @@ const resources = {
       "forum.reply.replyingTo": "Odpowiadasz na",
       "forum.reply.nickname": "Twój pseudonim",
       "forum.reply.nicknamePlaceholder": "Wpisz swój pseudonim",
+      "forum.reply.postAnonymously": "Opublikuj anonimowo",
+      "forum.reply.anonymousDescription": "Twoje prawdziwe imię zostanie ukryte. Wpisz pseudonim poniżej.",
+      "forum.reply.anonymousRequired": "Anonimowe publikowanie wymaga podania pseudonimu.",
       "forum.reply.content": "Twoja odpowiedź",
       "forum.reply.contentPlaceholder": "Wpisz swoją odpowiedź tutaj...",
       "forum.reply.cancel": "Anuluj",
       "forum.reply.submit": "Opublikuj odpowiedź",
       "forum.reply.submitting": "Publikowanie...",
-      "forum.reply.errorNickname": "Pseudonim jest wymagany",
+      "forum.reply.errorNickname": "Pseudonim jest wymagany dla anonimowych postów",
       "forum.reply.errorContent": "Treść odpowiedzi jest wymagana",
       "forum.reply.errorSubmit": "Błąd podczas publikowania odpowiedzi",
       
@@ -335,6 +348,9 @@ const resources = {
       "forum.create.contentPlaceholder": "Opisz swoje pytanie lub temat szczegółowo...",
       "forum.create.nickname": "Twój pseudonim",
       "forum.create.nicknamePlaceholder": "Wpisz swój pseudonim",
+      "forum.create.postAnonymously": "Opublikuj anonimowo",
+      "forum.create.anonymousDescription": "Twoje prawdziwe imię zostanie ukryte. Wpisz pseudonim poniżej.",
+      "forum.create.anonymousRequired": "Anonimowe publikowanie wymaga podania pseudonimu.",
       "forum.create.visibleForTeachers": "Widoczne dla nauczycieli",
       "forum.create.canBeAnswered": "Zezwalaj na odpowiedzi w tym wątku",
       "forum.create.cancel": "Anuluj",
@@ -346,7 +362,7 @@ const resources = {
       "forum.create.validation.categoryRequired": "Wybierz kategorię",
       "forum.create.validation.contentRequired": "Treść wątku jest wymagana",
       "forum.create.validation.contentLength": "Treść musi mieć co najmniej 10 znaków",
-      "forum.create.validation.nicknameRequired": "Pseudonim jest wymagany"
+      "forum.create.validation.nicknameRequired": "Pseudonim jest wymagany dla anonimowych postów"
     }
   }
 };
