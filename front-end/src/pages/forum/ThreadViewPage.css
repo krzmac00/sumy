@@ -114,13 +114,13 @@
 }
 
 .new-reply-button {
-  background-color: #007bff;
+  background-color: #8b0002;
   color: white;
   border: none;
 }
 
 .new-reply-button:hover {
-  background-color: #0069d9;
+  background-color: #6a0000;
 }
 
 .multi-reply-button {
@@ -159,13 +159,13 @@
 }
 
 .reply-to-selected {
-  background-color: #007bff;
+  background-color: #8b0002;
   border: none;
   color: white;
 }
 
 .reply-to-selected:disabled {
-  background-color: #b3d7ff;
+  background-color: #f2c7c8;
   cursor: not-allowed;
 }
 
