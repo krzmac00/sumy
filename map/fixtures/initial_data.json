@@ -1,12 +1,27 @@
 [
   {
+    "model": "map.buildingtype",
+    "pk": 1,
+    "fields": {
+      "name": "Administracyjny"
+    }
+  },
+  {
+    "model": "map.buildingtype",
+    "pk": 2,
+    "fields": {
+      "name": "Wydziałowy"
+    }
+  },
+  {
     "model": "map.building",
     "pk": 1,
     "fields": {
       "name": "Centrum Technologii Informatycznych",
       "short_name": "CTI",
       "latitude": 50.288850,
-      "longitude": 18.677060
+      "longitude": 18.677060,
+      "types": [1, 2]
     }
   },
   {
@@ -16,7 +31,8 @@
       "name": "Budynek B9",
       "short_name": "B9",
       "latitude": 50.488850,
-      "longitude": 18.377060
+      "longitude": 18.377060,
+      "types": [2]
     }
   },
   {
@@ -24,7 +40,9 @@
     "pk": 1,
     "fields": {
       "number": 0,
-      "building": 1
+      "building": 1,
+      "latitude": 50.288851,
+      "longitude": 18.677061
     }
   },
   {
@@ -32,7 +50,9 @@
     "pk": 2,
     "fields": {
       "number": 1,
-      "building": 1
+      "building": 1,
+      "latitude": 50.288852,
+      "longitude": 18.677062
     }
   },
   {
@@ -40,8 +60,9 @@
     "pk": 1,
     "fields": {
       "number": "001",
-      "room_type": "lecture",
-      "floor": 1
+      "floor": 1,
+      "latitude": 50.288853,
+      "longitude": 18.677063
     }
   },
   {
@@ -49,8 +70,9 @@
     "pk": 2,
     "fields": {
       "number": "002",
-      "room_type": "lab",
-      "floor": 2
+      "floor": 2,
+      "latitude": 50.288854,
+      "longitude": 18.677064
     }
   }
 ]

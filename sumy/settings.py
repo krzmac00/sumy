@@ -15,6 +15,9 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
+GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal310.dll'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -42,7 +45,9 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "mainapp",
-    "accounts"
+    "accounts",
+    "map",
+    "django.contrib.gis",
 ]
 
 MIDDLEWARE = [

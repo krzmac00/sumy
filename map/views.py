@@ -1,18 +1,23 @@
 from rest_framework import generics, filters
+from rest_framework.permissions import AllowAny
+
 from .models import Building, Floor, Room
 from .serializers import BuildingSerializer, FloorSerializer, RoomSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 
+@permission_classes([AllowAny])
 class BuildingListView(generics.ListAPIView):
     queryset = Building.objects.all()
     serializer_class = BuildingSerializer
 
+@permission_classes([AllowAny])
 class BuildingDetailView(generics.RetrieveAPIView):
     queryset = Building.objects.all()
     serializer_class = BuildingSerializer
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def search_view(request):
     query = request.GET.get('q', '').lower()
     buildings = Building.objects.filter(name__icontains=query) | Building.objects.filter(short_name__icontains=query)
@@ -24,6 +29,7 @@ def search_view(request):
     })
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def autocomplete_view(request):
     term = request.GET.get('term', '')
     building_suggestions = Building.objects.filter(name__icontains=term)[:5]
