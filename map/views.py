@@ -1,7 +1,9 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, filters
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 
-from .models import Building, Floor, Room
+from .models import Building, Floor, Room, BuildingType
 from .serializers import BuildingSerializer, FloorSerializer, RoomSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -41,3 +43,12 @@ def autocomplete_view(request):
             'rooms': [r.number for r in room_suggestions],
         }
     })
+
+@permission_classes([AllowAny])
+class BuildingByTypeView(ListAPIView):
+    serializer_class = BuildingSerializer
+
+    def get_queryset(self):
+        type_name = self.kwargs.get('type_name')
+        building_type = get_object_or_404(BuildingType, name__iexact=type_name)
+        return Building.objects.filter(types=building_type)

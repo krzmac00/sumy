@@ -69,3 +69,20 @@ class BuildingTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("Centrum Technologii Informatycznych", response.data['suggestions']['buildings'])
 
+    def test_buildings_by_type(self):
+        url = reverse('buildings-by-type', args=['Wydziałowy'])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+        building_names = [b['name'] for b in response.data['results']]
+        self.assertIn('Centrum Technologii Informatycznych', building_names)
+        self.assertIn('Budynek B9', building_names)
+
+    def test_buildings_by_type_not_found(self):
+        url = reverse('buildings-by-type', args=['NieistniejącyTyp'])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
