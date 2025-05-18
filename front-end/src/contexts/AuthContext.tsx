@@ -29,7 +29,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     // Setup a token refresh interval 
     const tokenRefreshInterval = setInterval(() => {
-      if (authService.isAuthenticated() && authService.shouldRefreshToken()) {
+      // Skip background refresh on auth pages
+      const isAuthPage = window.location.pathname.includes('/auth');
+      
+      if (!isAuthPage && authService.isAuthenticated() && authService.shouldRefreshToken()) {
         authService.refreshToken()
           .catch(error => {
             console.error('Token refresh error in interval:', error);
@@ -46,17 +49,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Load user data on mount
   useEffect(() => {
     const loadUserData = async () => {
-      if (authService.isAuthenticated()) {
+      // Skip loading on auth pages to prevent token refresh loops
+      const isAuthPage = window.location.pathname.includes('/auth');
+      
+      if (authService.isAuthenticated() && !isAuthPage) {
         try {
           const userData = await authService.getUserData();
           setCurrentUser(userData);
         } catch (err) {
           console.error('Failed to load user data:', err);
-          authService.logout();
+          // Clear auth state on error
+          await authService.logout();
+          setCurrentUser(null);
         } finally {
           setIsLoading(false);
         }
       } else {
+        // If not authenticated or on auth page, just set loading false
+        setCurrentUser(null);
         setIsLoading(false);
       }
     };

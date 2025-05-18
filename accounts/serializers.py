@@ -4,14 +4,44 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import re
 
+from accounts.models import UserProfile
+
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    blacklist = serializers.CharField(required=False)
+
     class Meta:
         model = User
-        fields = ['id', 'login', 'email', 'first_name', 'last_name', 'role']
+        fields = ['id', 'login', 'email', 'first_name', 'last_name', 'role', 'blacklist']
         read_only_fields = ['login', 'role']
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        request = self.context.get('request')
+        if request and request.user != instance:
+            rep.pop('blacklist', None)
+        else:
+            rep['blacklist'] = instance.blacklist or []
+        return rep
+
+    def validate_blacklist(self, value):
+        if not value:
+            return []
+        matches = re.findall(r'"(.*?)"', value)
+        return matches
+
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        if request and request.user != instance:
+            validated_data.pop('blacklist', None)
+        else:
+            blacklist = validated_data.get('blacklist')
+            if isinstance(blacklist, str):
+                validated_data['blacklist'] = self.validate_blacklist(blacklist)
+
+        return super().update(instance, validated_data)
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -58,3 +88,8 @@ class PasswordChangeSerializer(serializers.Serializer):
         if attrs['new_password'] != attrs['new_password2']:
             raise serializers.ValidationError({"new_password": "Password fields didn't match."})
         return attrs
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['bio']

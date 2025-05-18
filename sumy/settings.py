@@ -206,15 +206,16 @@ SIMPLE_JWT = {
 }
 
 # Email configuration - update with your actual email settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
 # For production use:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.your-email-provider.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-email@edu.p.lodz.pl'
-# EMAIL_HOST_PASSWORD = 'your-password'
-# DEFAULT_FROM_EMAIL = 'University System <your-email@edu.p.lodz.pl>'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'sumypoliconnect@gmail.com'  # Twój adres Gmail
+EMAIL_HOST_PASSWORD = 'ubuh luux ivzk fdhj'        # Wklej hasło aplikacji (bez spacji)
+DEFAULT_FROM_EMAIL = 'University System <sumypoliconnect@gmail.com>'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite development server

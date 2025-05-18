@@ -7,6 +7,7 @@ interface ThreadListProps {
   threads: Thread[];
   loading: boolean;
   error: string | null;
+  onRefresh?: () => void;
 }
 
 const formatDate = (dateString: string): string => {
@@ -80,7 +81,10 @@ const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error }) => {
                 </h3>
                 <div className="thread-meta">
                   <span className="thread-category">{thread.category}</span>
-                  <span className="thread-author">{t('forum.threadList.by')} {thread.nickname}</span>
+                  <span className="thread-author">
+                    {t('forum.threadList.by')} {thread.author_display_name || thread.nickname}
+                    {thread.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+                  </span>
                 </div>
               </div>
               <div className="thread-activity">

@@ -1,23 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200">
-    <!-- Rounded square background + border -->
-    <rect
-      x="1" y="1" width="98" height="98"
-      rx="15" ry="15"
-      fill="#8b0002"
-      stroke="#595959"
-      stroke-width="3"
-    />
-    <!-- Centered “Pc” text -->
-    <text
-      x="50" y="54"
-      text-anchor="middle"
-      alignment-baseline="middle"
-      font-family="Myriad Pro, Arial, sans-serif"
-      font-weight="bold"
-      font-size="50"
-      fill="#595959"
-    >
-      Pc
-    </text>
-  </svg>
-  
+  <rect
+    x="1" y="1" width="98" height="98"
+    rx="15" ry="15"
+    fill="#8b231D"
+    stroke="#B2B3B3"
+    stroke-width="3"
+  />
+  <text
+    x="50%" y="67%"
+    text-anchor="middle"
+    font-family="Myriad Pro, Arial, sans-serif"
+    font-weight="bold"
+    font-size="50"
+    fill="#B2B3B3"
+  >
+    Pc
+  </text>
+</svg>

@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
-from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer
+from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer
 from .tokens import generate_activation_token, validate_activation_token
 from .emails import send_activation_email, send_password_verification_email
 
@@ -138,12 +138,13 @@ class VerifyPasswordChangeView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserDetailView(generics.RetrieveAPIView):
+class UserDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     
     def get_object(self):
         return self.request.user
+
 
 
 class ChangeUserRoleView(APIView):
@@ -216,3 +217,33 @@ class LogoutView(APIView):
                 {"detail": "Invalid token or an error occurred."}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id=None):
+        try:
+            if user_id:
+                user = User.objects.get(id=user_id)
+            else:
+                user = request.user
+
+            profile = user.profile
+            serializer = UserProfileSerializer(profile)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class UpdateUserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        profile = request.user.profile
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

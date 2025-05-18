@@ -26,7 +26,21 @@ export const threadAPI = {
     if (!response.ok) {
       throw new Error(`Failed to fetch threads: ${response.statusText}`);
     }
-    return response.json();
+    const data = await response.json();
+    
+    // Check if response is paginated (Django REST Framework pagination)
+    if (data && typeof data === 'object' && 'results' in data && Array.isArray(data.results)) {
+      return data.results;
+    }
+    
+    // If it's a direct array
+    if (Array.isArray(data)) {
+      return data;
+    }
+    
+    // If neither condition is met, return empty array to prevent errors
+    console.warn('Unexpected response format from threads API:', data);
+    return [];
   },
 
   /**
@@ -155,7 +169,22 @@ export const postAPI = {
     if (!response.ok) {
       throw new Error(`Failed to fetch posts: ${response.statusText}`);
     }
-    return response.json();
+    
+    const data = await response.json();
+    
+    // Check if response is paginated (Django REST Framework pagination)
+    if (data && typeof data === 'object' && 'results' in data && Array.isArray(data.results)) {
+      return data.results;
+    }
+    
+    // If it's a direct array
+    if (Array.isArray(data)) {
+      return data;
+    }
+    
+    // If neither condition is met, return empty array to prevent errors
+    console.warn('Unexpected response format from posts API:', data);
+    return [];
   },
 
   /**
@@ -173,13 +202,31 @@ export const postAPI = {
    * Create a new post
    */
   create: async (data: PostCreateData): Promise<Post> => {
+    // Ensure required fields exist
+    const postData: PostCreateData = {
+      ...data,
+      nickname: data.nickname || "Anonymous User",
+      replying_to: Array.isArray(data.replying_to) ? data.replying_to : []
+    };
+
+    console.log('Sending post data to server:', postData);
+    
     const response = await fetch(`${API_BASE}/posts/`, {
       method: 'POST',
       headers: JSON_HEADERS,
-      body: JSON.stringify(data),
+      body: JSON.stringify(postData),
     });
+    
     if (!response.ok) {
-      throw new Error(`Failed to create post: ${response.statusText}`);
+      // Try to get more detailed error information
+      try {
+        const errorData = await response.json();
+        console.error('Server returned error:', errorData);
+        throw new Error(`Failed to create post: ${JSON.stringify(errorData)}`);
+      } catch (jsonError) {
+        // If can't parse JSON, fall back to statusText
+        throw new Error(`Failed to create post: ${response.statusText}`);
+      }
     }
     return response.json();
   },

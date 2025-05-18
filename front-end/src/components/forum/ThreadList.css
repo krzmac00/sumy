@@ -109,6 +109,17 @@
   font-size: 0.8rem;
 }
 
+.anonymous-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  background-color: #f0f0f0;
+  color: #666;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
 .thread-activity {
   display: flex;
   flex-direction: column;
