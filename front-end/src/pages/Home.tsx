@@ -3,12 +3,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import MainLayout from '../layouts/MainLayout';
 import './Home.css';
-import Calendar from '@/components/Calendar';
-import { useLocation } from 'react-router-dom';
+//import Calendar from '@/components/Calendar';
+//import { useLocation } from 'react-router-dom';
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
-  const { hash } = useLocation();
+  //const { hash } = useLocation();
 
   return (
     <MainLayout>
@@ -25,12 +25,6 @@ const Home: React.FC = () => {
           </ul>
         </div>
       </div>
-      {hash === '#calendar' && (
-        <div>
-          <h2>{t('nav.calendar')}</h2>
-          <Calendar />
-        </div>
-      )}
     </MainLayout>
   );
 };

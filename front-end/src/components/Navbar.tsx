@@ -61,10 +61,10 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
       
       <div className="navbar-center">
         <ul className="nav-tabs">
-          <li className="nav-item"><a href="#home">{t('nav.home')}</a></li>
+          <li className="nav-item"><a href="/home">{t('nav.home')}</a></li>
           <li className="nav-item"><a href="#newsfeed">{t('nav.newsfeed')}</a></li>
           <li className="nav-item"><a href="#map">{t('nav.map')}</a></li>
-          <li className="nav-item"><a href="#calendar">{t('nav.calendar')}</a></li>
+          <li className="nav-item"><a href="/calendar">{t('nav.calendar')}</a></li>
           <li className="nav-item"><a href="#timetable">{t('nav.timetable')}</a></li>
         </ul>
       </div>
@@ -95,7 +95,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
           </button>
           {isUserDropdownOpen && (
             <div className="dropdown-menu user-dropdown">
-              <a href="#profile">{t('user.profile')}</a>
+              <a href="/profile">{t('user.profile')}</a>
               <a href="#settings">{t('user.settings')}</a>
               <button onClick={handleLogout} className="dropdown-button">
                 {t('user.logout')}

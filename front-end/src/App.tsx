@@ -10,6 +10,7 @@ import ForumPage from './pages/forum/ForumPage';
 import ThreadViewPage from './pages/forum/ThreadViewPage';
 import ThreadCreatePage from './pages/forum/ThreadCreatePage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import Calendar from './pages/Calendar';
 import './App.css';
 
 const AuthLayout: React.FC = () => {
@@ -89,7 +90,9 @@ const AppRoutes: React.FC = () => {
       <Route path="/forum" element={<ProtectedRoute element={<ForumPage />} />} />
       <Route path="/forum/threads/:threadId" element={<ProtectedRoute element={<ThreadViewPage />} />} />
       <Route path="/forum/create-thread" element={<ProtectedRoute element={<ThreadCreatePage />} />} />
-      
+
+      <Route path="/calendar" element={<ProtectedRoute element={<Calendar />} />} />
+
       {/* Default Routes */}
       <Route path="/" element={<Navigate to="/auth" replace />} />
       <Route path="*" element={<Navigate to="/home" replace />} />
