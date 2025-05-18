@@ -3,9 +3,11 @@ import axios from 'axios';
 import MainLayout from '../layouts/MainLayout';
 import './EditProfile.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const EditProfile: React.FC = () => {
   const navigate = useNavigate();
+  const { updateUser, currentUser } = useAuth();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -77,29 +79,35 @@ const EditProfile: React.FC = () => {
     }
 
     try {
-      const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('auth_token');
 
-      const formPayload = new FormData();
-      formPayload.append('first_name', formData.firstName);
-      formPayload.append('last_name', formData.lastName);
-      formPayload.append('email', formData.email);
-      if (formData.avatar) formPayload.append('avatar', formData.avatar);
-      if (showPasswordFields && formData.password) formPayload.append('password', formData.password);
+    const formPayload = new FormData();
+    formPayload.append('first_name', formData.firstName);
+    formPayload.append('last_name', formData.lastName);
+    formPayload.append('email', formData.email);
+    if (formData.avatar) formPayload.append('avatar', formData.avatar);
+    if (showPasswordFields && formData.password) formPayload.append('password', formData.password);
 
-      await axios.put('http://localhost:8000/api/accounts/me/', formPayload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    const response = await axios.put('http://localhost:8000/api/accounts/me/', formPayload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
-      alert('Profil zaktualizowany pomyślnie!');
-      navigate('/profile');
-    } catch (error) {
-      console.error('Błąd podczas aktualizacji profilu:', error);
-      alert('Nie udało się zaktualizować profilu.');
-    }
-  };
+    // Zakładam, że backend zwraca aktualizowanego użytkownika
+    const updatedUser = response.data;
+
+    // Aktualizuj globalny stan użytkownika
+    updateUser(updatedUser);
+
+    alert('Profil zaktualizowany pomyślnie!');
+    navigate('/profile');
+  } catch (error) {
+    console.error('Błąd podczas aktualizacji profilu:', error);
+    alert('Nie udało się zaktualizować profilu.');
+  }
+};
 
   return (
     <MainLayout>

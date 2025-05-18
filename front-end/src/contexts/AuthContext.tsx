@@ -10,6 +10,7 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<{ message: string }>;
   logout: () => Promise<void>;
   error: string | null;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -119,6 +120,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+   const updateUser = (user: User) => {
+    setCurrentUser(user);
+  };
+
   const value = {
     currentUser,
     isLoading,
@@ -126,7 +131,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
-    error
+    error,
+    updateUser
   };
 
   return (
@@ -134,6 +140,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+
 };
 
 export const useAuth = (): AuthContextType => {
