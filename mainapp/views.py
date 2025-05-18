@@ -3,6 +3,7 @@ from rest_framework import viewsets, generics, filters, status
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.db import transaction
+from django.db.models import Q
 from datetime import date, datetime
 
 from .post import Post, Thread, PostSerializer, ThreadSerializer
@@ -140,11 +141,29 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 # ---------- THREAD SECTION ----------
 class ThreadListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Thread.objects.all()
+    #queryset = Thread.objects.all()
     serializer_class = ThreadSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['last_activity_date', 'date']
     ordering = ['-last_activity_date']
+
+    def get_queryset(self):
+        queryset = Thread.objects.all()
+        user = self.request.user
+        # Jeśli użytkownik ma blacklist jako listę fraz
+        blacklist = getattr(user, 'blacklist', [])
+        if isinstance(blacklist, str):
+            try:
+                import json
+                blacklist = json.loads(blacklist)
+            except Exception:
+                blacklist = []
+        for phrase in blacklist:
+            # Dokładne dopasowanie jako podciąg (bez ignorowania wielkości liter i bez .strip)
+            queryset = queryset.exclude(
+                Q(title__contains=phrase) | Q(content__contains=phrase)
+            )
+        return queryset
 
 class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Thread.objects.all()

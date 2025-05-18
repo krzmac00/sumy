@@ -1,22 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import MainLayout from '../layouts/MainLayout';
 import './EditProfile.css';
-import { useNavigate } from 'react-router-dom'; // dodaj na górze pliku
-
+import { useNavigate } from 'react-router-dom';
 
 const EditProfile: React.FC = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    firstName: 'Jan',
-    lastName: 'Kowalski',
-    email: '123456@edu.p.lodz.pl',
+    firstName: '',
+    lastName: '',
+    email: '',
     password: '',
     confirmPassword: '',
-    avatar: null as File | null
+    avatar: null as File | null,
   });
 
   const [showPasswordFields, setShowPasswordFields] = useState(false);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await axios.get('http://localhost:8000/api/accounts/me/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = response.data;
+        setFormData({
+          firstName: data.first_name,
+          lastName: data.last_name,
+          email: data.email,
+          password: '',
+          confirmPassword: '',
+          avatar: null,
+        });
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        alert('Nie udało się załadować danych użytkownika.');
+      }
+    };
+    fetchUserData();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
@@ -27,36 +51,54 @@ const EditProfile: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    // Walidacja imienia i nazwiska
+
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
       alert('Imię i nazwisko nie mogą być puste.');
       return;
     }
-  
-    // Walidacja haseł (jeśli użytkownik je edytuje)
+
     if (showPasswordFields) {
       if (!formData.password || !formData.confirmPassword) {
         alert('Wprowadź oba pola hasła.');
         return;
       }
-  
+
       if (formData.password.length < 6) {
         alert('Hasło musi mieć co najmniej 6 znaków.');
         return;
       }
-  
+
       if (formData.password !== formData.confirmPassword) {
         alert('Hasła się nie zgadzają.');
         return;
       }
     }
-  
-    // Jeśli wszystko OK
-    console.log('Zapisane dane:', formData);
-    alert('Zapisano zmiany (tylko frontend)');
+
+    try {
+      const token = localStorage.getItem('auth_token');
+
+      const formPayload = new FormData();
+      formPayload.append('first_name', formData.firstName);
+      formPayload.append('last_name', formData.lastName);
+      formPayload.append('email', formData.email);
+      if (formData.avatar) formPayload.append('avatar', formData.avatar);
+      if (showPasswordFields && formData.password) formPayload.append('password', formData.password);
+
+      await axios.put('http://localhost:8000/api/accounts/me/', formPayload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      alert('Profil zaktualizowany pomyślnie!');
+      navigate('/profile');
+    } catch (error) {
+      console.error('Błąd podczas aktualizacji profilu:', error);
+      alert('Nie udało się zaktualizować profilu.');
+    }
   };
 
   return (
@@ -71,7 +113,7 @@ const EditProfile: React.FC = () => {
           <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
 
           <label>Email:</label>
-          <input type="email" name="email" value={formData.email} readOnly disabled className="disabled-input"/>
+          <input type="email" name="email" value={formData.email} readOnly disabled className="disabled-input" />
 
           <label>Avatar:</label>
           <input type="file" name="avatar" accept="image/*" onChange={handleChange} />
@@ -102,10 +144,14 @@ const EditProfile: React.FC = () => {
                 onChange={handleChange}
               />
             </>
-          )}          
+          )}
 
-          <button type="submit" className="save-button">Zapisz zmiany</button>
-          <button type="button" className="back-button" onClick={() => navigate('/profile')}>Anuluj</button>
+          <button type="submit" className="save-button">
+            Zapisz zmiany
+          </button>
+          <button type="button" className="back-button" onClick={() => navigate('/profile')}>
+            Anuluj
+          </button>
         </form>
       </div>
     </MainLayout>

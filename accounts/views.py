@@ -146,6 +146,7 @@ class UserDetailView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
 
+
 class ChangeUserRoleView(APIView):
     permission_classes = (IsAuthenticated,)
     
