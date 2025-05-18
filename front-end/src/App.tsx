@@ -12,6 +12,9 @@ import ThreadCreatePage from './pages/forum/ThreadCreatePage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Calendar from './pages/Calendar';
 import './App.css';
+import MapPage from './pages/MapPage';
+import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
 
 const AuthLayout: React.FC = () => {
   const { t } = useTranslation();
@@ -92,6 +95,9 @@ const AppRoutes: React.FC = () => {
       <Route path="/forum/create-thread" element={<ProtectedRoute element={<ThreadCreatePage />} />} />
 
       <Route path="/calendar" element={<ProtectedRoute element={<Calendar />} />} />
+      <Route path="/map" element={<ProtectedRoute element={<MapPage />} />} />
+      <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+      <Route path="/profile/edit" element={<ProtectedRoute element={<EditProfile />} />} />
 
       {/* Default Routes */}
       <Route path="/" element={<Navigate to="/auth" replace />} />
