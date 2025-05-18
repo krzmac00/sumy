@@ -392,3 +392,64 @@ class UserProfileAPITests(TestCase):
         # Ensure bio remains unchanged
         self.user.profile.refresh_from_db()
         self.assertEqual(self.user.profile.bio, '')
+
+
+class ChangeNameTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(
+            email='123456@edu.p.lodz.pl',
+            password='testpass123',
+            first_name='OldName',
+            last_name='OldLastName',
+            is_active=True
+        )
+        self.token_url = reverse('token_obtain_pair')
+        self.change_name_url = reverse('change_name')
+        login_payload = {'email': self.user.email, 'password': 'testpass123'}
+        login_response = self.client.post(self.token_url, login_payload)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login_response.data['access']}")
+
+    def test_change_name_successfully(self):
+        """Zmiana obu pól działa."""
+        payload = {'first_name': 'NewName', 'last_name': 'NewLastName'}
+        response = self.client.put(self.change_name_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'NewName')
+        self.assertEqual(self.user.last_name, 'NewLastName')
+
+    def test_change_only_last_name(self):
+        """Można zmienić tylko last_name; first_name zostaje."""
+        payload = {'last_name': 'SoloLastName'}
+        response = self.client.put(self.change_name_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'OldName')
+        self.assertEqual(self.user.last_name, 'SoloLastName')
+
+    def test_change_only_first_name(self):
+        """Można zmienić tylko first_name; last_name zostaje."""
+        payload = {'first_name': 'SoloFirstName'}
+        response = self.client.put(self.change_name_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'SoloFirstName')
+        self.assertEqual(self.user.last_name, 'OldLastName')
+
+    def test_change_name_blank_value(self):
+        """Puste stringi są odrzucane."""
+        payload = {'first_name': '', 'last_name': ''}
+        response = self.client.put(self.change_name_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('first_name', response.data)
+        self.assertIn('last_name', response.data)
+
+    def test_change_name_unauthenticated(self):
+        """Niezalogowani dostają 401."""
+        self.client.credentials()  # usuń nagłówki
+        payload = {'first_name': 'NoAuth', 'last_name': 'NoAuthLast'}
+        response = self.client.put(self.change_name_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+

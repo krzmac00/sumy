@@ -65,3 +65,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['bio']
+
+class NameChangeSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(required=True, allow_blank=False)
+    last_name = serializers.CharField(required=True, allow_blank=False)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name']

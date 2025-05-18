@@ -9,7 +9,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
-from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer
+from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer, \
+    NameChangeSerializer
 from .tokens import generate_activation_token, validate_activation_token
 from .emails import send_activation_email, send_password_verification_email
 
@@ -245,4 +246,17 @@ class UpdateUserProfileView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangeNameView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        serializer = NameChangeSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Imię i nazwisko zostały zaktualizowane."},
+                status=status.HTTP_200_OK
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
