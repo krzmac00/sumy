@@ -1,3 +1,4 @@
+import { CustomCalendarEvent } from '@/types/event';
 import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData } from '../types/forum';
 
 /**
@@ -67,7 +68,6 @@ export const threadAPI = {
     }
     return response.json();
   },*/
-
 
   /**
  * Create a new thread
@@ -255,6 +255,103 @@ export const postAPI = {
     });
     if (!response.ok) {
       throw new Error(`Failed to delete post ${id}: ${response.statusText}`);
+    }
+  },
+};
+
+export const eventAPI = {
+  /**
+   * Get all events
+   */
+  getAll: async (): Promise<CustomCalendarEvent[]> => {
+    const response = await fetch(`${API_BASE}/events/`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch events: ${response.statusText}`);
+    }
+    const data = await response.json();
+
+    return data.results.map((event: any) => ({
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      repeatType: event.repeat_type
+    }));
+  },
+
+  /**
+   * Get a specific event by ID
+   */
+  getOne: async (id: number): Promise<CustomCalendarEvent> => {
+    const response = await fetch(`${API_BASE}/events/${id}/`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch event ${id}: ${response.statusText}`);
+    }
+    const event = await response.json();
+    return {
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      repeatType: event.repeat_type
+    };
+  },
+
+  /**
+   * Create a new event
+   */
+  create: async (data: Omit<CustomCalendarEvent, "id">): Promise<CustomCalendarEvent> => {
+    const response = await fetch(`${API_BASE}/events/`, {
+      method: "POST",
+      headers: JSON_HEADERS,
+      body: JSON.stringify({
+        ...data,
+        repeat_type: data.repeatType,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to create event: ${response.statusText}`);
+    }
+    const event = await response.json();
+    return {
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      repeatType: event.repeat_type,
+    };
+  },
+
+  /**
+   * Update an existing event
+   */
+  update: async (id: number, data: Partial<CustomCalendarEvent>): Promise<CustomCalendarEvent> => {
+    const response = await fetch(`${API_BASE}/events/${id}/`, {
+      method: "PUT",
+      headers: JSON_HEADERS,
+      body: JSON.stringify({
+        ...data,
+        repeat_type: data.repeatType
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to update event ${id}: ${response.statusText}`);
+    }
+    const event = await response.json();
+    return {
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      repeatType: event.repeat_type,
+    };
+  },
+
+  /**
+   * Delete an event
+   */
+  delete: async (id: number): Promise<void> => {
+    const response = await fetch(`${API_BASE}/events/${id}/`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to delete event ${id}: ${response.statusText}`);
     }
   },
 };

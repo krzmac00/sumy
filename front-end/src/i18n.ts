@@ -222,7 +222,25 @@ const resources = {
       "forum.action.save": "Save",
       "forum.action.info": "More Info",
       "forum.action.upvote": "Upvote",
-      "forum.action.downvote": "Downvote"
+      "forum.action.downvote": "Downvote",
+
+	    //Calendar
+      "calendar.enterClass": "Enter class title",
+      "calendar.deleteClass": "Delete event '{{title}}'?",
+      "calendar.previous": "Back",
+      "calendar.next": "Next",
+      "calendar.month": "Month",
+      "calendar.week": "Week",
+      "calendar.day": "Day",
+      "calendar.category.important": "Important",
+      "calendar.category.private": "Private",
+      "calendar.category.club": "Science Club",
+      "calendar.category.student_council": "Student Council",
+      "calendar.category.tul_events": "TUL Events",
+      "calendar.newEvent": "New event",
+      "calendar.repeat.none": "Once",
+      "calendar.repeat.weekly": "Weekly",
+      "calendar.repeat.monthly": "Monthly"
     }
   },
   pl: {
@@ -442,7 +460,25 @@ const resources = {
       "forum.action.save": "Zapisz",
       "forum.action.info": "Więcej Informacji",
       "forum.action.upvote": "Głosuj za",
-      "forum.action.downvote": "Głosuj przeciw"
+      "forum.action.downvote": "Głosuj przeciw",
+	  
+	    //Calendar
+      "calendar.enterClass": "Wprowadź tytuł zajęć",
+      "calendar.deleteClass": "Usunąć wydarzenie '{{title}}'?",
+      "calendar.previous": "Wstecz",
+      "calendar.next": "Dalej",
+      "calendar.month": "Miesiąc",
+      "calendar.week": "Tydzień",
+      "calendar.day": "Dzień",
+      "calendar.category.important": "Ważne",
+      "calendar.category.private": "Prywatne",
+      "calendar.category.club": "Koło naukowe",
+      "calendar.category.student_council": "Samorząd Studencki",
+      "calendar.category.tul_events": "Wydarzenia PŁ",
+      "calendar.newEvent": "Nowe wydarzenie",
+      "calendar.repeat.none": "Jednorazowo",
+      "calendar.repeat.weekly": "Co tydzień",
+      "calendar.repeat.monthly": "Co miesiąc"
     }
   }
 };
