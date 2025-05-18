@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
+from django.contrib.postgres.fields import ArrayField
 import re
 
 
@@ -65,7 +66,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=150)
     last_name = models.CharField(_('last name'), max_length=150)
     role = models.CharField(_('role'), max_length=20, choices=ROLES, default='student')
-    
+    blacklist = ArrayField(
+        base_field=models.CharField(max_length=511),
+        default=list,
+        blank=True,
+        verbose_name='blacklist'
+    )
+
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,

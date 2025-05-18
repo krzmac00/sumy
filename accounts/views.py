@@ -138,7 +138,7 @@ class VerifyPasswordChangeView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserDetailView(generics.RetrieveAPIView):
+class UserDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     
