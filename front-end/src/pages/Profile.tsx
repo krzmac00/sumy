@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {useEffect, useState, useRef, ChangeEvent} from 'react';
 import axios from 'axios';
 import MainLayout from '../layouts/MainLayout';
 import './Profile.css';
@@ -12,12 +12,16 @@ interface UserData {
   login: string;
   role: string;
   blacklist: string;
+  bio: string;
 }
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [blacklist, setBlacklist] = useState('');
+  const [bio, setBio] = useState('');
+  const blacklistRef = useRef<HTMLTextAreaElement>(null);
+  const bioRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useTranslation();
 
@@ -35,6 +39,8 @@ const ProfilePage: React.FC = () => {
           .map((item: string) => `"${item}"`)
           .join(' ');
         setBlacklist(formattedBlacklist);
+
+        setBio(response.data.bio || '');
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -50,6 +56,14 @@ const ProfilePage: React.FC = () => {
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'; // ustaw na wysokość zawartości
     }
   }, [blacklist]);
+
+  // Auto-resize textarea for bio
+  useEffect(() => {
+    if (bioRef.current) {
+      bioRef.current.style.height = 'auto';
+      bioRef.current.style.height = `${bioRef.current.scrollHeight}px`;
+    }
+  }, [bio]);
 
   const saveBlacklist = async (newBlacklist: string) => {
     try {
@@ -72,11 +86,32 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  // Save bio separately
+  const saveBio = async (newBio: string) => {
+    if (!userData) return;
+    try {
+      const token = localStorage.getItem('auth_token');
+      await axios.put(
+        'http://localhost:8000/api/accounts/me/',
+        { bio: newBio, first_name: userData.first_name, last_name: userData.last_name, email: userData.email },
+        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+      );
+    } catch (error) {
+      console.error('Error saving bio:', error);
+    }
+  };
+
   // Obsługa zmiany w textarea
   const handleBlacklistChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setBlacklist(newValue);
     saveBlacklist(newValue);  // zapis na backend przy każdej zmianie
+  };
+
+  const handleBioChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setBio(newValue);
+    saveBio(newValue);
   };
 
   if (!userData) return <MainLayout><p>Ładowanie danych...</p></MainLayout>;
@@ -117,7 +152,20 @@ const ProfilePage: React.FC = () => {
             overflow: 'hidden'   // ukrycie pasków przewijania
           }}
         />
+
+        {/* Bio section */}
+        <p><strong>Profile bio</strong></p>
+          <textarea
+            ref={bioRef}
+            value={bio}
+            onChange={handleBioChange}
+            placeholder="Add your bio"
+            rows={3}
+            style={{ width: '100%', boxSizing: 'border-box', resize: 'none', overflow: 'hidden' }}
+          />
       </div>
+
+
     </MainLayout>
   );
 };

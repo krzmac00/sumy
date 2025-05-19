@@ -11,10 +11,11 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     blacklist = serializers.CharField(required=False)
+    bio = serializers.CharField(source='profile.bio', allow_blank=True)
 
     class Meta:
         model = User
-        fields = ['id', 'login', 'email', 'first_name', 'last_name', 'role', 'blacklist']
+        fields = ['id', 'login', 'email', 'first_name', 'last_name', 'role', 'blacklist', 'bio']
         read_only_fields = ['login', 'role']
 
     def to_representation(self, instance):
@@ -33,6 +34,8 @@ class UserSerializer(serializers.ModelSerializer):
         return matches
 
     def update(self, instance, validated_data):
+        bio = validated_data.pop('profile', {}).get('bio', None)
+
         request = self.context.get('request')
         if request and request.user != instance:
             validated_data.pop('blacklist', None)
@@ -41,8 +44,15 @@ class UserSerializer(serializers.ModelSerializer):
             if isinstance(blacklist, str):
                 validated_data['blacklist'] = self.validate_blacklist(blacklist)
 
-        return super().update(instance, validated_data)
+        user = super().update(instance, validated_data)
 
+        # zapis bio w modelu UserProfile
+        profile, _ = UserProfile.objects.get_or_create(user=user)
+        if bio is not None:
+            profile.bio = bio
+            profile.save()
+
+        return user
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
