@@ -3,9 +3,11 @@ import axios from 'axios';
 import MainLayout from '../layouts/MainLayout';
 import './EditProfile.css';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const EditProfile: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -104,12 +106,12 @@ const EditProfile: React.FC = () => {
   return (
     <MainLayout>
       <div className="edit-profile-page">
-        <h1>Edytuj profil</h1>
+        <h1>{t('profile.edit.editProfile')}</h1>
         <form onSubmit={handleSubmit} className="edit-profile-form">
-          <label>Imię:</label>
+          <label>{t('profile.firstName')}</label>
           <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
 
-          <label>Nazwisko:</label>
+          <label>{t('profile.lastName')}</label>
           <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
 
           <label>Email:</label>
@@ -128,7 +130,7 @@ const EditProfile: React.FC = () => {
 
           {showPasswordFields && (
             <>
-              <label>Nowe hasło:</label>
+              <label>{t('profile.edit.newPassword')}</label>
               <input
                 type="password"
                 name="password"
@@ -136,7 +138,7 @@ const EditProfile: React.FC = () => {
                 onChange={handleChange}
               />
 
-              <label>Powtórz hasło:</label>
+              <label>{t('profile.edit.repeatPassword')}</label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -147,10 +149,10 @@ const EditProfile: React.FC = () => {
           )}
 
           <button type="submit" className="save-button">
-            Zapisz zmiany
+            {t('profile.edit.saveChanges')}
           </button>
           <button type="button" className="back-button" onClick={() => navigate('/profile')}>
-            Anuluj
+            {t('profile.edit.cancel')}
           </button>
         </form>
       </div>

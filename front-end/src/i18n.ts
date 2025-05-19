@@ -266,6 +266,15 @@ const resources = {
       "profile.blackListForum": "Forum blacklist",
       "profile.addBlacklistedCotent": "Add content to the blacklist",
       "profile.blacklistExample": "Phrases should be placed in quotation marks: \"First phrase\", \"Second phrase\", etc.",
+
+      //UserProfileEdit
+      "profile.edit.editProfile": "Edit profile",
+      "profile.edit.changePassword": "Change password",
+      "profile.edit.changePasswordCancel": "Cancel password change",
+      "profile.edit.saveChanges": "Save changes",
+      "profile.edit.newPassword": "New password:",
+      "profile.edit.repeatPassword": "Repeat password:",
+      "profile.edit.cancel": "Cancel:",
     }
   },
   pl: {
@@ -529,6 +538,15 @@ const resources = {
       "profile.blackListForum": "Czarna lista forum:",
       "profile.addBlacklistedCotent": "Dodaj treść do czarnej listy...",
       "profile.blacklistExample": "Frazy należy włożyć w cudzysłów: \"Pierwsza fraza\" \"Druga\" itd.",
+
+      //UserProfileEdit
+      "profile.edit.editProfile": "Edytuj profil",
+      "profile.edit.changePassword": "Zmień hasło'",
+      "profile.edit.changePasswordCancel": "Anuluj zmianę hasła",
+      "profile.edit.saveChanges": "Zapisz zmiany",
+      "profile.edit.newPassword": "Nowe hasło:",
+      "profile.edit.repeatPassword": "Powtórz hasło:",
+      "profile.edit.cancel": "Anuluj:",
     }
   }
 };
