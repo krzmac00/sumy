@@ -1,0 +1,281 @@
+[
+  {
+    "model": "map.buildingtype",
+    "pk": 1,
+    "fields": {
+      "name": "Ogólnouczelniany"
+    }
+  },
+  {
+    "model": "map.buildingtype",
+    "pk": 2,
+    "fields": {
+      "name": "Pozawydzałowy"
+    }
+  },
+  {
+    "model": "map.buildingtype",
+    "pk": 3,
+    "fields": {
+      "name": "Jednostka IT"
+    }
+  },
+  {
+    "model": "map.buildingtype",
+    "pk": 4,
+    "fields": {
+      "name": "Osiedle Akademikie"
+    }
+  },
+  {
+    "model": "map.buildingtype",
+    "pk": 5,
+    "fields": {
+      "name": "Administracyjny"
+    }
+  },
+  {
+    "model": "map.buildingtype",
+    "pk": 6,
+    "fields": {
+      "name": "Portiernia"
+    }
+  },
+  {
+    "model": "map.buildingtype",
+    "pk": 7,
+    "fields": {
+      "name": "FTIMS"
+    }
+  },
+
+
+  {
+    "model": "map.building",
+    "pk": 1,
+    "fields": {
+      "name": "Rektorat",
+      "short_name": "B1",
+      "latitude": 51.7484284,
+      "longitude": 19.4549747,
+      "types": [5]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 2,
+    "fields": {
+      "name": "",
+      "short_name": "B2",
+      "latitude": 51.7487935,
+      "longitude": 19.4543657,
+      "types": [5]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 3,
+    "fields": {
+      "name": "Dział wsółpracyz z zagranicą",
+      "short_name": "B3",
+      "latitude": 51.7483226,
+      "longitude": 19.4527879,
+      "types": [5]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 4,
+    "fields": {
+      "name": "Portiernia",
+      "short_name": "B8",
+      "latitude": 51.7473631,
+      "longitude": 19.4507607,
+      "types": [6]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 5,
+    "fields": {
+      "name": "Lodex",
+      "short_name": "B9",
+      "latitude": 51.7472477,
+      "longitude": 19.4532184,
+      "types": [7]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 6,
+    "fields": {
+      "name": "Dziekanat",
+      "short_name": "B11",
+      "latitude": 51.7474031,
+      "longitude": 19.455635,
+      "types": [7]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 7,
+    "fields": {
+      "name": "Instytut Fizyki",
+      "short_name": "B15",
+      "latitude": 51.746394,
+      "longitude": 19.45501,
+      "types": [7]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 8,
+    "fields": {
+      "name": "Centrum Technologii Informatycznych CTI",
+      "short_name": "B19",
+      "latitude": 51.7470537,
+      "longitude": 19.4556704,
+      "types": [3, 5]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 9,
+    "fields": {
+      "name": "Portiernia",
+      "short_name": "B20",
+      "latitude": 51.7458479,
+      "longitude": 19.4561211,
+      "types": [6]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 10,
+    "fields": {
+      "name": "Biblioteka Główna Politechniki Łódzkiej",
+      "short_name": "B22",
+      "latitude": 51.7455182,
+      "longitude": 19.4543101,
+      "types": [1, 3]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 11,
+    "fields": {
+      "name": "Centrum Językowe CJ",
+      "short_name": "B24",
+      "latitude": 51.7455261,
+      "longitude": 19.4513356,
+      "types": [2]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 12,
+    "fields": {
+      "name": "Zatoka Sportu",
+      "short_name": "B28",
+      "latitude": 51.7467264,
+      "longitude": 19.4513153,
+      "types": [2]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 13,
+    "fields": {
+      "name": "Portiernia",
+      "short_name": "B29",
+      "latitude": 51.7447165,
+      "longitude": 19.4540332,
+      "types": [6]
+    }
+  },
+  {
+    "model": "map.building",
+    "pk": 14,
+    "fields": {
+      "name": "Centrum Sportu",
+      "short_name": "C4",
+      "latitude": 51.7455631,
+      "longitude": 19.4496428,
+      "types": [2]
+    }
+  },
+
+
+  {
+    "model": "map.floor",
+    "pk": 1,
+    "fields": {
+      "number": 0,
+      "building": 5,
+      "latitude": 51.7472477,
+      "longitude": 19.4532184
+    }
+  },
+  {
+    "model": "map.floor",
+    "pk": 2,
+    "fields": {
+      "number": 3,
+      "building": 5,
+      "latitude": 51.7472477,
+      "longitude": 19.4532184
+    }
+  },
+  {
+    "model": "map.floor",
+    "pk": 3,
+    "fields": {
+      "number": 4,
+      "building": 5,
+      "latitude": 51.7472477,
+      "longitude": 19.4532184
+    }
+  },
+
+
+  {
+    "model": "map.room",
+    "pk": 1,
+    "fields": {
+      "number": "F2",
+      "floor": 1,
+      "latitude": 51.7472305,
+      "longitude": 19.4535654
+    }
+  },
+  {
+    "model": "map.room",
+    "pk": 2,
+    "fields": {
+      "number": "F3",
+      "floor": 1,
+      "latitude": 51.7471911,
+      "longitude": 19.4532729
+    }
+  },
+  {
+    "model": "map.room",
+    "pk": 3,
+    "fields": {
+      "number": "F7",
+      "floor": 2,
+      "latitude": 0.0,
+      "longitude": 0.0
+    }
+  },
+  {
+    "model": "map.room",
+    "pk": 4,
+    "fields": {
+      "number": "F10",
+      "floor": 3,
+      "latitude": 0.0,
+      "longitude": 0.0
+    }
+  }
+]

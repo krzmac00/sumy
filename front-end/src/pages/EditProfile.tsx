@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import MainLayout from '../layouts/MainLayout';
 import './EditProfile.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const EditProfile: React.FC = () => {
   const { t } = useTranslation();
@@ -59,23 +59,23 @@ const EditProfile: React.FC = () => {
     e.preventDefault();
 
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      alert(t("editProfile.empty_names"));
+      alert(t("profile.edit.empty_names"));
       return;
     }
 
     if (showPasswordFields) {
       if (!formData.password || !formData.confirmPassword) {
-        alert(t("editProfile.fill_both_passwords"));
+        alert(t("profile.edit.fill_both_passwords"));
         return;
       }
 
       if (formData.password.length < 6) {
-        alert(t("editProfile.password_len"));
+        alert(t("profile.edit.password_len"));
         return;
       }
 
       if (formData.password !== formData.confirmPassword) {
-        alert(t("editProfile.password_no_match"));
+        alert(t("profile.edit.password_no_match"));
         return;
       }
     }
@@ -102,29 +102,29 @@ const EditProfile: React.FC = () => {
     updateUser(updatedUser);
 
 
-    alert(t("editProfile.successful_update"));
+    alert(t("profile.edit.successful_update"));
     navigate('/profile');
   } catch (error) {
     console.error('Błąd podczas aktualizacji profilu:', error);
-    alert(t("editProfile.unsuccessful_update"));
+    alert(t("profile.edit.unsuccessful_update"));
   }
 };
 
   return (
     <MainLayout>
       <div className="edit-profile-page">
-        <h1>{t("editProfile.title")}</h1>
+        <h1>{t('profile.edit.editProfile')}</h1>
         <form onSubmit={handleSubmit} className="edit-profile-form">
-          <label>{t("editProfile.first_name")}</label>
+          <label>{t('profile.firstName')}</label>
           <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
 
-          <label>{t("editProfile.last_name")}</label>
+          <label>{t('profile.lastName')}</label>
           <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
 
-          <label>{t("editProfile.email")}</label>
+          <label>Email:</label>
           <input type="email" name="email" value={formData.email} readOnly disabled className="disabled-input" />
 
-          <label>{t("editProfile.avatar")}</label>
+          <label>Avatar:</label>
           <input type="file" name="avatar" accept="image/*" onChange={handleChange} />
 
           <button
@@ -132,12 +132,12 @@ const EditProfile: React.FC = () => {
             className="toggle-password-button"
             onClick={() => setShowPasswordFields(!showPasswordFields)}
           >
-            {showPasswordFields ? t("editProfile.cancel_password_update") : t("editProfile.update_password")}
+            {showPasswordFields ? t("profile.edit.changePasswordCancel") : t("profile.edit.changePassword")}
           </button>
 
           {showPasswordFields && (
             <>
-              <label>{t("editProfile.new_password")}</label>
+              <label>{t('profile.edit.newPassword')}</label>
               <input
                 type="password"
                 name="password"
@@ -145,7 +145,7 @@ const EditProfile: React.FC = () => {
                 onChange={handleChange}
               />
 
-              <label>{t("editProfile.repeat_password")}</label>
+              <label>{t('profile.edit.repeatPassword')}</label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -156,10 +156,10 @@ const EditProfile: React.FC = () => {
           )}
 
           <button type="submit" className="save-button">
-            {t("editProfile.save")}
+            {t('profile.edit.saveChanges')}
           </button>
           <button type="button" className="back-button" onClick={() => navigate('/profile')}>
-            {t("editProfile.cancel")}
+            {t('profile.edit.cancel')}
           </button>
         </form>
       </div>

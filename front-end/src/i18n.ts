@@ -67,38 +67,6 @@ const resources = {
       "user.settings": "Settings",
       "user.logout": "Logout",
 
-      // Profile
-      "profile.loading": "Loading...",
-      "profile.h1": "User profile",
-      "profile.first_name": "First Name:",
-      "profile.last_name": "Last Name:",
-      "profile.email": "Email:",
-      "profile.index_number": "Index Number:",
-      "profile.edit": "Edit profile",
-      "profile.blacklist": "Blacklist for forum:",
-      "profile.blacklist_tip": "Phrases ought to be put in quotes: \"First phraze\" \"Second\" etc.",
-      "profile.blacklist_placeholder": "Add content of blacklist...",
-
-      //Edit Profile
-      "editProfile.title": "Edit profile",
-      "editProfile.first_name": "First name:",
-      "editProfile.last_name": "Last name:",
-      "editProfile.email": "Email:",
-      "editProfile.avatar": "Avatar:",
-      "editProfile.new_password": "New password:",
-      "editProfile.repeat_password": "Repeat password:",
-      "editProfile.unable_to_load": "Failed to load user's data.",
-      "editProfile.empty_names": "First and last name cannot be empty.",
-      "editProfile.fill_both_passwords": "Fill both passwords.",
-      "editProfile.password_len": "Passwords require at least 6 characters.",
-      "editProfile.password_no_match": "Passwords are not matching.",
-      "editProfile.successful_update": "Profile updated successfully!",
-      "editProfile.unsuccessful_update": "Failed to update profile.",
-      "editProfile.cancel_password_update": "Cancel password update",
-      "editProfile.update_password": "Update password",
-      "editProfile.save": "Save changes",
-      "editProfile.cancel": "Cancel",
-
       // Sidebar
       "sidebar.title": "Navigation",
       "sidebar.home": "Home",
@@ -274,7 +242,50 @@ const resources = {
       "calendar.newEvent": "New event",
       "calendar.repeat.none": "Once",
       "calendar.repeat.weekly": "Weekly",
-      "calendar.repeat.monthly": "Monthly"
+      "calendar.repeat.monthly": "Monthly",
+
+      //MapFilterPanel
+      "map.filter.mapFilters": "Map filters",
+      "map.filter.buildingType": "Builingd type:",
+      "map.filter.generalAcademic": "General academic building",
+      "map.filter.faculty": "Faculty",
+      "map.filter.nonFaculty": "Non-faculty",
+      "map.filter.administration": "Administraion",
+      "map.filter.porter": "Porter's lodge",
+      "map.filter.roomType": "Room type:",
+      "map.filter.choice": "--select--",
+      "map.filter.auditorium": "Aula",
+      "map.filter.class": "Class",
+      "map.filter.laboratory": "Laboratory",
+      "map.filter.applyFilters": "Apply filters",
+
+      //UserProfile
+      "profile.userProfile": "User profile",
+      "profile.firstName": "First name:",
+      "profile.lastName": "Last name:",
+      "profile.indexNumber": "Index number:",
+      "profile.editProfile": "Edit profile",
+      "profile.blackListForum": "Forum blacklist",
+      "profile.addBlacklistedCotent": "Add content to the blacklist",
+      "profile.blacklistExample": "Phrases should be placed in quotation marks: \"First phrase\", \"Second phrase\", etc.",
+      "profile.bio": "Profile bio",
+      "profile.bioPlaceholder": "Add your bio",
+
+      //UserProfileEdit
+      "profile.edit.editProfile": "Edit profile",
+      "profile.edit.changePassword": "Change password",
+      "profile.edit.changePasswordCancel": "Cancel password change",
+      "profile.edit.saveChanges": "Save changes",
+      "profile.edit.newPassword": "New password:",
+      "profile.edit.repeatPassword": "Repeat password:",
+      "profile.edit.cancel": "Cancel:",
+      "profile.edit.empty_names": "First and last name cannot be empty",
+      "profile.edit.fill_both_passwords": "Fill both password fields",
+      "profile.edit.password_len": "Password must be at least 6 characters long",
+      "profile.edit.password_no_match": "Passwords do not match",
+      "profile.edit.successful_update": "Data has been successfully updated",
+      "profile.edit.unsuccessful_update": "Failed to update data",
+
     }
   },
   pl: {
@@ -338,38 +349,6 @@ const resources = {
       "user.profile": "Profil",
       "user.settings": "Ustawienia",
       "user.logout": "Wyloguj",
-
-      // Profile
-      "profile.loading": "Ładowanie...",
-      "profile.h1": "Profil użytkownika",
-      "profile.first_name": "Imie:",
-      "profile.last_name": "Nazwisko:",
-      "profile.email": "Email:",
-      "profile.index_number": "Numer indeksu:",
-      "profile.edit": "Edytuj profil",
-      "profile.blacklist": "Czarna lista forum:",
-      "profile.blacklist_tip": "Frazy nalerzy włorzyć w cudzysłów: \"Pierwsza fraza\" \"Druga\" etc.",
-      "profile.blacklist_placeholder": "Dodaj zawartość czarnej listy...",
-
-      //Edit Profile
-      "editProfile.title": "Edytuj profil",
-      "editProfile.first_name": "Imię:",
-      "editProfile.last_name": "Nazwisko:",
-      "editProfile.email": "Email:",
-      "editProfile.avatar": "Awatar:",
-      "editProfile.new_password": "Nowe hasło:",
-      "editProfile.repeat_password": "Powtórz hasło:",
-      "editProfile.unable_to_load": "Nie udało sie załadować danych użytkownika.",
-      "editProfile.empty_names": "Imię i nazwisko nie mogą być puste.",
-      "editProfile.fill_both_passwords": "Wprowadź oba pola hasła.",
-      "editProfile.password_len": "Hasło musi mieć co najmniej 6 znaków.",
-      "editProfile.password_no_match": "Hasła się nie zgadzają.",
-      "editProfile.successful_update": "Profil zaktualizowany pomyślnie!",
-      "editProfile.unsuccessful_update": "Nie udało się zaktualizować profilu.",
-      "editProfile.cancel_password_update": "Anuluj zmianę hasła",
-      "editProfile.update_password": "Zmień hasło",
-      "editProfile.save": "Zapisz zmiany",
-      "editProfile.cancel": "Anuluj",
 
       // Sidebar
       "sidebar.title": "Nawigacja",
@@ -546,7 +525,51 @@ const resources = {
       "calendar.newEvent": "Nowe wydarzenie",
       "calendar.repeat.none": "Jednorazowo",
       "calendar.repeat.weekly": "Co tydzień",
-      "calendar.repeat.monthly": "Co miesiąc"
+      "calendar.repeat.monthly": "Co miesiąc",
+
+      //MapFilterPanel
+      "map.filter.mapFilters": "Filtry mapy",
+      "map.filter.buildingType": "Typ budynku:",
+      "map.filter.generalAcademic": "General academic building",
+      "map.filter.faculty": "Wydziałowy",
+      "map.filter.nonFaculty": "Pozawydziałowy",
+      "map.filter.administration": "Administracja",
+      "map.filter.porter": "Portiernia",
+      "map.filter.roomType": "Typ pomieszczenia:",
+      "map.filter.choice": "--wybierz--",
+      "map.filter.auditorium": "Aula",
+      "map.filter.class": "Sala",
+      "map.filter.laboratory": "Laboratorium",
+      "map.filter.applyFilters": "Zastosuj filtry",
+
+      //UserProfile
+      "profile.userProfile": "Profil użytkownika",
+      "profile.firstName": "Imię:",
+      "profile.lastName": "Nazwisko:",
+      "profile.indexNumber": "Numer indeksu:",
+      "profile.editProfile": "Edytuj profil",
+      "profile.blackListForum": "Czarna lista forum:",
+      "profile.addBlacklistedCotent": "Dodaj treść do czarnej listy...",
+      "profile.blacklistExample": "Frazy należy włożyć w cudzysłów: \"Pierwsza fraza\" \"Druga\" itd.",
+      "profile.bio": "O mnie",
+      "profile.bioPlaceholder": "Dodaj coś o sobie",
+
+      //UserProfileEdit
+      "profile.edit.editProfile": "Edytuj profil",
+      "profile.edit.changePassword": "Zmień hasło'",
+      "profile.edit.changePasswordCancel": "Anuluj zmianę hasła",
+      "profile.edit.saveChanges": "Zapisz zmiany",
+      "profile.edit.newPassword": "Nowe hasło:",
+      "profile.edit.repeatPassword": "Powtórz hasło:",
+      "profile.edit.cancel": "Anuluj:",
+      "profile.edit.empty_names": "Pola na imię i nazwisko nie mogą być puste",
+      "profile.edit.fill_both_passwords": "Wypełnij oba pola na hasło",
+      "profile.edit.password_len": "Hasło musi posiadać minimum 6 znaków",
+      "profile.edit.password_no_match": "Hasła nie są identyczne",
+      "profile.edit.successful_update": "Dane zostały zaktualizowane",
+      "profile.edit.unsuccessful_update": "Nie udało się zaktualizować danych",
+
+
     }
   }
 };

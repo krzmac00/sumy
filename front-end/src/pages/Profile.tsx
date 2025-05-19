@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, {useEffect, useState, useRef, ChangeEvent} from 'react';
 import axios from 'axios';
 import MainLayout from '../layouts/MainLayout';
 import './Profile.css';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface UserData {
   first_name: string;
@@ -12,6 +12,7 @@ interface UserData {
   login: string;
   role: string;
   blacklist: string;
+  bio: string;
 }
 
 const ProfilePage: React.FC = () => {
@@ -19,6 +20,9 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [blacklist, setBlacklist] = useState('');
+  const [bio, setBio] = useState('');
+  const blacklistRef = useRef<HTMLTextAreaElement>(null);
+  const bioRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -35,6 +39,8 @@ const ProfilePage: React.FC = () => {
           .map((item: string) => `"${item}"`)
           .join(' ');
         setBlacklist(formattedBlacklist);
+
+        setBio(response.data.bio || '');
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -50,6 +56,14 @@ const ProfilePage: React.FC = () => {
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'; // ustaw na wysokość zawartości
     }
   }, [blacklist]);
+
+  // Auto-resize textarea for bio
+  useEffect(() => {
+    if (bioRef.current) {
+      bioRef.current.style.height = 'auto';
+      bioRef.current.style.height = `${bioRef.current.scrollHeight}px`;
+    }
+  }, [bio]);
 
   const saveBlacklist = async (newBlacklist: string) => {
     try {
@@ -72,6 +86,21 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  // Save bio separately
+  const saveBio = async (newBio: string) => {
+    if (!userData) return;
+    try {
+      const token = localStorage.getItem('auth_token');
+      await axios.put(
+        'http://localhost:8000/api/accounts/me/',
+        { bio: newBio, first_name: userData.first_name, last_name: userData.last_name, email: userData.email },
+        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+      );
+    } catch (error) {
+      console.error('Error saving bio:', error);
+    }
+  };
+
   // Obsługa zmiany w textarea
   const handleBlacklistChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
@@ -79,36 +108,53 @@ const ProfilePage: React.FC = () => {
     saveBlacklist(newValue);  // zapis na backend przy każdej zmianie
   };
 
+
   if (!userData) return <MainLayout><p>{t('profile.loading')}</p></MainLayout>;
+
+  const handleBioChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setBio(newValue);
+    saveBio(newValue);
+  };
+
 
   return (
     <MainLayout>
       <div className="profile-page">
-        <h1>{t("profile.h1")}</h1>
+        <h1>{t('profile.userProfile')}</h1>
 
         <div className="profile-section">
           <div className="avatar">👤</div>
           <div className="user-info">
-            <p><strong>{t('profile.first_name')}</strong> {userData.first_name}</p>
-            <p><strong>{t('profile.last_name')}</strong> {userData.last_name}</p>
-            <p><strong>{t('profile.email')}</strong> {userData.email}</p>
-            <p><strong>{t('profile.index_number')}</strong> {userData.email.split('@')[0]}</p>
+            <p><strong>{t('profile.firstName')}</strong> {userData.first_name}</p>
+            <p><strong>{t('profile.lastName')}</strong> {userData.last_name}</p>
+            <p><strong>Email:</strong> {userData.email}</p>
+            <p><strong>{t('profile.indexNumber')}</strong> {userData.email.split('@')[0]}</p>
 
             <button onClick={() => navigate('/profile/edit')} className="edit-profile-button">
-              {t("profile.edit")}
+              {t('profile.editProfile')}
             </button>
           </div>
         </div>
-
-        <p><strong>{t("profile.blacklist")}</strong></p>
+        {/* Bio section */}
+        <p><strong>{t("profile.bio")}</strong></p>
+          <textarea
+            ref={bioRef}
+            value={bio}
+            onChange={handleBioChange}
+            placeholder={t("profile.bioPlaceholder")}
+            rows={3}
+            style={{ width: '100%', boxSizing: 'border-box', resize: 'none', overflow: 'hidden' }}
+          />
+        <p style={{ marginTop: '16px'}}><strong>{t('profile.blackListForum')}</strong></p>
         <p style={{ color: '#555555', fontStyle: 'italic', marginTop: '-4px', marginBottom: '4px' }}>
-          {t("profile.blacklist_tip")}
+          {t('profile.blacklistExample')}
         </p>
         <textarea
           ref={textareaRef}
           value={blacklist}
           onChange={handleBlacklistChange}
-          placeholder={t("profile.blacklist_placeholder")}
+          placeholder={t('profile.addBlacklistedCotent')}
           rows={1} // minimalna wysokość 1 linijka
           style={{
             width: '100%',
@@ -118,6 +164,8 @@ const ProfilePage: React.FC = () => {
           }}
         />
       </div>
+
+
     </MainLayout>
   );
 };
