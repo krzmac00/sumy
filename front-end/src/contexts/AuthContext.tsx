@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const loadUserData = async () => {
       // Skip loading on auth pages to prevent token refresh loops
       const isAuthPage = window.location.pathname.includes('/auth');
-      
+
       if (authService.isAuthenticated() && !isAuthPage) {
         try {
           const userData = await authService.getUserData();
@@ -118,10 +118,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setIsLoading(false);
     }
+
   };
 
-   const updateUser = (user: User) => {
+  const updateUser = (user: User) => {
     setCurrentUser(user);
+    localStorage.setItem('user_data', JSON.stringify(user));
   };
 
   const value = {
@@ -140,7 +142,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-
 };
 
 export const useAuth = (): AuthContextType => {

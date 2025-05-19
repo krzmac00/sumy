@@ -66,7 +66,39 @@ const resources = {
       "user.profile": "Profile",
       "user.settings": "Settings",
       "user.logout": "Logout",
-      
+
+      // Profile
+      "profile.loading": "Loading...",
+      "profile.h1": "User profile",
+      "profile.first_name": "First Name:",
+      "profile.last_name": "Last Name:",
+      "profile.email": "Email:",
+      "profile.index_number": "Index Number:",
+      "profile.edit": "Edit profile",
+      "profile.blacklist": "Blacklist for forum:",
+      "profile.blacklist_tip": "Phrases ought to be put in quotes: \"First phraze\" \"Second\" etc.",
+      "profile.blacklist_placeholder": "Add content of blacklist...",
+
+      //Edit Profile
+      "editProfile.title": "Edit profile",
+      "editProfile.first_name": "First name:",
+      "editProfile.last_name": "Last name:",
+      "editProfile.email": "Email:",
+      "editProfile.avatar": "Avatar:",
+      "editProfile.new_password": "New password:",
+      "editProfile.repeat_password": "Repeat password:",
+      "editProfile.unable_to_load": "Failed to load user's data.",
+      "editProfile.empty_names": "First and last name cannot be empty.",
+      "editProfile.fill_both_passwords": "Fill both passwords.",
+      "editProfile.password_len": "Passwords require at least 6 characters.",
+      "editProfile.password_no_match": "Passwords are not matching.",
+      "editProfile.successful_update": "Profile updated successfully!",
+      "editProfile.unsuccessful_update": "Failed to update profile.",
+      "editProfile.cancel_password_update": "Cancel password update",
+      "editProfile.update_password": "Update password",
+      "editProfile.save": "Save changes",
+      "editProfile.cancel": "Cancel",
+
       // Sidebar
       "sidebar.title": "Navigation",
       "sidebar.home": "Home",
@@ -105,6 +137,8 @@ const resources = {
       "forum.error.fetchThreads": "Error loading threads. Please try again later.",
       "forum.error.fetchThread": "Error loading thread. Please try again later.",
       "forum.error.threadNotFound": "Thread not found.",
+      "forum.blacklist_on": "Blacklist is on:",
+      "forum.blacklist_off": "Blacklist is off:",
       
       // Forum - Thread List
       "forum.threadList.title": "Discussion Threads",
@@ -304,7 +338,39 @@ const resources = {
       "user.profile": "Profil",
       "user.settings": "Ustawienia",
       "user.logout": "Wyloguj",
-      
+
+      // Profile
+      "profile.loading": "Ładowanie...",
+      "profile.h1": "Profil użytkownika",
+      "profile.first_name": "Imie:",
+      "profile.last_name": "Nazwisko:",
+      "profile.email": "Email:",
+      "profile.index_number": "Numer indeksu:",
+      "profile.edit": "Edytuj profil",
+      "profile.blacklist": "Czarna lista forum:",
+      "profile.blacklist_tip": "Frazy nalerzy włorzyć w cudzysłów: \"Pierwsza fraza\" \"Druga\" etc.",
+      "profile.blacklist_placeholder": "Dodaj zawartość czarnej listy...",
+
+      //Edit Profile
+      "editProfile.title": "Edytuj profil",
+      "editProfile.first_name": "Imię:",
+      "editProfile.last_name": "Nazwisko:",
+      "editProfile.email": "Email:",
+      "editProfile.avatar": "Awatar:",
+      "editProfile.new_password": "Nowe hasło:",
+      "editProfile.repeat_password": "Powtórz hasło:",
+      "editProfile.unable_to_load": "Nie udało sie załadować danych użytkownika.",
+      "editProfile.empty_names": "Imię i nazwisko nie mogą być puste.",
+      "editProfile.fill_both_passwords": "Wprowadź oba pola hasła.",
+      "editProfile.password_len": "Hasło musi mieć co najmniej 6 znaków.",
+      "editProfile.password_no_match": "Hasła się nie zgadzają.",
+      "editProfile.successful_update": "Profil zaktualizowany pomyślnie!",
+      "editProfile.unsuccessful_update": "Nie udało się zaktualizować profilu.",
+      "editProfile.cancel_password_update": "Anuluj zmianę hasła",
+      "editProfile.update_password": "Zmień hasło",
+      "editProfile.save": "Zapisz zmiany",
+      "editProfile.cancel": "Anuluj",
+
       // Sidebar
       "sidebar.title": "Nawigacja",
       "sidebar.home": "Strona główna",
@@ -343,6 +409,8 @@ const resources = {
       "forum.error.fetchThreads": "Błąd podczas ładowania wątków. Spróbuj ponownie później.",
       "forum.error.fetchThread": "Błąd podczas ładowania wątku. Spróbuj ponownie później.",
       "forum.error.threadNotFound": "Wątek nie został znaleziony.",
+      "forum.blacklist_on": "Czarna lista wł:",
+      "forum.blacklist_off": "Czarna lista wył:",
       
       // Forum - Thread List
       "forum.threadList.title": "Wątki dyskusyjne",

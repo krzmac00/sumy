@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import MainLayout from '../layouts/MainLayout';
 import './EditProfile.css';
@@ -6,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const EditProfile: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { updateUser, currentUser } = useAuth();
 
@@ -57,23 +59,23 @@ const EditProfile: React.FC = () => {
     e.preventDefault();
 
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      alert('Imię i nazwisko nie mogą być puste.');
+      alert(t("editProfile.empty_names"));
       return;
     }
 
     if (showPasswordFields) {
       if (!formData.password || !formData.confirmPassword) {
-        alert('Wprowadź oba pola hasła.');
+        alert(t("editProfile.fill_both_passwords"));
         return;
       }
 
       if (formData.password.length < 6) {
-        alert('Hasło musi mieć co najmniej 6 znaków.');
+        alert(t("editProfile.password_len"));
         return;
       }
 
       if (formData.password !== formData.confirmPassword) {
-        alert('Hasła się nie zgadzają.');
+        alert(t("editProfile.password_no_match"));
         return;
       }
     }
@@ -95,35 +97,34 @@ const EditProfile: React.FC = () => {
       },
     });
 
-    // Zakładam, że backend zwraca aktualizowanego użytkownika
-    const updatedUser = response.data;
-
     // Aktualizuj globalny stan użytkownika
+    const updatedUser = response.data;
     updateUser(updatedUser);
 
-    alert('Profil zaktualizowany pomyślnie!');
+
+    alert(t("editProfile.successful_update"));
     navigate('/profile');
   } catch (error) {
     console.error('Błąd podczas aktualizacji profilu:', error);
-    alert('Nie udało się zaktualizować profilu.');
+    alert(t("editProfile.unsuccessful_update"));
   }
 };
 
   return (
     <MainLayout>
       <div className="edit-profile-page">
-        <h1>Edytuj profil</h1>
+        <h1>{t("editProfile.title")}</h1>
         <form onSubmit={handleSubmit} className="edit-profile-form">
-          <label>Imię:</label>
+          <label>{t("editProfile.first_name")}</label>
           <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
 
-          <label>Nazwisko:</label>
+          <label>{t("editProfile.last_name")}</label>
           <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
 
-          <label>Email:</label>
+          <label>{t("editProfile.email")}</label>
           <input type="email" name="email" value={formData.email} readOnly disabled className="disabled-input" />
 
-          <label>Avatar:</label>
+          <label>{t("editProfile.avatar")}</label>
           <input type="file" name="avatar" accept="image/*" onChange={handleChange} />
 
           <button
@@ -131,12 +132,12 @@ const EditProfile: React.FC = () => {
             className="toggle-password-button"
             onClick={() => setShowPasswordFields(!showPasswordFields)}
           >
-            {showPasswordFields ? 'Anuluj zmianę hasła' : 'Zmień hasło'}
+            {showPasswordFields ? t("editProfile.cancel_password_update") : t("editProfile.update_password")}
           </button>
 
           {showPasswordFields && (
             <>
-              <label>Nowe hasło:</label>
+              <label>{t("editProfile.new_password")}</label>
               <input
                 type="password"
                 name="password"
@@ -144,7 +145,7 @@ const EditProfile: React.FC = () => {
                 onChange={handleChange}
               />
 
-              <label>Powtórz hasło:</label>
+              <label>{t("editProfile.repeat_password")}</label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -155,10 +156,10 @@ const EditProfile: React.FC = () => {
           )}
 
           <button type="submit" className="save-button">
-            Zapisz zmiany
+            {t("editProfile.save")}
           </button>
           <button type="button" className="back-button" onClick={() => navigate('/profile')}>
-            Anuluj
+            {t("editProfile.cancel")}
           </button>
         </form>
       </div>

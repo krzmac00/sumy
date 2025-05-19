@@ -11,12 +11,13 @@ const ForumPage: React.FC = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [blacklistOn, setBlacklistOn] = useState<boolean>(true);
 
   const fetchThreads = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const threadsData = await threadAPI.getAll();
+      const threadsData = await threadAPI.getAll(blacklistOn);
       
       // Ensure threadsData is an array before attempting to sort
       if (!Array.isArray(threadsData)) {
@@ -37,11 +38,11 @@ const ForumPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, [t, blacklistOn]);
 
   useEffect(() => {
-    fetchThreads();
-  }, [fetchThreads]);
+  fetchThreads();
+}, [fetchThreads, blacklistOn]);
 
   return (
     <MainLayout>
@@ -71,6 +72,8 @@ const ForumPage: React.FC = () => {
           loading={loading}
           error={error}
           onRefresh={fetchThreads}
+          blacklistOn={blacklistOn}
+          setBlacklistOn={setBlacklistOn}
         />
       </div>
     </MainLayout>

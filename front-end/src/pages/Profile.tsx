@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import MainLayout from '../layouts/MainLayout';
 import './Profile.css';
@@ -14,6 +15,7 @@ interface UserData {
 }
 
 const ProfilePage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [blacklist, setBlacklist] = useState('');
@@ -66,7 +68,7 @@ const ProfilePage: React.FC = () => {
       );
       // możesz dodać powiadomienie o sukcesie lub logowanie
     } catch (error) {
-      console.error('Nie udało się zapisać czarnej listy:', error);
+      console.error('Unable to save blacklist:', error);
     }
   };
 
@@ -77,36 +79,36 @@ const ProfilePage: React.FC = () => {
     saveBlacklist(newValue);  // zapis na backend przy każdej zmianie
   };
 
-  if (!userData) return <MainLayout><p>Ładowanie danych...</p></MainLayout>;
+  if (!userData) return <MainLayout><p>{t('profile.loading')}</p></MainLayout>;
 
   return (
     <MainLayout>
       <div className="profile-page">
-        <h1>Profil użytkownika</h1>
+        <h1>{t("profile.h1")}</h1>
 
         <div className="profile-section">
           <div className="avatar">👤</div>
           <div className="user-info">
-            <p><strong>Imię:</strong> {userData.first_name}</p>
-            <p><strong>Nazwisko:</strong> {userData.last_name}</p>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Numer indeksu:</strong> {userData.email.split('@')[0]}</p>
+            <p><strong>{t('profile.first_name')}</strong> {userData.first_name}</p>
+            <p><strong>{t('profile.last_name')}</strong> {userData.last_name}</p>
+            <p><strong>{t('profile.email')}</strong> {userData.email}</p>
+            <p><strong>{t('profile.index_number')}</strong> {userData.email.split('@')[0]}</p>
 
             <button onClick={() => navigate('/profile/edit')} className="edit-profile-button">
-              Edytuj profil
+              {t("profile.edit")}
             </button>
           </div>
         </div>
 
-        <p><strong>Czarna lista forum:</strong></p>
+        <p><strong>{t("profile.blacklist")}</strong></p>
         <p style={{ color: '#555555', fontStyle: 'italic', marginTop: '-4px', marginBottom: '4px' }}>
-          Frazy należy włożyć w cudzysłów: "Pierwsza fraza" "Druga" itd.
+          {t("profile.blacklist_tip")}
         </p>
         <textarea
           ref={textareaRef}
           value={blacklist}
           onChange={handleBlacklistChange}
-          placeholder="Dodaj treść do czarnej listy..."
+          placeholder={t("profile.blacklist_placeholder")}
           rows={1} // minimalna wysokość 1 linijka
           style={{
             width: '100%',

@@ -21,27 +21,18 @@ export const threadAPI = {
   /**
    * Get all threads
    */
-  getAll: async (): Promise<Thread[]> => {
-    const response = await fetch(`${API_BASE}/threads/`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch threads: ${response.statusText}`);
-    }
-    const data = await response.json();
-    
-    // Check if response is paginated (Django REST Framework pagination)
-    if (data && typeof data === 'object' && 'results' in data && Array.isArray(data.results)) {
-      return data.results;
-    }
-    
-    // If it's a direct array
-    if (Array.isArray(data)) {
-      return data;
-    }
-    
-    // If neither condition is met, return empty array to prevent errors
-    console.warn('Unexpected response format from threads API:', data);
-    return [];
-  },
+  getAll: async (blacklistOn = true): Promise<Thread[]> => {
+  const url = blacklistOn ? `${API_BASE}/threads/` : `${API_BASE}/threads/?blacklist=off`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch threads: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return Array.isArray(data?.results) ? data.results : (Array.isArray(data) ? data : []);
+},
+
 
   /**
    * Get a specific thread by ID

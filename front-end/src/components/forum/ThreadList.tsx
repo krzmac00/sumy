@@ -24,7 +24,8 @@ const formatDate = (dateString: string): string => {
 const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error }) => {
   const { t } = useTranslation();
   const [categoryFilter, setCategoryFilter] = useState<string>('');
-  
+
+
   // Get unique categories for filter
   const uniqueCategories = Array.from(new Set(threads.map(thread => thread.category)));
   

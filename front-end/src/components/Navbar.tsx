@@ -1,5 +1,5 @@
 // src/components/Navbar.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,12 +14,20 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const { t, i18n } = useTranslation();
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const [displayName, setDisplayName] = useState('');
   
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   
   const currentLanguage = i18n.language.substring(0, 2).toUpperCase();
-  
+
+  useEffect(() => {
+    if (currentUser) {
+    const name = `${currentUser.first_name} ${currentUser.last_name}`;
+    setDisplayName(name);
+  }
+  }, [currentUser]);
+
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
     setIsLanguageDropdownOpen(false);

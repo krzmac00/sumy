@@ -10,12 +10,15 @@ interface RedditThreadListProps {
   loading: boolean;
   error: string | null;
   onRefresh?: () => void;
+  blacklistOn: boolean;
+  setBlacklistOn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RedditThreadList: React.FC<RedditThreadListProps> = ({ threads, loading, error, onRefresh }) => {
+const RedditThreadList: React.FC<RedditThreadListProps> = ({ threads, loading, error, onRefresh, blacklistOn,
+  setBlacklistOn }) => {
   const { t } = useTranslation();
   const [categoryFilter, setCategoryFilter] = useState<string>('');
-  
+
   // Get unique categories for filter
   const uniqueCategories = Array.from(new Set(threads.map(thread => thread.category)));
   
@@ -37,6 +40,38 @@ const RedditThreadList: React.FC<RedditThreadListProps> = ({ threads, loading, e
       <div className="thread-list-header">
         <h2>{t('forum.threadList.title')}</h2>
         <div className="thread-list-actions">
+          <div className="blacklist-toggle" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ marginTop: '4px' }}>
+              {blacklistOn ? t("forum.blacklist_on") : t("forum.blacklist_off")}
+            </span>
+            <div
+              onClick={() => setBlacklistOn(prev => !prev)}
+              style={{
+                width: '40px',
+                height: '20px',
+                backgroundColor: blacklistOn ? '#22aa22' : '#aa2222',
+                borderRadius: '9999px',
+                position: 'relative',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s',
+                marginRight: '10px',
+                marginTop: '4px',
+              }}
+            >
+              <div
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  backgroundColor: 'white',
+                  borderRadius: '50%',
+                  position: 'absolute',
+                  top: '2px',
+                  left: blacklistOn ? '20px' : '2px',
+                  transition: 'left 0.3s',
+                }}
+              />
+            </div>
+          </div>
           <div className="category-filter">
             <label htmlFor="category-select">{t('forum.filter.category')}:</label>
             <select 

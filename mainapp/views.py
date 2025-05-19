@@ -141,7 +141,6 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 # ---------- THREAD SECTION ----------
 class ThreadListCreateAPIView(generics.ListCreateAPIView):
-    #queryset = Thread.objects.all()
     serializer_class = ThreadSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['last_activity_date', 'date']
@@ -150,19 +149,24 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Thread.objects.all()
         user = self.request.user
-        # Jeśli użytkownik ma blacklist jako listę fraz
-        blacklist = getattr(user, 'blacklist', [])
-        if isinstance(blacklist, str):
-            try:
-                import json
-                blacklist = json.loads(blacklist)
-            except Exception:
-                blacklist = []
-        for phrase in blacklist:
-            # Dokładne dopasowanie jako podciąg (bez ignorowania wielkości liter i bez .strip)
-            queryset = queryset.exclude(
-                Q(title__contains=phrase) | Q(content__contains=phrase)
-            )
+
+        apply_blacklist = self.request.query_params.get("blacklist",
+                                                        "on") != "off"
+
+        if apply_blacklist:
+            blacklist = getattr(user, 'blacklist', [])
+            if isinstance(blacklist, str):
+                try:
+                    import json
+                    blacklist = json.loads(blacklist)
+                except Exception:
+                    blacklist = []
+
+            for phrase in blacklist:
+                queryset = queryset.exclude(
+                    Q(title__contains=phrase) | Q(content__contains=phrase)
+                )
+
         return queryset
 
 class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
