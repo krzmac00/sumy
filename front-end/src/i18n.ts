@@ -278,7 +278,7 @@ const resources = {
       "profile.edit.saveChanges": "Save changes",
       "profile.edit.newPassword": "New password:",
       "profile.edit.repeatPassword": "Repeat password:",
-      "profile.edit.cancel": "Cancel:",
+      "profile.edit.cancel": "Cancel",
       "profile.edit.empty_names": "First and last name cannot be empty",
       "profile.edit.fill_both_passwords": "Fill both password fields",
       "profile.edit.password_len": "Password must be at least 6 characters long",
