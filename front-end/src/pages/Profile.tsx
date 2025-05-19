@@ -3,6 +3,7 @@ import axios from 'axios';
 import MainLayout from '../layouts/MainLayout';
 import './Profile.css';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface UserData {
   first_name: string;
@@ -18,6 +19,7 @@ const ProfilePage: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [blacklist, setBlacklist] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -82,31 +84,31 @@ const ProfilePage: React.FC = () => {
   return (
     <MainLayout>
       <div className="profile-page">
-        <h1>Profil użytkownika</h1>
+        <h1>{t('profile.userProfile')}</h1>
 
         <div className="profile-section">
           <div className="avatar">👤</div>
           <div className="user-info">
-            <p><strong>Imię:</strong> {userData.first_name}</p>
-            <p><strong>Nazwisko:</strong> {userData.last_name}</p>
+            <p><strong>{t('profile.firstName')}</strong> {userData.first_name}</p>
+            <p><strong>{t('profile.lastName')}</strong> {userData.last_name}</p>
             <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Numer indeksu:</strong> {userData.email.split('@')[0]}</p>
+            <p><strong>{t('profile.indexNumber')}</strong> {userData.email.split('@')[0]}</p>
 
             <button onClick={() => navigate('/profile/edit')} className="edit-profile-button">
-              Edytuj profil
+              {t('profile.editProfile')}
             </button>
           </div>
         </div>
 
-        <p><strong>Czarna lista forum:</strong></p>
+        <p><strong>{t('profile.blackListForum')}</strong></p>
         <p style={{ color: '#555555', fontStyle: 'italic', marginTop: '-4px', marginBottom: '4px' }}>
-          Frazy należy włożyć w cudzysłów: "Pierwsza fraza" "Druga" itd.
+          {t('profile.blacklistExample')}
         </p>
         <textarea
           ref={textareaRef}
           value={blacklist}
           onChange={handleBlacklistChange}
-          placeholder="Dodaj treść do czarnej listy..."
+          placeholder={t('profile.addBlacklistedCotent')}
           rows={1} // minimalna wysokość 1 linijka
           style={{
             width: '100%',

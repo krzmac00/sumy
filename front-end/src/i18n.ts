@@ -256,6 +256,16 @@ const resources = {
       "map.filter.class": "Class",
       "map.filter.laboratory": "Laboratory",
       "map.filter.applyFilters": "Apply filters",
+
+      //UserProfile
+      "profile.userProfile": "User profile",
+      "profile.firstName": "First name:",
+      "profile.lastName": "Last name:",
+      "profile.indexNumber": "Index number:",
+      "profile.editProfile": "Edit profile",
+      "profile.blackListForum": "Forum blacklist",
+      "profile.addBlacklistedCotent": "Add content to the blacklist",
+      "profile.blacklistExample": "Phrases should be placed in quotation marks: \"First phrase\", \"Second phrase\", etc.",
     }
   },
   pl: {
@@ -509,6 +519,16 @@ const resources = {
       "map.filter.class": "Sala",
       "map.filter.laboratory": "Laboratorium",
       "map.filter.applyFilters": "Zastosuj filtry",
+
+      //UserProfile
+      "profile.userProfile": "Profil użytkownika",
+      "profile.firstName": "Imię:",
+      "profile.lastName": "Nazwisko:",
+      "profile.indexNumber": "Numer indeksu:",
+      "profile.editProfile": "Edytuj profil",
+      "profile.blackListForum": "Czarna lista forum:",
+      "profile.addBlacklistedCotent": "Dodaj treść do czarnej listy...",
+      "profile.blacklistExample": "Frazy należy włożyć w cudzysłów: \"Pierwsza fraza\" \"Druga\" itd.",
     }
   }
 };
