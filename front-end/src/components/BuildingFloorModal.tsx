@@ -12,6 +12,14 @@ interface BuildingFloorModalProps {
 
 const floorsOrder = ["Parter", "Piętro 1", "Piętro 2", "Piętro 3", "Piętro 4"];
 
+const lectureRooms = {
+  "Piętro 1": [
+    { id: "F2", name: "Aula F2", x: 145, y: 120, width: 100, height: 64 },
+    { id: "F3", name: "Aula F3", x: 300, y: 120, width: 136, height: 64 },
+  ],
+  // Dodaj inne piętra w razie potrzeby
+};
+
 const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
   isOpen,
   onClose,
@@ -20,6 +28,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
   defaultFloor = "Piętro 1"
 }) => {
   const [selectedFloor, setSelectedFloor] = useState(defaultFloor);
+  const [selectedRoom, setSelectedRoom] = useState<null | { id: string, name: string }>(null);
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
@@ -44,17 +53,52 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
 
           {/* Floor Plan Image */}
           <div className="floor-plan">
-            <img
-              src={floorImages[selectedFloor]}
-              alt={`Plan piętra ${selectedFloor}`}
-              style={{ width: '100%', height: 'auto', display: 'block' }}
-            />
+            <div className="floor-plan-container">
+              <img
+                src={floorImages[selectedFloor]}
+                alt={`Plan piętra ${selectedFloor}`}
+                className="floor-plan-image"
+              />
+
+              {/* Overlay clickable rooms */}
+              {(lectureRooms[selectedFloor] || []).map(room => (
+                <div
+                  key={room.id}
+                  className="room-overlay"
+                  style={{
+                    left: room.x,
+                    top: room.y,
+                    width: room.width,
+                    height: room.height,
+                  }}
+                  title={room.name}
+                  onClick={() => setSelectedRoom(room)}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="modal-footer">
             <button onClick={onClose} className="close-button">Zamknij</button>
           </div>
         </Dialog.Panel>
+
+        {selectedRoom && (
+          <Dialog open={true} onClose={() => setSelectedRoom(null)} className="relative z-50">
+            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            <div className="fixed inset-0 flex items-center justify-center p-4">
+              <Dialog.Panel className="building-floor-modal">
+                <Dialog.Title className="building-floor-modal-title">Szczegóły sali</Dialog.Title>
+                <p><strong>ID:</strong> {selectedRoom.id}</p>
+                <p><strong>Nazwa:</strong> {selectedRoom.name}</p>
+                <div className="modal-footer">
+                  <button onClick={() => setSelectedRoom(null)} className="close-button">Zamknij</button>
+                </div>
+              </Dialog.Panel>
+            </div>
+          </Dialog>
+        )}
+
       </div>
     </Dialog>
 

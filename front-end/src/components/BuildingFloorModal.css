@@ -24,7 +24,6 @@
   padding-bottom: 8px;
 }
 
-/* Dla estetyki: można dodać też cień tła na overflow */
 .floor-selector-horizontal::-webkit-scrollbar {
   height: 6px;
 }
@@ -71,4 +70,27 @@
 
 .close-button:hover {
   background-color: #aaa;
+}
+
+.floor-plan-container {
+  position: relative;
+  width: 100%;
+}
+
+.floor-plan-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.room-overlay {
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.4);
+  border: 1px solid #8b0002;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.room-overlay:hover {
+  background-color: rgba(255, 0, 0, 0.6);
 }
