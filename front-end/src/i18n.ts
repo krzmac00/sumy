@@ -240,7 +240,22 @@ const resources = {
       "calendar.newEvent": "New event",
       "calendar.repeat.none": "Once",
       "calendar.repeat.weekly": "Weekly",
-      "calendar.repeat.monthly": "Monthly"
+      "calendar.repeat.monthly": "Monthly",
+
+      //MapFilterPanel
+      "map.filter.mapFilters": "Map filters",
+      "map.filter.buildingType": "Builingd type:",
+      "map.filter.generalAcademic": "General academic building",
+      "map.filter.faculty": "Faculty",
+      "map.filter.nonFaculty": "Non-faculty",
+      "map.filter.administration": "Administraion",
+      "map.filter.porter": "Porter's lodge",
+      "map.filter.roomType": "Room type:",
+      "map.filter.choice": "--select--",
+      "map.filter.auditorium": "Aula",
+      "map.filter.class": "Class",
+      "map.filter.laboratory": "Laboratory",
+      "map.filter.applyFilters": "Apply filters",
     }
   },
   pl: {
@@ -478,7 +493,22 @@ const resources = {
       "calendar.newEvent": "Nowe wydarzenie",
       "calendar.repeat.none": "Jednorazowo",
       "calendar.repeat.weekly": "Co tydzień",
-      "calendar.repeat.monthly": "Co miesiąc"
+      "calendar.repeat.monthly": "Co miesiąc",
+
+      //MapFilterPanel
+      "map.filter.mapFilters": "Filtry mapy",
+      "map.filter.buildingType": "Typ budynku:",
+      "map.filter.generalAcademic": "General academic building",
+      "map.filter.faculty": "Wydziałowy",
+      "map.filter.nonFaculty": "Pozawydziałowy",
+      "map.filter.administration": "Administracja",
+      "map.filter.porter": "Portiernia",
+      "map.filter.roomType": "Typ pomieszczenia:",
+      "map.filter.choice": "--wybierz--",
+      "map.filter.auditorium": "Aula",
+      "map.filter.class": "Sala",
+      "map.filter.laboratory": "Laboratorium",
+      "map.filter.applyFilters": "Zastosuj filtry",
     }
   }
 };
