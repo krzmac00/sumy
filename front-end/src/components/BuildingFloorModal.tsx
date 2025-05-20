@@ -13,9 +13,13 @@ interface BuildingFloorModalProps {
 const floorsOrder = ["Parter", "Piętro 1", "Piętro 2", "Piętro 3", "Piętro 4"];
 
 const lectureRooms = {
-  "Piętro 1": [
+  "Parter": [
     { id: "F2", name: "Aula F2", x: 145, y: 120, width: 100, height: 64 },
     { id: "F3", name: "Aula F3", x: 300, y: 120, width: 136, height: 64 },
+  ],
+  "Piętro 3": [
+    { id: "F7", name: "Aula F7", x: 312, y: 31, width: 120, height: 54 },
+
   ],
   // Dodaj inne piętra w razie potrzeby
 };
