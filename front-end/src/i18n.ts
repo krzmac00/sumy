@@ -276,6 +276,7 @@ const resources = {
       "profile.edit.changePassword": "Change password",
       "profile.edit.changePasswordCancel": "Cancel password change",
       "profile.edit.saveChanges": "Save changes",
+      "profile.edit.oldPassword": "Current password:",
       "profile.edit.newPassword": "New password:",
       "profile.edit.repeatPassword": "Repeat password:",
       "profile.edit.cancel": "Cancel",
@@ -556,9 +557,10 @@ const resources = {
 
       //UserProfileEdit
       "profile.edit.editProfile": "Edytuj profil",
-      "profile.edit.changePassword": "Zmień hasło'",
+      "profile.edit.changePassword": "Zmień hasło",
       "profile.edit.changePasswordCancel": "Anuluj zmianę hasła",
       "profile.edit.saveChanges": "Zapisz zmiany",
+      "profile.edit.oldPassword": "Obecne hasło:",
       "profile.edit.newPassword": "Nowe hasło:",
       "profile.edit.repeatPassword": "Powtórz hasło:",
       "profile.edit.cancel": "Anuluj:",

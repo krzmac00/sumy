@@ -15,9 +15,10 @@ const EditProfile: React.FC = () => {
     firstName: '',
     lastName: '',
     email: '',
-    password: '',
-    confirmPassword: '',
     avatar: null as File | null,
+    oldPassword: '',
+    newPassword: '',
+    newPassword2: '',
   });
 
   const [showPasswordFields, setShowPasswordFields] = useState(false);
@@ -34,9 +35,10 @@ const EditProfile: React.FC = () => {
           firstName: data.first_name,
           lastName: data.last_name,
           email: data.email,
-          password: '',
-          confirmPassword: '',
           avatar: null,
+          oldPassword: '',
+          newPassword: '',
+          newPassword2: '',
         });
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -58,57 +60,67 @@ const EditProfile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Walidacja imion
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      alert(t("profile.edit.empty_names"));
+      alert(t('profile.edit.empty_names'));
       return;
     }
 
+    // Walidacja pól hasła, jeśli włączone
     if (showPasswordFields) {
-      if (!formData.password || !formData.confirmPassword) {
-        alert(t("profile.edit.fill_both_passwords"));
+      if (!formData.oldPassword || !formData.newPassword || !formData.newPassword2) {
+        alert(t('profile.edit.fill_all_passwords'));
         return;
       }
-
-      if (formData.password.length < 6) {
-        alert(t("profile.edit.password_len"));
+      if (formData.newPassword.length < 6) {
+        alert(t('profile.edit.password_len'));
         return;
       }
-
-      if (formData.password !== formData.confirmPassword) {
-        alert(t("profile.edit.password_no_match"));
+      if (formData.newPassword !== formData.newPassword2) {
+        alert(t('profile.edit.password_no_match'));
         return;
       }
     }
 
     try {
-    const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('auth_token');
+      const headers = { Authorization: `Bearer ${token}` };
 
-    const formPayload = new FormData();
-    formPayload.append('first_name', formData.firstName);
-    formPayload.append('last_name', formData.lastName);
-    formPayload.append('email', formData.email);
-    if (formData.avatar) formPayload.append('avatar', formData.avatar);
-    if (showPasswordFields && formData.password) formPayload.append('password', formData.password);
+      // 1) Aktualizacja profilu
+      const formPayload = new FormData();
+      formPayload.append('first_name', formData.firstName);
+      formPayload.append('last_name', formData.lastName);
+      if (formData.avatar) formPayload.append('avatar', formData.avatar);
 
-    const response = await axios.put('http://localhost:8000/api/accounts/me/', formPayload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+      const profileResp = await axios.put(
+        'http://localhost:8000/api/accounts/me/',
+        formPayload,
+        { headers: { ...headers, 'Content-Type': 'multipart/form-data' } }
+      );
 
-    // Aktualizuj globalny stan użytkownika
-    const updatedUser = response.data;
-    updateUser(updatedUser);
+      // 2) Zmiana hasła
+      if (showPasswordFields) {
+        await axios.post(
+          'http://localhost:8000/api/accounts/change-password/',
+          {
+            old_password: formData.oldPassword,
+            new_password: formData.newPassword,
+            new_password2: formData.newPassword2,
+          },
+          { headers }
+        );
+      }
 
+      // Aktualizacja kontekstu użytkownika
+      updateUser(profileResp.data);
 
-    alert(t("profile.edit.successful_update"));
-    navigate('/profile');
-  } catch (error) {
-    console.error('Błąd podczas aktualizacji profilu:', error);
-    alert(t("profile.edit.unsuccessful_update"));
-  }
-};
+      alert(t('profile.edit.successful_update'));
+      navigate('/profile');
+    } catch (error: any) {
+      console.error('Błąd podczas zapisu:', error);
+      alert(t('profile.edit.unsuccessful_update'));
+    }
+  };
 
   return (
     <MainLayout>
@@ -122,7 +134,14 @@ const EditProfile: React.FC = () => {
           <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
 
           <label>Email:</label>
-          <input type="email" name="email" value={formData.email} readOnly disabled className="disabled-input" />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            readOnly
+            disabled
+            className="disabled-input"
+          />
 
           <label>Avatar:</label>
           <input type="file" name="avatar" accept="image/*" onChange={handleChange} />
@@ -132,24 +151,34 @@ const EditProfile: React.FC = () => {
             className="toggle-password-button"
             onClick={() => setShowPasswordFields(!showPasswordFields)}
           >
-            {showPasswordFields ? t("profile.edit.changePasswordCancel") : t("profile.edit.changePassword")}
+            {showPasswordFields
+              ? t('profile.edit.changePasswordCancel')
+              : t('profile.edit.changePassword')}
           </button>
 
           {showPasswordFields && (
             <>
+              <label>{t('profile.edit.oldPassword')}</label>
+              <input
+                type="password"
+                name="oldPassword"
+                value={formData.oldPassword}
+                onChange={handleChange}
+              />
+
               <label>{t('profile.edit.newPassword')}</label>
               <input
                 type="password"
-                name="password"
-                value={formData.password}
+                name="newPassword"
+                value={formData.newPassword}
                 onChange={handleChange}
               />
 
               <label>{t('profile.edit.repeatPassword')}</label>
               <input
                 type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                name="newPassword2"
+                value={formData.newPassword2}
                 onChange={handleChange}
               />
             </>
