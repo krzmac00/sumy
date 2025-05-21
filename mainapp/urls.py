@@ -11,4 +11,6 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('list', views.event_list, name='event_list'),
     path('add', views.add_event, name='add_event')
+    path('save-calendar/', EventViewSet.as_view({'post': 'save_calendar'}), name='save-calendar'),
+    path('events/bulk/', EventViewSet.as_view({'post': 'bulk_create'}), name='event-bulk-create'),
 ] + router.urls

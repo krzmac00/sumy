@@ -5,6 +5,7 @@ from .models import Event
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
+        exclude = ['user']
         fields = '__all__'
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date'}),

@@ -1,7 +1,8 @@
 from django.db import models
+from django.conf import settings
 from .constants import CATEGORY_COLORS
-from datetime import date, time, datetime
 from datetime import *
+from django.contrib.auth.models import User
 
 CATEGORIES = [
     ('important', 'Important'),
@@ -21,6 +22,7 @@ def get_today():
     return date.today()
 
 class Event(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     start_date = models.DateTimeField(default=get_today)

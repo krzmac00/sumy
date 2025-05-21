@@ -1,5 +1,8 @@
-from rest_framework import viewsets, filters
-from rest_framework.decorators import action
+from django.shortcuts import render, redirect, HttpResponse
+from rest_framework import viewsets, generics, filters, status
+from rest_framework.decorators import api_view, action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 from rest_framework.response import Response
 from datetime import date
 from .models import Event
@@ -17,6 +20,7 @@ def home(request):
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['category']
     ordering_fields = ['date', 'time']
@@ -40,18 +44,59 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         profile_id = self.request.query_params.get('profile_id')
-        if profile_id:
-            return Event.objects.filter(profile_id=profile_id)
-        return Event.objects.all()
+        if self.request.user.is_authenticated:
+            return Event.objects.filter(user=self.request.user)
+        return Event.objects.none()
+
+    @action(detail=False, methods=['POST'])
+    @transaction.atomic
+    def save_calendar(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+           Event.objects.filter(user=user).delete() 
+           events_data = request.data.get('events', [])
+           created_events = []
+           for event_data in events_data:
+               event_data['user'] = user.id
+               serializer = self.get_serializer(data=event_data)
+               serializer.is_valid(raise_exception=True)  
+               serializer.save()
+               created_events.append(serializer.data)
+           return Response(created_events, status=status.HTTP_201_CREATED)
+        except Exception as e: 
+           return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['POST'])
+    @transaction.atomic
+    def bulk_create(self, request):
+        serializer = self.get_serializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        
+        try:
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_events_for_month(request):
     year = int(request.query_params.get('year', datetime.now().year))
     month = int(request.query_params.get('month', datetime.now().month))
-    events = Event.objects.filter(date__year=year, date__month=month)
+    events = Event.objects.filter(start_date__year=year, start_date__month=month)
     events_data = [{"title": event.title, "date": event.date} for event in events]
+    if not request.user.is_superuser:
+        events = events.filter(user=request.user)
     return Response(events_data)
     
 # @login_required
@@ -60,7 +105,8 @@ def add_event(request):
         form = EventForm(request.POST)
         if form.is_valid():
             event = form.save(commit=False)
-            event.profile = request.user 
+            # event.profile = request.user
+            event.user = request.user
             event.save()
             return redirect('event_list')
     else:
