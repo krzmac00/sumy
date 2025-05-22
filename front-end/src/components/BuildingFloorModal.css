@@ -3,7 +3,7 @@
   border-radius: 12px;
   padding: 24px;
   width: 100%;
-  max-width: 760px; /* zwiększona szerokość */
+  max-width: 760px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
@@ -73,8 +73,13 @@
 }
 
 .floor-plan-container {
-  position: relative;
-  width: 100%;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.building-floor-modal {
+  background-color: #ffffff; 
 }
 
 .floor-plan-image {
@@ -85,12 +90,33 @@
 
 .room-overlay {
   position: absolute;
-  background-color: rgba(255, 0, 0, 0.4);
-  border: 1px solid #8b0002;
+  background-color: #fff9e288;
+  border: 0.5px solid #ffdc51;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .room-overlay:hover {
-  background-color: rgba(255, 0, 0, 0.6);
+  background-color: #ffefad8e;
+}
+
+.floor-plan-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.floor-plan-svg .room {
+  fill: #ffdc51;
+  fill-opacity: 0.2;
+
+  transition: fill-opacity 0.2s, stroke-width 0.2s;
+}
+.floor-plan-svg .room:hover {
+  fill: rgba(139,0,2,0.1);
+  stroke-width: 3;
+  cursor: pointer;
+}
+.floor-plan-svg {
+  background-color: #fff;
 }

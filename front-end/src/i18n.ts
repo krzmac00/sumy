@@ -531,7 +531,7 @@ const resources = {
       //MapFilterPanel
       "map.filter.mapFilters": "Filtry mapy",
       "map.filter.buildingType": "Typ budynku:",
-      "map.filter.generalAcademic": "General academic building",
+      "map.filter.generalAcademic": "Ogólnouczelniane",
       "map.filter.faculty": "Wydziałowy",
       "map.filter.nonFaculty": "Pozawydziałowy",
       "map.filter.administration": "Administracja",

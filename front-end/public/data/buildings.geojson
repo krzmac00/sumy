@@ -3,7 +3,11 @@
   "features": [
     {
       "type": "Feature",
-      "properties": {"name": "B19", "label": "Centrum Technologii Informatycznych"},
+      "properties": {"name": "B19",
+                    "label": "B19 Centrum Technologii Informatycznych",
+                    "description": "Wydział Fizyki Technicznej, Informatyki i Matematyki Stosowanej",
+                    "website": "https://cti.p.lodz.pl",
+                    "hasPlan": true},
       "geometry": {
         "coordinates": [
           [
@@ -62,7 +66,8 @@
     },
     {
       "type": "Feature",
-      "properties": {"name": "B11", "label": "Dziekanat WFTIMS"},
+      "properties": {"name": "B11", "label": "B11 Dziekanat WFTIMS",
+                  "website": "https://ftims.p.lodz.pl/wydzial/dziekanat"},
       "geometry": {
         "coordinates": [
           [
@@ -165,7 +170,10 @@
     },
     {
       "type": "Feature",
-      "properties": {"name": "B9", "label": "B9 Lodex"},
+      "properties": {"name": "B9", "label": "B9 Lodex",
+                  "description": "Wydział Fizyki Technicznej, Informatyki i Matematyki Stosowanej",
+                  "website": "https://ftims.p.lodz.pl",
+                  "hasPlan": true},
       "geometry": {
         "coordinates": [
           [
@@ -284,7 +292,9 @@
     },
     {
       "type": "Feature",
-      "properties": {"name": "Zatoka Sportu", "label": "Zatoka Sportu"},
+      "properties": {"name": "B28", "label": "B28 Zatoka Sportu",
+                  "description": "Akademickie Centrum Sportowo-Dydaktyczne Politechniki Łódzkiej",
+                  "website": "https://www.zatokasportu.pl/pl"},
       "geometry": {
         "coordinates": [
           [
@@ -315,7 +325,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {"name": "co to", "label": "czym ty jestes"},
       "geometry": {
         "coordinates": [
           [
@@ -386,7 +396,8 @@
     },
     {
       "type": "Feature",
-      "properties": {"name": "Centrum Językowe", "label": "Centrum Językowe"},
+      "properties": {"name": "B24", "label": "B24 Centrum Językowe",
+                  "website": "https://www.cj.p.lodz.pl"},
       "geometry": {
         "coordinates": [
           [
@@ -457,7 +468,8 @@
     },
     {
       "type": "Feature",
-      "properties": {"name": "Biblioteka Główna", "label": "Biblioteka Główna"},
+      "properties": {"name": "B22", "label": "B22 Biblioteka Główna",
+                  "website": "https://bg.p.lodz.pl"},
       "geometry": {
         "coordinates": [
           [
@@ -520,53 +532,55 @@
     },
     {
       "type": "Feature",
-      "properties": {"name": "", "label": "Instytut Fizyki"},
+      "properties": {"name": "B14", "label": "B14 Instytut Fizyki",
+                    "website": "https://fizyka.p.lodz.pl",
+                    "hasPlan": true},
       "geometry": {
         "coordinates": [
           [
             [
-              19.454922343503796,
-              51.746443125012945
+              19.455598159914103,
+              51.74712222713745
             ],
             [
-              19.45492951951823,
-              51.74641498614773
+              19.455209159173165,
+              51.74708984288097
             ],
             [
-              19.456127152262354,
-              51.74651953106394
+              19.455310908498745,
+              51.746541589190116
             ],
             [
-              19.456100025279113,
-              51.74663867359769
+              19.454920139876123,
+              51.74651231100327
             ],
             [
-              19.455869445918125,
-              51.746616629628335
+              19.45492591168866,
+              51.74648997618945
             ],
             [
-              19.455803456908967,
-              51.7468954556721
+              19.454820576131965,
+              51.746481935653634
             ],
             [
-              19.455648391296478,
-              51.7468808723614
+              19.45482923384941,
+              51.746439052772445
             ],
             [
-              19.45485023322493,
-              51.74681836895354
+              19.454921582829968,
+              51.74644441313478
             ],
             [
-              19.45492435519219,
-              51.746490377129476
+              19.454931683499893,
+              51.746416717922386
             ],
             [
-              19.454934772055537,
-              51.74644641284104
+              19.455734607051824,
+              51.7464852898612
             ],
             [
-              19.454922343503796,
-              51.746443125012945
+              19.455598159914103,
+              51.74712222713745
             ]
           ]
         ],
@@ -576,8 +590,9 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Centrum Sportu",
-        "label": "Centrum Sportu"
+        "name": "C4",
+        "label": "C4 Centrum Sportu",
+        "website": "https://www.centrumsportu.p.lodz.pl"
       },
       "geometry": {
         "coordinates": [
@@ -650,8 +665,9 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "DS VI",
-        "label": "VI Dom Studencki"
+        "name": "C17",
+        "label": "C17 VI Dom Studencki",
+        "website": "https://samorzad.p.lodz.pl/pages/vi-dom-studenta"
       },
       "geometry": {
         "coordinates": [
@@ -684,8 +700,9 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "DS VII",
-        "label": "VII Dom Studencki"
+        "name": "C5",
+        "label": "C5 VII Dom Studencki",
+        "website": "https://samorzad.p.lodz.pl/pages/vii-dom-studenta"
       },
       "geometry": {
         "coordinates": [
@@ -734,8 +751,9 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "DS IV",
-        "label": "IV Dom Studencki"
+        "name": "C11",
+        "label": "C11 IV Dom Studencki",
+        "website": "https://samorzad.p.lodz.pl/pages/iv-dom-studenta"
       },
       "geometry": {
         "coordinates": [
@@ -768,8 +786,9 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "DS III",
-        "label": "III Dom Studencki"
+        "name": "C12",
+        "label": "C12 III Dom Studencki",
+        "website": "https://samorzad.p.lodz.pl/pages/iii-dom-studenta"
       },
       "geometry": {
         "coordinates": [
@@ -802,8 +821,9 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "DS II",
-        "label": "II Dom Studencki"
+        "name": "C13",
+        "label": "C13 II Dom Studencki",
+        "website": "https://samorzad.p.lodz.pl/pages/ii-dom-studenta"
       },
       "geometry": {
         "coordinates": [
@@ -836,8 +856,9 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "DS I",
-        "label": "I Dom Studencki"
+        "name": "C14",
+        "label": "C14 I Dom Studencki",
+        "website": "https://samorzad.p.lodz.pl/pages/i-dom-studenta"
       },
       "geometry": {
         "coordinates": [
@@ -894,8 +915,9 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "SDS",
-        "label": "czym jest sedes"
+        "name": "C15",
+        "label": "C15 SDS",
+        "website": "https://samorzad.p.lodz.pl"
       },
       "geometry": {
         "coordinates": [
@@ -952,8 +974,9 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "DS IX",
-        "label": "IX Dom Studencki"
+        "name": "E1",
+        "label": "E1 IX Dom Studencki",
+        "website": "https://samorzad.p.lodz.pl/pages/ix-dom-studenta"
       },
       "geometry": {
         "coordinates": [
@@ -985,7 +1008,8 @@
     },
     {
       "type": "Feature",
-      "properties": {"name": "DS V", "label": "V Dom Studencki"},
+      "properties": {"name": "F1", "label": "F1 V Dom Studencki",
+    "website": "https://samorzad.p.lodz.pl/pages/v-dom-studenta"},
       "geometry": {
         "coordinates": [
           [
