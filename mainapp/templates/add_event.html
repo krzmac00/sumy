@@ -6,10 +6,10 @@
 <body>
     <h1>Dodaj nowe wydarzenie</h1>
     <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Zapisz</button>
-    </form>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Event</button>
+</form>
     <a href="{% url 'event_list' %}">Powrót do listy wydarzeń</a>
 </body>
 </html>

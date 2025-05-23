@@ -1,23 +1,49 @@
 from rest_framework import serializers
-from .models import Event
-from datetime import datetime
-from .constants import CATEGORY_COLORS
+from .models import SchedulePlan, ScheduleEvent, AppliedPlan, Event
 
-class EventSerializer(serializers.ModelSerializer):
-    start = serializers.DateTimeField(source='start_date')
-    end = serializers.DateTimeField(source='end_date')
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
+class ScheduleEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScheduleEvent
+        fields = '__all__'
+
+class SchedulePlanSerializer(serializers.ModelSerializer):
+    events = ScheduleEventSerializer(many=True, read_only=True)
+    administrator = serializers.StringRelatedField()
+    is_applied = serializers.SerializerMethodField()
 
     class Meta:
-        model = Event
+        model = SchedulePlan
         fields = [
-            'id',
-            'user', 
-            'title',
-            'description',
-            'start',
-            'end',
-            'category',
-            'color',
-            'repeat_type'
+            'id', 
+            'name', 
+            'description', 
+            'administrator',
+            'is_active',
+            'events',
+            'created_at',
+            'updated_at',
+            'is_applied'
         ]
+
+    def get_is_applied(self, obj):
+        user = self.context['request'].user
+        return obj.participants.filter(id=user.id).exists()
+
+class AppliedPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppliedPlan
+        fields = ['plan', 'start_date', 'end_date', 'is_active']
+
+class ApplyPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppliedPlan
+        fields = ['start_date', 'end_date']
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = '__all__'
+        extra_kwargs = {
+            'user': {'read_only': True},
+            'color': {'read_only': True}
+        }

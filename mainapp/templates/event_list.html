@@ -1,19 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Lista wydarzeń</title>
-</head>
-<body>
-    <h1>Wszystkie wydarzenia</h1>
-    <a href="{% url 'add_event' %}">Dodaj wydarzenie</a>
-    <ul>
-        {% for event in events %}
-            <li>
-                <strong>{{ event.title }}</strong><br>
-                {{ event.date }} {{ event.time }}<br>
-                <span style="color: {{ event.color }};">{{ event.category }}</span>
-            </li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>My Events</h1>
+
+<!-- Sekcja dostępnych planów -->
+<div class="plans-section">
+    <h2>Available Schedule Plans</h2>
+    {% for plan in available_plans %}
+    <div class="plan-card">
+        <h3>{{ plan.name }}</h3>
+        <p>By: {{ plan.administrator.username }}</p>
+        
+        <form method="post" action="{% url 'apply-plan' plan.id %}">
+            {% csrf_token %}
+            <input type="date" name="start_date" required>
+            <button type="submit">Apply to My Calendar</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Lista wydarzeń -->
+<table>
+    {% for event in events %}
+    <tr>
+        <td>{{ event.title }}</td>
+        <td>{{ event.start_date }}</td>
+        <td>{{ event.end_date }}</td>
+        <td style="color: {{ event.color }}">{{ event.get_category_display }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'add_event' %}">Add New Event</a>
+{% endblock %}
