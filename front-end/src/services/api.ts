@@ -252,9 +252,18 @@ export const postAPI = {
   delete: async (id: number): Promise<void> => {
     const response = await fetch(`${API_BASE}/posts/${id}/`, {
       method: 'DELETE',
+      credentials: 'include', // Include credentials to send authentication cookies
     });
+
     if (!response.ok) {
-      throw new Error(`Failed to delete post ${id}: ${response.statusText}`);
+      // Try to parse detailed error message
+      try {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to delete post ${id}: ${response.statusText}`);
+      } catch (jsonError) {
+        // If can't parse JSON, fall back to statusText
+        throw new Error(`Failed to delete post ${id}: ${response.statusText}`);
+      }
     }
   },
 };

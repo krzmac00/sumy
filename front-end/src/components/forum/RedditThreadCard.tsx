@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Thread } from '../../types/forum';
 import { formatTimeAgo } from '../../utils/dateUtils';
 import { translateCategory } from '../../utils/categories';
+import { useAuth } from '../../contexts/AuthContext';
+import { threadAPI } from '../../services/api';
 import './RedditThreadCard.css';
 
 interface RedditThreadCardProps {
@@ -12,8 +14,15 @@ interface RedditThreadCardProps {
 
 const RedditThreadCard: React.FC<RedditThreadCardProps> = ({ thread }) => {
   const { t } = useTranslation();
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [voteStatus, setVoteStatus] = useState<'up' | 'down' | null>(null);
   const [voteCount, setVoteCount] = useState<number>(Math.floor(Math.random() * 100)); // Simulated vote count
+  const [error, setError] = useState<string | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState<boolean>(false);
+
+  // Check if current user is the thread creator
+  const isThreadCreator = currentUser && thread.user === currentUser.id;
 
   const handleUpvote = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -34,6 +43,27 @@ const RedditThreadCard: React.FC<RedditThreadCardProps> = ({ thread }) => {
     } else {
       setVoteStatus('down');
       setVoteCount(prev => prev - (voteStatus === 'up' ? 2 : 1));
+    }
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/forum/threads/${thread.post}/edit`);
+  };
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      await threadAPI.delete(thread.post);
+      navigate('/forum');
+    } catch (err) {
+      console.error('Error deleting thread:', err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError(t('forum.thread.errorDelete'));
+      }
+      setConfirmingDelete(false);
     }
   };
 
@@ -86,25 +116,60 @@ const RedditThreadCard: React.FC<RedditThreadCardProps> = ({ thread }) => {
         </div>
         
         <div className="thread-footer">
+          {error && <div className="thread-error">{error}</div>}
+
           <div className="thread-action">
             <span className="thread-action-icon">💬</span>
             <span>
-              {thread.posts.length} {thread.posts.length === 1 
-                ? t('forum.threadList.post') 
+              {thread.posts.length} {thread.posts.length === 1
+                ? t('forum.threadList.post')
                 : t('forum.threadList.posts')}
             </span>
           </div>
-          
+
           <div className="thread-action">
             <span className="thread-action-icon">🔄</span>
             <span>{t('forum.action.share')}</span>
           </div>
-          
-          <div className="thread-action">
-            <span className="thread-action-icon">💾</span>
-            <span>{t('forum.action.save')}</span>
-          </div>
-          
+
+          {/* Only show edit option for thread creator */}
+          {isThreadCreator && (
+            <div className="thread-action" onClick={handleEdit}>
+              <span className="thread-action-icon">✏️</span>
+              <span>{t('forum.thread.edit')}</span>
+            </div>
+          )}
+
+          {/* Only show delete option for thread creator */}
+          {isThreadCreator && !confirmingDelete ? (
+            <div className="thread-action" onClick={(e) => {
+              e.preventDefault();
+              setConfirmingDelete(true);
+            }}>
+              <span className="thread-action-icon">🗑️</span>
+              <span>{t('forum.thread.delete')}</span>
+            </div>
+          ) : isThreadCreator && confirmingDelete ? (
+            <div className="delete-confirmation">
+              <span>{t('forum.thread.confirmDelete')}</span>
+              <button
+                className="confirm-delete-yes"
+                onClick={handleDelete}
+              >
+                {t('forum.thread.confirmYes')}
+              </button>
+              <button
+                className="confirm-delete-no"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setConfirmingDelete(false);
+                }}
+              >
+                {t('forum.thread.confirmNo')}
+              </button>
+            </div>
+          ) : null}
+
           <div className="thread-action">
             <span className="thread-action-icon">ℹ️</span>
             <span>{t('forum.action.info')}</span>

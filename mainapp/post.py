@@ -165,8 +165,28 @@ def update_post(post_id, new_content):
     except Post.DoesNotExist:
         pass
 
-def delete_post(post_id):
-    Post.objects.filter(id=post_id).delete()
+def delete_post(post_id, user=None):
+    """
+    Delete a post only if the user is the creator of the post.
+
+    Args:
+        post_id: ID of the post to delete
+        user: The user attempting to delete the post
+
+    Returns:
+        tuple: (success, message) where success is a boolean and message is a string
+    """
+    try:
+        post = Post.objects.get(id=post_id)
+
+        # Check if user is the creator of the post
+        if user and post.user and post.user.id == user.id:
+            post.delete()
+            return True, "Post deleted successfully"
+        else:
+            return False, "You do not have permission to delete this post. Only the post creator can delete it."
+    except Post.DoesNotExist:
+        return False, "Post not found"
 
 def create_thread(nickname, content, category, title, visibleforteachers, canbeanswered, user=None, is_anonymous=False):
     # Create placeholder post for compatibility

@@ -199,10 +199,11 @@
   font-family: inherit;
 }
 
-.post-edit-error {
+.post-edit-error, .post-error {
   color: #8b0002;
   margin-bottom: 8px;
   font-size: 12px;
+  width: 100%;
 }
 
 .post-edit-actions {

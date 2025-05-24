@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Post } from '../../types/forum';
 import { postAPI } from '../../services/api';
 import { formatTimeAgo } from '../../utils/dateUtils';
+import { useAuth } from '../../contexts/AuthContext';
 import './PostCard.css';
 import './RedditPostCard.css';
 
@@ -26,12 +27,16 @@ const RedditPostCard: React.FC<RedditPostCardProps> = ({
   onRefresh
 }) => {
   const { t } = useTranslation();
+  const { currentUser } = useAuth();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editContent, setEditContent] = useState<string>(post.content);
   const [error, setError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState<boolean>(false);
   const [voteStatus, setVoteStatus] = useState<'up' | 'down' | null>(null);
   const [voteCount, setVoteCount] = useState<number>(Math.floor(Math.random() * 50)); // Simulated vote count
+
+  // Check if current user is the post creator
+  const isPostCreator = currentUser && post.user === currentUser.id;
 
   // Default user image path
   const userImagePath = "/user_default_image.png";
@@ -57,9 +62,16 @@ const RedditPostCard: React.FC<RedditPostCardProps> = ({
     try {
       await postAPI.delete(post.id);
       onRefresh(); // Refresh thread data
+      setConfirmingDelete(false);
     } catch (err) {
       console.error('Error deleting post:', err);
-      setError(t('forum.post.errorDelete'));
+      // Show the error message from the API if available
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError(t('forum.post.errorDelete'));
+      }
+      setConfirmingDelete(false);
     }
   };
 
@@ -193,22 +205,28 @@ const RedditPostCard: React.FC<RedditPostCardProps> = ({
         </div>
 
         <div className="thread-footer">
+          {error && <div className="post-error">{error}</div>}
+
           <div className="thread-action" onClick={() => onReply(post.id)}>
             <span className="thread-action-icon">💬</span>
             <span>{t('forum.post.reply')}</span>
           </div>
-          
-          <div className="thread-action" onClick={() => setIsEditing(true)}>
-            <span className="thread-action-icon">✏️</span>
-            <span>{t('forum.post.edit')}</span>
-          </div>
-          
-          {!confirmingDelete ? (
+
+          {/* Only show edit option for post creator */}
+          {isPostCreator && (
+            <div className="thread-action" onClick={() => setIsEditing(true)}>
+              <span className="thread-action-icon">✏️</span>
+              <span>{t('forum.post.edit')}</span>
+            </div>
+          )}
+
+          {/* Only show delete option for post creator */}
+          {isPostCreator && !confirmingDelete ? (
             <div className="thread-action" onClick={() => setConfirmingDelete(true)}>
               <span className="thread-action-icon">🗑️</span>
               <span>{t('forum.post.delete')}</span>
             </div>
-          ) : (
+          ) : isPostCreator && confirmingDelete ? (
             <div className="delete-confirmation">
               <span>{t('forum.post.confirmDelete')}</span>
               <button
@@ -224,7 +242,7 @@ const RedditPostCard: React.FC<RedditPostCardProps> = ({
                 {t('forum.post.confirmNo')}
               </button>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

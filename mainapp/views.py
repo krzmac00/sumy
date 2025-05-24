@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
-from rest_framework import viewsets, generics, filters, status
+from rest_framework import viewsets, generics, filters, status, permissions
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.db import transaction
@@ -10,6 +10,7 @@ from .models import Event
 from .serializers import EventSerializer
 from .forms import EventForm
 from .post import create_thread
+from .permissions import IsOwnerOrReadOnly
 
 # ---------- COMMON HOME ----------
 def home(request):
@@ -78,37 +79,39 @@ def event_list(request):
 class PostListCreateAPIView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    
+    # No permission class needed here since we want to allow anyone to create posts
+    # But users can only edit/delete their own posts (handled in PostRetrieveUpdateDestroyAPIView)
+
     def create(self, request, *args, **kwargs):
         try:
             print("Post creation request data:", request.data)
-            
+
             # Make a mutable copy of the request data
             request_data = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
-            
+
             # Ensure nickname is not blank
             if 'nickname' not in request_data or not request_data['nickname']:
                 request_data['nickname'] = 'Anonymous User'
-            
+
             # Get replying_to ids if present and remove from request data temporarily
             replying_to_ids = request_data.get('replying_to', [])
             if 'replying_to' in request_data:
                 del request_data['replying_to']
-            
+
             # Create serializer without replying_to
             serializer = self.get_serializer(data=request_data)
-            
+
             if not serializer.is_valid():
                 print("Serializer validation errors:", serializer.errors)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
+
             # Add user and is_anonymous
             user = request.user if request.user.is_authenticated else None
             is_anonymous = request_data.get('is_anonymous', False)
-            
+
             # Save the post
             post = serializer.save(user=user, is_anonymous=is_anonymous)
-            
+
             # Add replying_to after post is created
             if replying_to_ids:
                 # Convert string IDs to integers if needed
@@ -118,14 +121,14 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
                     except (ValueError, TypeError):
                         pass  # Keep original if conversion fails
                 post.replying_to.set(replying_to_ids)
-            
+
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        
+
         except Exception as e:
             print(f"Error creating post: {str(e)}")
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-            
+
     def perform_create(self, serializer):
         user = self.request.user if self.request.user.is_authenticated else None
         is_anonymous = self.request.data.get('is_anonymous', False)
@@ -134,6 +137,7 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
 class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [IsOwnerOrReadOnly]
 
     def perform_update(self, serializer):
         serializer.save(was_edited=True)
@@ -149,6 +153,30 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
 class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Thread.objects.all()
     serializer_class = ThreadSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+    def get_object(self):
+        obj = super().get_object()
+        # For permissions, we need to check if the requester is the thread author
+        # This is a workaround since Thread model's primary key is from Post model
+        # and the actual author is in thread_author field
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def check_object_permissions(self, request, obj):
+        # For safe methods, allow anyone
+        if request.method in permissions.SAFE_METHODS:
+            return
+
+        # For write methods, check if the user is the thread author
+        if not request.user.is_authenticated:
+            self.permission_denied(request)
+
+        if obj.thread_author and obj.thread_author != request.user:
+            self.permission_denied(
+                request,
+                message="You do not have permission to modify this thread. Only the thread creator can modify it."
+            )
 
 @api_view(['POST'])
 def create_thread_with_post(request):
