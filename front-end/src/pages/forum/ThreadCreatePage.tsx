@@ -5,7 +5,7 @@ import MainLayout from '../../layouts/MainLayout';
 import { threadAPI } from '../../services/api';
 import { ThreadCreateData } from '../../types/forum';
 import { useAuth } from '../../contexts/AuthContext';
-import { THREAD_CATEGORIES, getTranslatedCategories } from '../../utils/categories';
+import { getTranslatedCategories } from '../../utils/categories';
 import './ThreadCreatePage.css';
 
 const ThreadCreatePage: React.FC = () => {

@@ -92,8 +92,8 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread }) => {
       
       <div className="thread-content">
         <div className="thread-header">
-          <Link to={`/forum/category/${thread.category}`} className="thread-category">
-            r/{translateCategory(thread.category, t)}
+          <Link to={`/forum?category=${thread.category}`} className="thread-category">
+            {translateCategory(thread.category, t)}
           </Link>
           <span className="thread-separator">•</span>
           <img src={userImagePath} alt="User" className="thread-author-image" />

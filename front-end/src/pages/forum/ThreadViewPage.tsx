@@ -162,7 +162,9 @@ const ThreadViewPage: React.FC = () => {
           <Link to="/forum" className="back-to-forum-link">
             ← {t('forum.backToList')}
           </Link>
-          <div className="thread-category">{translateCategory(thread.category, t)}</div>
+          <Link to={`/forum?category=${thread.category}`} className="thread-category">
+            {translateCategory(thread.category, t)}
+          </Link>
         </div>
         
         {/* Original Post as Thread Card */}
@@ -187,8 +189,8 @@ const ThreadViewPage: React.FC = () => {
           
           <div className="thread-content">
             <div className="thread-header">
-              <Link to={`/forum/category/${thread.category}`} className="thread-category">
-                r/{translateCategory(thread.category, t)}
+              <Link to={`/forum?category=${thread.category}`} className="thread-category">
+                {translateCategory(thread.category, t)}
               </Link>
               <span className="thread-separator">•</span>
               <img src={userImagePath} alt="User" className="thread-author-image" />

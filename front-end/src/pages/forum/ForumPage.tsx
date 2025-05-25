@@ -11,6 +11,7 @@ const ForumPage: React.FC = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  // Category filtering is handled by ThreadList component via URL params
 
   const fetchThreads = useCallback(async () => {
     try {
@@ -71,6 +72,7 @@ const ForumPage: React.FC = () => {
           loading={loading}
           error={error}
           onRefresh={fetchThreads}
+          onCategoryChange={() => {}} // URL state is managed by ThreadList itself
         />
       </div>
     </MainLayout>

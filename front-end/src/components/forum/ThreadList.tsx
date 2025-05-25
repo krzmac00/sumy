@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Thread } from '../../types/forum';
 import ThreadCard from './ThreadCard';
+import { getTranslatedCategories, translateCategory } from '../../utils/categories';
 import './ThreadList.css';
 
 interface ThreadListProps {
@@ -10,19 +11,36 @@ interface ThreadListProps {
   loading: boolean;
   error: string | null;
   onRefresh?: () => void;
+  onCategoryChange?: (category: string) => void;
 }
 
-const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error /* onRefresh */ }) => {
+const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error, onCategoryChange /* onRefresh */ }) => {
   const { t } = useTranslation();
-  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryFilter = searchParams.get('category') || '';
   
-  // Get unique categories for filter
-  const uniqueCategories = Array.from(new Set(threads.map(thread => thread.category)));
+  // Get translated categories for the dropdown
+  const translatedCategories = getTranslatedCategories(t);
   
   // Filter threads by category if a filter is selected
   const filteredThreads = categoryFilter 
     ? threads.filter(thread => thread.category === categoryFilter) 
     : threads;
+
+  // Handle category filter change
+  const handleCategoryChange = (newCategory: string) => {
+    if (newCategory) {
+      setSearchParams({ category: newCategory });
+    } else {
+      setSearchParams({});
+    }
+    onCategoryChange?.(newCategory);
+  };
+
+  // Sync with parent component when category changes
+  useEffect(() => {
+    onCategoryChange?.(categoryFilter);
+  }, [categoryFilter, onCategoryChange]);
 
   if (loading) {
     return <div className="loading-indicator">{t('forum.loading')}</div>;
@@ -42,11 +60,11 @@ const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error /* onRe
             <select 
               id="category-select"
               value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
             >
               <option value="">{t('forum.filter.allCategories')}</option>
-              {uniqueCategories.map(category => (
-                <option key={category} value={category}>{category}</option>
+              {translatedCategories.map(category => (
+                <option key={category.value} value={category.value}>{category.label}</option>
               ))}
             </select>
           </div>
@@ -59,7 +77,7 @@ const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error /* onRe
       {filteredThreads.length === 0 ? (
         <div className="no-threads-message">
           {categoryFilter 
-            ? t('forum.threadList.noThreadsInCategory', { category: categoryFilter }) 
+            ? t('forum.threadList.noThreadsInCategory', { category: translateCategory(categoryFilter, t) }) 
             : t('forum.threadList.noThreads')}
         </div>
       ) : (
