@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Thread } from '../../types/forum';
+import ThreadCard from './ThreadCard';
+import './ThreadList.css';
 
 interface ThreadListProps {
   threads: Thread[];
@@ -10,18 +12,7 @@ interface ThreadListProps {
   onRefresh?: () => void;
 }
 
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('default', { 
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date);
-};
-
-const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error }) => {
+const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error /* onRefresh */ }) => {
   const { t } = useTranslation();
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   
@@ -74,30 +65,7 @@ const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error }) => {
       ) : (
         <div className="thread-list">
           {filteredThreads.map(thread => (
-            <div key={thread.post} className="thread-item">
-              <div className="thread-main-info">
-                <h3 className="thread-title">
-                  <Link to={`/forum/threads/${thread.post}`}>{thread.title}</Link>
-                </h3>
-                <div className="thread-meta">
-                  <span className="thread-category">{thread.category}</span>
-                  <span className="thread-author">
-                    {t('forum.threadList.by')} {thread.author_display_name || thread.nickname}
-                    {thread.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
-                  </span>
-                </div>
-              </div>
-              <div className="thread-activity">
-                <div className="post-count">
-                  {thread.posts.length} {thread.posts.length === 1 
-                    ? t('forum.threadList.post') 
-                    : t('forum.threadList.posts')}
-                </div>
-                <div className="last-activity">
-                  {t('forum.threadList.lastActivity')}: {formatDate(thread.last_activity_date)}
-                </div>
-              </div>
-            </div>
+            <ThreadCard key={thread.post} thread={thread} />
           ))}
         </div>
       )}

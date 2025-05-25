@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import MainLayout from '../../layouts/MainLayout';
-import RedditThreadList from '../../components/forum/RedditThreadList';
+import ThreadList from '../../components/forum/ThreadList';
 import { Thread } from '../../types/forum';
 import { threadAPI } from '../../services/api';
 import './ForumPage.css';
@@ -66,7 +66,7 @@ const ForumPage: React.FC = () => {
           <p className="forum-description">{t('forum.description')}</p>
         </div>
         
-        <RedditThreadList
+        <ThreadList
           threads={threads}
           loading={loading}
           error={error}

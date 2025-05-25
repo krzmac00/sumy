@@ -1,231 +1,273 @@
-.post-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fff;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: relative;
-}
+/* Merged CSS from PostCard.css and RedditPostCard.css with reddit- prefixes removed */
 
-.post-card.original-post {
-  border-left: 4px solid #007bff;
-  background-color: #f8f9fa;
-}
-
-.post-header {
+.thread-card {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.post-author {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.anonymous-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 6px;
-  background-color: #f0f0f0;
-  color: #666;
+  background-color: white;
   border-radius: 4px;
-  font-size: 0.75rem;
-  font-style: italic;
-  font-weight: normal;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #ccc;
 }
 
-.post-meta {
+.thread-card.original-post {
+  border-left: 3px solid #8b0002;
+  background-color: #fafafa;
+}
+
+.vote-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  background-color: #f8f9fa;
+  color: #878a8c;
+  min-width: 40px;
+}
+
+.vote-count {
+  font-weight: bold;
+  font-size: 12px;
+  margin: 4px 0;
+}
+
+.upvote-button, .downvote-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #878a8c;
+  padding: 0;
+  font-size: 18px;
+}
+
+.upvote-button:hover, .upvote-active {
+  color: #ff4500;
+}
+
+.downvote-button:hover, .downvote-active {
+  color: #7193ff;
+}
+
+.thread-content {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.thread-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #666;
-  font-size: 0.85rem;
+  font-size: 12px;
+  color: #787c7e;
+  margin-bottom: 8px;
 }
 
-.post-edited {
-  color: #666;
-  font-style: italic;
-  font-size: 0.85rem;
+.thread-category {
+  font-weight: bold;
+  color: #8b0002;
+  margin-right: 8px;
+  text-decoration: none;
+}
+
+.thread-category:hover {
+  text-decoration: underline;
+}
+
+.thread-author {
+  margin-right: 4px;
+  font-weight: 500;
+}
+
+.thread-separator {
+  margin: 0 4px;
+}
+
+.thread-time {
+  white-space: nowrap;
 }
 
 .post-content {
-  margin-bottom: 16px;
+  color: #222;
+  font-size: 14px;
   line-height: 1.5;
-  overflow-wrap: break-word;
-  word-break: break-word;
+  margin-bottom: 12px;
 }
 
-.post-actions {
+.thread-footer {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 12px;
-  border-top: 1px solid #eee;
-  padding-top: 12px;
+  font-size: 12px;
+  color: #878a8c;
+  margin-top: auto;
 }
 
-.post-action-button {
-  padding: 6px 12px;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  color: #495057;
-  font-size: 0.9rem;
+.thread-action {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
   cursor: pointer;
-  transition: all 0.2s;
-}
-
-.post-action-button:hover {
-  background-color: #e9ecef;
-}
-
-.post-action-button.delete {
-  color: #dc3545;
-}
-
-.post-action-button.delete:hover {
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-}
-
-.delete-confirmation {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #dc3545;
-  font-size: 0.9rem;
-}
-
-.confirm-delete-yes,
-.confirm-delete-no {
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 0.85rem;
-  cursor: pointer;
 }
 
-.confirm-delete-yes {
-  background-color: #dc3545;
-  color: white;
-  border: none;
+.thread-action:hover {
+  background-color: #f2f2f2;
+  color: #8b0002;
 }
 
-.confirm-delete-no {
-  background-color: #6c757d;
-  color: white;
-  border: none;
+.thread-action-icon {
+  margin-right: 4px;
 }
 
-.post-edit-form {
+.anonymous-badge {
+  background-color: #e9e9e9;
+  color: #666;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 2px;
+  margin-left: 4px;
+}
+
+.thread-author-image {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.post-edited {
+  font-style: italic;
+  font-size: 11px;
+}
+
+/* Replied to section */
+.replied-to-container {
+  background-color: #f6f7f8;
+  border-radius: 4px;
+  padding: 8px;
   margin-bottom: 12px;
+  border-left: 2px solid #8b0002;
+}
+
+.replied-to-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.replied-to-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.replied-to-post {
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.replied-to-author {
+  font-weight: 500;
+  color: #8b0002;
+}
+
+.replied-to-preview {
+  color: #666;
+  font-style: italic;
+}
+
+/* Reply references */
+.replying-posts-info {
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #8b0002;
+  font-weight: 500;
+}
+
+/* Edit form */
+.post-edit-form {
+  margin-bottom: 8px;
 }
 
 .post-edit-textarea {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ced4da;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  font-family: inherit;
-  font-size: inherit;
+  padding: 8px;
+  margin-bottom: 8px;
   resize: vertical;
-  margin-bottom: 10px;
+  font-family: inherit;
 }
 
-.post-edit-error {
-  color: #dc3545;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
+.post-edit-error, .post-error {
+  color: #8b0002;
+  margin-bottom: 8px;
+  font-size: 12px;
+  width: 100%;
 }
 
 .post-edit-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 8px;
 }
 
 .post-edit-cancel,
 .post-edit-save {
   padding: 6px 12px;
   border-radius: 4px;
+  border: none;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .post-edit-cancel {
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  color: #495057;
+  background-color: #f2f2f2;
+  color: #666;
 }
 
 .post-edit-save {
-  background-color: #28a745;
-  border: none;
+  background-color: #8b0002;
   color: white;
 }
 
-.replied-to-container {
-  background-color: #f8f9fa;
-  border-left: 3px solid #6c757d;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 0 4px 4px 0;
-}
-
-.replied-to-label {
-  font-size: 0.85rem;
-  color: #6c757d;
-  margin-bottom: 5px;
-}
-
-.replied-to-posts {
+.delete-confirmation {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
   gap: 8px;
 }
 
-.replied-to-post {
-  font-size: 0.9rem;
+.confirm-delete-yes,
+.confirm-delete-no {
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
 }
 
-.replied-to-author {
-  font-weight: 600;
-  margin-right: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.confirm-delete-yes {
+  background-color: #8b0002;
+  color: white;
 }
 
-.replied-to-preview {
-  color: #495057;
-  font-style: italic;
-}
-
-.replying-posts-info {
-  position: absolute;
-  top: -8px;
-  right: 20px;
-  background-color: #e9ecef;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
+.confirm-delete-no {
+  background-color: #f2f2f2;
+  color: #666;
 }
 
 /* Responsive styles */
 @media (max-width: 576px) {
-  .post-header {
+  .thread-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
   
-  .post-actions {
+  .thread-footer {
     flex-wrap: wrap;
   }
   

@@ -6,13 +6,13 @@ import { formatTimeAgo } from '../../utils/dateUtils';
 import { translateCategory } from '../../utils/categories';
 import { useAuth } from '../../contexts/AuthContext';
 import { threadAPI } from '../../services/api';
-import './RedditThreadCard.css';
+import './ThreadCard.css';
 
-interface RedditThreadCardProps {
+interface ThreadCardProps {
   thread: Thread;
 }
 
-const RedditThreadCard: React.FC<RedditThreadCardProps> = ({ thread }) => {
+const ThreadCard: React.FC<ThreadCardProps> = ({ thread }) => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ const RedditThreadCard: React.FC<RedditThreadCardProps> = ({ thread }) => {
   const userImagePath = "/user_default_image.png";
   
   return (
-    <div className="reddit-thread-card">
+    <div className="thread-card">
       <div className="vote-section">
         <button 
           className={`upvote-button ${voteStatus === 'up' ? 'upvote-active' : ''}`}
@@ -188,4 +188,4 @@ const RedditThreadCard: React.FC<RedditThreadCardProps> = ({ thread }) => {
   );
 };
 
-export default RedditThreadCard;
+export default ThreadCard;
