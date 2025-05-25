@@ -83,7 +83,7 @@ const ThreadList: React.FC<ThreadListProps> = ({ threads, loading, error, onCate
       ) : (
         <div className="thread-list">
           {filteredThreads.map(thread => (
-            <ThreadCard key={thread.post} thread={thread} />
+            <ThreadCard key={thread.id} thread={thread} />
           ))}
         </div>
       )}

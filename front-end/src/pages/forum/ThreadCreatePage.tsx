@@ -92,8 +92,8 @@ const ThreadCreatePage: React.FC = () => {
       
       const newThread = await threadAPI.create(threadData);
       
-      // Redirect to the new thread using post_id which is the thread's primary key
-      navigate(`/forum/threads/${newThread.post}`);
+      // Redirect to the new thread using thread id
+      navigate(`/forum/threads/${newThread.id}`);
     } catch (err) {
       console.error('Error creating thread:', err);
       setError(t('forum.create.error'));

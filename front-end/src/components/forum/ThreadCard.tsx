@@ -48,13 +48,13 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread }) => {
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(`/forum/threads/${thread.post}/edit`);
+    navigate(`/forum/threads/${thread.id}/edit`);
   };
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
-      await threadAPI.delete(thread.post);
+      await threadAPI.delete(thread.id);
       navigate('/forum');
     } catch (err) {
       console.error('Error deleting thread:', err);
@@ -106,7 +106,7 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread }) => {
         </div>
         
         <h3 className="thread-title">
-          <Link to={`/forum/threads/${thread.post}`}>{thread.title}</Link>
+          <Link to={`/forum/threads/${thread.id}`}>{thread.title}</Link>
         </h3>
         
         <div className="thread-description">

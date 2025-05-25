@@ -18,18 +18,22 @@ export interface Post {
  * Interface for Thread model
  */
 export interface Thread {
-  post: number; // Post ID (primary key)
+  id: number; // Thread ID (primary key)
   category: string;
   title: string;
+  content: string; // Thread content
+  nickname: string; // Thread author nickname
   visible_for_teachers: boolean;
   can_be_answered: boolean;
   last_activity_date: string; // ISO datetime string
-  nickname: string; // From associated post
-  content: string; // From associated post
+  date: string; // Thread creation date
   posts: Post[]; // Related posts
   user?: number | null; // User ID of the thread author
   is_anonymous: boolean;
   author_display_name: string; // Display name (either user's name or nickname)
+  
+  // Legacy field for backward compatibility during migration
+  post?: number; // Legacy post ID reference
 }
 
 /**

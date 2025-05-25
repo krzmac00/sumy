@@ -39,92 +39,56 @@ class PostSerializer(serializers.ModelSerializer):
                   'thread', 'replying_to', 'replies', 'is_anonymous', 'user_display_name']
 
 class Thread(models.Model):
-    post = models.OneToOneField(Post, on_delete=models.CASCADE, primary_key=True, related_name='thread_details')
-    category = models.CharField(max_length=63)
+    # Primary key (auto-generated)
+    id = models.AutoField(primary_key=True)
+    
+    # Thread content and metadata
     title = models.CharField(max_length=1023)
+    content = models.TextField()
+    category = models.CharField(max_length=63)
+    
+    # Author information
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
+                              related_name='authored_threads', null=True, blank=True)
+    nickname = models.CharField(max_length=63, default="Anonymous User")
+    is_anonymous = models.BooleanField(default=False)
+    
+    # Thread settings
     visible_for_teachers = models.BooleanField(default=False)
     can_be_answered = models.BooleanField(default=True)
+    
+    # Timestamps
+    created_date = models.DateTimeField(auto_now_add=True)
     last_activity_date = models.DateTimeField(auto_now=True)
     
-    # Fields for the new model schema - will be properly migrated in a separate step
-    content = models.TextField(null=True, blank=True)
-    thread_author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
-                            related_name='authored_threads', null=True, blank=True)
-    thread_nickname = models.CharField(max_length=63, null=True, blank=True)
-    thread_is_anonymous = models.BooleanField(null=True, blank=True)
-    thread_date = models.DateTimeField(null=True, blank=True)
+    def __str__(self):
+        return f"{self.title} ({self.category})"
 class ThreadSerializer(serializers.ModelSerializer):
-    nickname = serializers.SerializerMethodField()
-    content = serializers.SerializerMethodField()
-    is_anonymous = serializers.SerializerMethodField()
+    posts = PostSerializer(many=True, read_only=True)
+    author_display_name = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
-    author_display_name = serializers.SerializerMethodField()
-    posts = PostSerializer(many=True, read_only=True)
-    
-    def get_nickname(self, obj):
-        # Prefer the dedicated thread nickname field if available
-        if obj.thread_nickname:
-            return obj.thread_nickname
-        # Fall back to the associated post's nickname
-        return obj.post.nickname if obj.post else "Anonymous"
-    
-    def get_content(self, obj):
-        # Prefer the dedicated thread content field if available
-        if obj.content:
-            return obj.content
-        # Fall back to the associated post's content
-        return obj.post.content if obj.post else ""
-    
-    def get_is_anonymous(self, obj):
-        # Prefer the dedicated thread is_anonymous field if available
-        if obj.thread_is_anonymous is not None:
-            return obj.thread_is_anonymous
-        # Fall back to the associated post's is_anonymous
-        return obj.post.is_anonymous if obj.post else False
-    
-    def get_date(self, obj):
-        # Prefer the dedicated thread date field if available
-        if obj.thread_date:
-            return obj.thread_date
-        # Fall back to the associated post's date
-        return obj.post.date if obj.post else obj.last_activity_date
-    
-    def get_user(self, obj):
-        # Prefer the dedicated thread author field if available
-        if obj.thread_author:
-            return obj.thread_author.id
-        # Fall back to the associated post's user
-        return obj.post.user.id if obj.post and obj.post.user else None
     
     def get_author_display_name(self, obj):
-        # Use thread-specific fields if available
-        if obj.thread_is_anonymous:
-            return obj.thread_nickname
-        elif obj.thread_author:
-            if obj.thread_author.role == 'student':
-                return f"{obj.thread_author.first_name} {obj.thread_author.last_name} {obj.thread_author.login}"
+        if obj.is_anonymous:
+            return obj.nickname
+        elif obj.author:
+            if obj.author.role == 'student':
+                return f"{obj.author.first_name} {obj.author.last_name} {obj.author.login}"
             else:
-                return f"{obj.thread_author.first_name} {obj.thread_author.last_name}"
-        
-        # Fall back to associated post behavior
-        if hasattr(obj, 'post') and obj.post:
-            if obj.post.is_anonymous:
-                return obj.post.nickname
-            elif obj.post.user:
-                if obj.post.user.role == 'student':
-                    return f"{obj.post.user.first_name} {obj.post.user.last_name} {obj.post.user.login}"
-                else:
-                    return f"{obj.post.user.first_name} {obj.post.user.last_name}"
-            else:
-                return obj.post.nickname
-        
-        return "Anonymous"
+                return f"{obj.author.first_name} {obj.author.last_name}"
+        return obj.nickname or "Anonymous"
+    
+    def get_date(self, obj):
+        return obj.created_date or obj.last_activity_date
+    
+    def get_user(self, obj):
+        return obj.author.id if obj.author else None
             
     class Meta:
         model = Thread
         fields = [
-            'post', 'category', 'title', 'content', 'nickname', 'date',
+            'id', 'category', 'title', 'content', 'nickname', 'date',
             'visible_for_teachers', 'can_be_answered', 'last_activity_date',
             'posts', 'is_anonymous', 'user', 'author_display_name'
         ]
@@ -188,60 +152,57 @@ def delete_post(post_id, user=None):
     except Post.DoesNotExist:
         return False, "Post not found"
 
-def create_thread(nickname, content, category, title, visibleforteachers, canbeanswered, user=None, is_anonymous=False):
-    # Create placeholder post for compatibility
-    post = Post.objects.create(
-        nickname="Placeholder", 
-        content="This is a placeholder post for thread compatibility",
-        user=None,
-        is_anonymous=True
-    )
-    
-    # Create thread with both old and new fields
+def create_thread(title, content, category, nickname=None, visible_for_teachers=False, 
+                 can_be_answered=True, user=None, is_anonymous=False):
+    """Create a new thread without placeholder posts."""
     thread = Thread.objects.create(
-        post=post,
-        category=category,
         title=title,
+        content=content,
+        category=category,
+        nickname=nickname or "Anonymous User",
+        visible_for_teachers=visible_for_teachers,
+        can_be_answered=can_be_answered,
+        author=user,
+        is_anonymous=is_anonymous
+    )
+    return thread.id
+
+# Legacy function for backward compatibility during migration
+def create_thread_legacy(nickname, content, category, title, visibleforteachers, canbeanswered, user=None, is_anonymous=False):
+    """Legacy create_thread function for backward compatibility during migration."""
+    return create_thread(
+        title=title,
+        content=content,
+        category=category,
+        nickname=nickname,
         visible_for_teachers=visibleforteachers,
         can_be_answered=canbeanswered,
-        # New fields
-        content=content,
-        thread_author=user,
-        thread_nickname=nickname,
-        thread_is_anonymous=is_anonymous,
-        thread_date=timezone.now()
+        user=user,
+        is_anonymous=is_anonymous
     )
-    
-    return thread.post.id
 
 def get_thread(thread_id):
     try:
-        thread = Thread.objects.get(post_id=thread_id)
-        
-        # Use new fields if available, otherwise fall back to post fields
-        nickname = thread.thread_nickname if thread.thread_nickname else thread.post.nickname
-        content = thread.content if thread.content else thread.post.content
-        is_anonymous = thread.thread_is_anonymous if thread.thread_is_anonymous is not None else thread.post.is_anonymous
-        date = thread.thread_date if thread.thread_date else thread.post.date
+        thread = Thread.objects.get(id=thread_id)
         
         return {
-            "id": thread.post.id,
+            "id": thread.id,
             "category": thread.category,
             "title": thread.title,
             "visible_for_teachers": thread.visible_for_teachers,
             "can_be_answered": thread.can_be_answered,
             "last_activity_date": thread.last_activity_date,
-            "nickname": nickname,
-            "content": content,
-            "is_anonymous": is_anonymous,
-            "date": date
+            "nickname": thread.nickname,
+            "content": thread.content,
+            "is_anonymous": thread.is_anonymous,
+            "date": thread.created_date
         }
     except Thread.DoesNotExist:
         return None
 
 def update_thread(thread_id, new_title=None, new_content=None):
     try:
-        thread = Thread.objects.get(post_id=thread_id)
+        thread = Thread.objects.get(id=thread_id)
         if new_title:
             thread.title = new_title
         if new_content:
@@ -251,12 +212,9 @@ def update_thread(thread_id, new_title=None, new_content=None):
         pass
 
 def delete_thread(thread_id):
-    # Find the thread and delete both it and its post
     try:
-        thread = Thread.objects.get(post_id=thread_id)
-        post_id = thread.post.id
+        thread = Thread.objects.get(id=thread_id)
         thread.delete()
-        Post.objects.filter(id=post_id).delete()
     except Thread.DoesNotExist:
         pass
 

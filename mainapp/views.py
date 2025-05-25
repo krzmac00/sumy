@@ -171,8 +171,8 @@ class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         # For write methods, check if the user is the thread author
         if not request.user.is_authenticated:
             self.permission_denied(request)
-
-        if obj.thread_author and obj.thread_author != request.user:
+            
+        if obj.author and obj.author != request.user:
             self.permission_denied(
                 request,
                 message="You do not have permission to modify this thread. Only the thread creator can modify it."
@@ -205,16 +205,16 @@ def create_thread_with_post(request):
             
         with transaction.atomic():
             thread_id = create_thread(
-                nickname=nickname,
+                title=data['title'],
                 content=data['content'],
                 category=data['category'],
-                title=data['title'],
-                visibleforteachers=data.get('visible_for_teachers', False),
-                canbeanswered=data.get('can_be_answered', True),
+                nickname=nickname,
+                visible_for_teachers=data.get('visible_for_teachers', False),
+                can_be_answered=data.get('can_be_answered', True),
                 user=user,
                 is_anonymous=is_anonymous
             )
-            thread = Thread.objects.get(post_id=thread_id)
+            thread = Thread.objects.get(id=thread_id)
             thread_data = ThreadSerializer(thread).data
 
             return Response(thread_data, status=status.HTTP_201_CREATED)

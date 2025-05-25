@@ -32,12 +32,24 @@ const ThreadViewPage: React.FC = () => {
   }, [threadId]);
 
   const fetchThread = async () => {
-    if (!threadId) return;
+    if (!threadId) {
+      setError(t('forum.error.invalidThreadId'));
+      setLoading(false);
+      return;
+    }
+    
+    // Validate that threadId is a valid number
+    const threadIdNum = parseInt(threadId);
+    if (isNaN(threadIdNum) || threadIdNum <= 0) {
+      setError(t('forum.error.invalidThreadId'));
+      setLoading(false);
+      return;
+    }
     
     try {
       setLoading(true);
       setError(null);
-      const threadData = await threadAPI.getOne(parseInt(threadId));
+      const threadData = await threadAPI.getOne(threadIdNum);
       setThread(threadData);
     } catch (err) {
       console.error('Error fetching thread:', err);
