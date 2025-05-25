@@ -5,7 +5,7 @@ import MainLayout from '../../layouts/MainLayout';
 import PostCard from '../../components/forum/PostCard';
 import ReplyForm from '../../components/forum/ReplyForm';
 import { Thread, Post } from '../../types/forum';
-import { threadAPI } from '../../services/api';
+import { threadAPI, voteAPI } from '../../services/api';
 import { formatTimeAgo } from '../../utils/dateUtils';
 import { translateCategory } from '../../utils/categories';
 import './ThreadViewPage.css';
@@ -21,8 +21,9 @@ const ThreadViewPage: React.FC = () => {
   const [showReplyForm, setShowReplyForm] = useState<boolean>(false);
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
   const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
-  const [voteStatus, setVoteStatus] = useState<'up' | 'down' | null>(null);
-  const [voteCount, setVoteCount] = useState<number>(Math.floor(Math.random() * 100));
+  const [voteStatus, setVoteStatus] = useState<'upvote' | 'downvote' | null>(null);
+  const [voteCount, setVoteCount] = useState<number>(0);
+  const [voting, setVoting] = useState<boolean>(false);
 
   // Default user image path
   const userImagePath = "/user_default_image.png";
@@ -51,6 +52,10 @@ const ThreadViewPage: React.FC = () => {
       setError(null);
       const threadData = await threadAPI.getOne(threadIdNum);
       setThread(threadData);
+      
+      // Initialize voting state from thread data
+      setVoteCount(threadData.vote_count || 0);
+      setVoteStatus(threadData.user_vote || null);
     } catch (err) {
       console.error('Error fetching thread:', err);
       setError(t('forum.error.fetchThread'));
@@ -105,26 +110,42 @@ const ThreadViewPage: React.FC = () => {
     setReplyingTo([]);
   };
 
-  const handleUpvote = (e: React.MouseEvent) => {
+  const handleThreadVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
     e.preventDefault();
-    if (voteStatus === 'up') {
-      setVoteStatus(null);
-      setVoteCount(prev => prev - 1);
-    } else {
-      setVoteStatus('up');
-      setVoteCount(prev => prev + (voteStatus === 'down' ? 2 : 1));
+    
+    if (!thread) return;
+    
+    if (!thread.can_vote) {
+      setError(t('forum.error.cannotVoteOwnThread'));
+      return;
+    }
+
+    if (voting) return;
+
+    try {
+      setVoting(true);
+      setError(null);
+      
+      const response = await voteAPI.voteThread(thread.id, voteType);
+      
+      setVoteCount(response.vote_count);
+      setVoteStatus(response.user_vote);
+      
+    } catch (err) {
+      console.error('Error voting on thread:', err);
+      setError(err instanceof Error ? err.message : t('forum.error.voteGeneric'));
+    } finally {
+      setVoting(false);
     }
   };
 
-  const handleDownvote = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (voteStatus === 'down') {
-      setVoteStatus(null);
-      setVoteCount(prev => prev + 1);
-    } else {
-      setVoteStatus('down');
-      setVoteCount(prev => prev - (voteStatus === 'up' ? 2 : 1));
-    }
+  const handleUpvote = (e: React.MouseEvent) => handleThreadVote('upvote', e);
+  const handleDownvote = (e: React.MouseEvent) => handleThreadVote('downvote', e);
+
+  const handlePostVoteUpdate = (postId: number, newVoteCount: number, userVote: 'upvote' | 'downvote' | null) => {
+    // Optionally update local state or just let the PostCard handle its own state
+    // This callback can be used for any global state management if needed
+    console.log(`Post ${postId} vote updated: ${newVoteCount} (${userVote})`);
   };
 
   if (loading) {
@@ -183,16 +204,18 @@ const ThreadViewPage: React.FC = () => {
         <div className="thread-card original-post">
           <div className="vote-section">
             <button 
-              className={`upvote-button ${voteStatus === 'up' ? 'upvote-active' : ''}`}
+              className={`upvote-button ${voteStatus === 'upvote' ? 'upvote-active' : ''} ${!thread.can_vote || voting ? 'vote-disabled' : ''}`}
               onClick={handleUpvote}
+              disabled={!thread.can_vote || voting}
               aria-label={t('forum.action.upvote')}
             >
               ▲
             </button>
             <span className="vote-count">{voteCount}</span>
             <button 
-              className={`downvote-button ${voteStatus === 'down' ? 'downvote-active' : ''}`}
+              className={`downvote-button ${voteStatus === 'downvote' ? 'downvote-active' : ''} ${!thread.can_vote || voting ? 'vote-disabled' : ''}`}
               onClick={handleDownvote}
+              disabled={!thread.can_vote || voting}
               aria-label={t('forum.action.downvote')}
             >
               ▼
@@ -335,6 +358,7 @@ const ThreadViewPage: React.FC = () => {
                     onReply={handleReply}
                     onReplyMultiple={() => {}}
                     onRefresh={fetchThread}
+                    onVoteUpdate={handlePostVoteUpdate}
                   />
                 </div>
               ))}

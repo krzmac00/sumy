@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Post } from '../../types/forum';
-import { postAPI } from '../../services/api';
+import { postAPI, voteAPI } from '../../services/api';
 import { formatTimeAgo } from '../../utils/dateUtils';
 import { useAuth } from '../../contexts/AuthContext';
 import './PostCard.css';
@@ -14,6 +14,7 @@ interface PostCardProps {
   onReply: (postId: number) => void;
   onReplyMultiple: (selectedPostIds: number[]) => void;
   onRefresh: () => void;
+  onVoteUpdate?: (postId: number, newVoteCount: number, userVote: 'upvote' | 'downvote' | null) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -23,7 +24,8 @@ const PostCard: React.FC<PostCardProps> = ({
   allPosts,
   onReply,
   // onReplyMultiple,
-  onRefresh
+  onRefresh,
+  onVoteUpdate
 }) => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
@@ -31,8 +33,9 @@ const PostCard: React.FC<PostCardProps> = ({
   const [editContent, setEditContent] = useState<string>(post.content);
   const [error, setError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState<boolean>(false);
-  const [voteStatus, setVoteStatus] = useState<'up' | 'down' | null>(null);
-  const [voteCount, setVoteCount] = useState<number>(Math.floor(Math.random() * 50));
+  const [voteStatus, setVoteStatus] = useState<'upvote' | 'downvote' | null>(post.user_vote);
+  const [voteCount, setVoteCount] = useState<number>(post.vote_count);
+  const [voting, setVoting] = useState<boolean>(false);
 
   // Check if current user is the post creator
   const isPostCreator = currentUser && post.user === currentUser.id;
@@ -40,27 +43,43 @@ const PostCard: React.FC<PostCardProps> = ({
   // Default user image path
   const userImagePath = "/user_default_image.png";
 
-  const handleUpvote = (e: React.MouseEvent) => {
+  const handleVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
     e.preventDefault();
-    if (voteStatus === 'up') {
-      setVoteStatus(null);
-      setVoteCount(prev => prev - 1);
-    } else {
-      setVoteStatus('up');
-      setVoteCount(prev => prev + (voteStatus === 'down' ? 2 : 1));
+    
+    if (!currentUser) {
+      setError(t('forum.error.loginRequired'));
+      return;
+    }
+
+    if (!post.can_vote) {
+      setError(t('forum.error.cannotVoteOwnPost'));
+      return;
+    }
+
+    if (voting) return;
+
+    try {
+      setVoting(true);
+      setError(null);
+      
+      const response = await voteAPI.votePost(post.id, voteType);
+      
+      setVoteCount(response.vote_count);
+      setVoteStatus(response.user_vote);
+      
+      // Notify parent component of vote update
+      onVoteUpdate?.(post.id, response.vote_count, response.user_vote);
+      
+    } catch (err) {
+      console.error('Error voting on post:', err);
+      setError(err instanceof Error ? err.message : t('forum.error.voteGeneric'));
+    } finally {
+      setVoting(false);
     }
   };
 
-  const handleDownvote = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (voteStatus === 'down') {
-      setVoteStatus(null);
-      setVoteCount(prev => prev + 1);
-    } else {
-      setVoteStatus('down');
-      setVoteCount(prev => prev - (voteStatus === 'up' ? 2 : 1));
-    }
-  };
+  const handleUpvote = (e: React.MouseEvent) => handleVote('upvote', e);
+  const handleDownvote = (e: React.MouseEvent) => handleVote('downvote', e);
 
   const handleEditSubmit = async () => {
     if (!editContent.trim()) {
@@ -103,16 +122,18 @@ const PostCard: React.FC<PostCardProps> = ({
     <div className={`thread-card ${isOriginalPost ? 'original-post' : ''}`}>
       <div className="vote-section">
         <button 
-          className={`upvote-button ${voteStatus === 'up' ? 'upvote-active' : ''}`}
+          className={`upvote-button ${voteStatus === 'upvote' ? 'upvote-active' : ''} ${!post.can_vote || voting ? 'vote-disabled' : ''}`}
           onClick={handleUpvote}
+          disabled={!post.can_vote || voting}
           aria-label={t('forum.action.upvote')}
         >
           ▲
         </button>
         <span className="vote-count">{voteCount}</span>
         <button 
-          className={`downvote-button ${voteStatus === 'down' ? 'downvote-active' : ''}`}
+          className={`downvote-button ${voteStatus === 'downvote' ? 'downvote-active' : ''} ${!post.can_vote || voting ? 'vote-disabled' : ''}`}
           onClick={handleDownvote}
+          disabled={!post.can_vote || voting}
           aria-label={t('forum.action.downvote')}
         >
           ▼

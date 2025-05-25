@@ -5,46 +5,64 @@ import { Thread } from '../../types/forum';
 import { formatTimeAgo } from '../../utils/dateUtils';
 import { translateCategory } from '../../utils/categories';
 import { useAuth } from '../../contexts/AuthContext';
-import { threadAPI } from '../../services/api';
+import { threadAPI, voteAPI } from '../../services/api';
 import './ThreadCard.css';
 
 interface ThreadCardProps {
   thread: Thread;
+  onVoteUpdate?: (threadId: number, newVoteCount: number, userVote: 'upvote' | 'downvote' | null) => void;
 }
 
-const ThreadCard: React.FC<ThreadCardProps> = ({ thread }) => {
+const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate }) => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const [voteStatus, setVoteStatus] = useState<'up' | 'down' | null>(null);
-  const [voteCount, setVoteCount] = useState<number>(Math.floor(Math.random() * 100)); // Simulated vote count
+  const [voteStatus, setVoteStatus] = useState<'upvote' | 'downvote' | null>(thread.user_vote);
+  const [voteCount, setVoteCount] = useState<number>(thread.vote_count);
   const [error, setError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState<boolean>(false);
+  const [voting, setVoting] = useState<boolean>(false);
 
   // Check if current user is the thread creator
   const isThreadCreator = currentUser && thread.user === currentUser.id;
 
-  const handleUpvote = (e: React.MouseEvent) => {
+  const handleVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
     e.preventDefault();
-    if (voteStatus === 'up') {
-      setVoteStatus(null);
-      setVoteCount(prev => prev - 1);
-    } else {
-      setVoteStatus('up');
-      setVoteCount(prev => prev + (voteStatus === 'down' ? 2 : 1));
+    
+    if (!currentUser) {
+      setError(t('forum.error.loginRequired'));
+      return;
+    }
+
+    if (!thread.can_vote) {
+      setError(t('forum.error.cannotVoteOwnThread'));
+      return;
+    }
+
+    if (voting) return;
+
+    try {
+      setVoting(true);
+      setError(null);
+      
+      const response = await voteAPI.voteThread(thread.id, voteType);
+      
+      setVoteCount(response.vote_count);
+      setVoteStatus(response.user_vote);
+      
+      // Notify parent component of vote update
+      onVoteUpdate?.(thread.id, response.vote_count, response.user_vote);
+      
+    } catch (err) {
+      console.error('Error voting on thread:', err);
+      setError(err instanceof Error ? err.message : t('forum.error.voteGeneric'));
+    } finally {
+      setVoting(false);
     }
   };
 
-  const handleDownvote = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (voteStatus === 'down') {
-      setVoteStatus(null);
-      setVoteCount(prev => prev + 1);
-    } else {
-      setVoteStatus('down');
-      setVoteCount(prev => prev - (voteStatus === 'up' ? 2 : 1));
-    }
-  };
+  const handleUpvote = (e: React.MouseEvent) => handleVote('upvote', e);
+  const handleDownvote = (e: React.MouseEvent) => handleVote('downvote', e);
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -74,16 +92,18 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread }) => {
     <div className="thread-card">
       <div className="vote-section">
         <button 
-          className={`upvote-button ${voteStatus === 'up' ? 'upvote-active' : ''}`}
+          className={`upvote-button ${voteStatus === 'upvote' ? 'upvote-active' : ''} ${!thread.can_vote || voting ? 'vote-disabled' : ''}`}
           onClick={handleUpvote}
+          disabled={!thread.can_vote || voting}
           aria-label={t('forum.action.upvote')}
         >
           ▲
         </button>
         <span className="vote-count">{voteCount}</span>
         <button 
-          className={`downvote-button ${voteStatus === 'down' ? 'downvote-active' : ''}`}
+          className={`downvote-button ${voteStatus === 'downvote' ? 'downvote-active' : ''} ${!thread.can_vote || voting ? 'vote-disabled' : ''}`}
           onClick={handleDownvote}
+          disabled={!thread.can_vote || voting}
           aria-label={t('forum.action.downvote')}
         >
           ▼

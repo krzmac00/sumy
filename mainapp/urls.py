@@ -4,7 +4,7 @@ from .views import (
     EventViewSet, home, event_list, add_event,
     PostListCreateAPIView, PostRetrieveUpdateDestroyAPIView,
     ThreadListCreateAPIView, ThreadRetrieveUpdateDestroyAPIView,
-    create_thread_with_post
+    create_thread_with_post, vote_thread, vote_post
 )
 
 # Setup DRF router for EventViewSet
@@ -27,6 +27,10 @@ urlpatterns = [
     path('threads/', ThreadListCreateAPIView.as_view(), name='thread-list-create'),
     path('threads/<int:pk>/', ThreadRetrieveUpdateDestroyAPIView.as_view(), name='thread-detail'),
     path('create-thread/', create_thread_with_post, name='create-thread-with-post'),
+
+    # Voting endpoints
+    path('threads/<int:thread_id>/vote/', vote_thread, name='vote-thread'),
+    path('posts/<int:post_id>/vote/', vote_post, name='vote-post'),
 
     # Include the router URLs for EventViewSet
     path('', include(router.urls)),

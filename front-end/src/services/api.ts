@@ -1,4 +1,4 @@
-import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData } from '../types/forum';
+import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData, VoteData, VoteResponse } from '../types/forum';
 
 /**
  * Base API URL
@@ -265,5 +265,48 @@ export const postAPI = {
         throw new Error(`Failed to delete post ${id}: ${response.statusText}`);
       }
     }
+  },
+};
+
+/**
+ * Vote API service
+ */
+export const voteAPI = {
+  /**
+   * Vote on a thread
+   */
+  voteThread: async (threadId: number, voteType: 'upvote' | 'downvote'): Promise<VoteResponse> => {
+    const response = await fetch(`${API_BASE}/threads/${threadId}/vote/`, {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      credentials: 'include',
+      body: JSON.stringify({ vote_type: voteType }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: response.statusText }));
+      throw new Error(errorData.error || `Failed to vote on thread: ${response.statusText}`);
+    }
+    
+    return response.json();
+  },
+
+  /**
+   * Vote on a post
+   */
+  votePost: async (postId: number, voteType: 'upvote' | 'downvote'): Promise<VoteResponse> => {
+    const response = await fetch(`${API_BASE}/posts/${postId}/vote/`, {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      credentials: 'include',
+      body: JSON.stringify({ vote_type: voteType }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: response.statusText }));
+      throw new Error(errorData.error || `Failed to vote on post: ${response.statusText}`);
+    }
+    
+    return response.json();
   },
 };

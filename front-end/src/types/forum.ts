@@ -12,6 +12,9 @@ export interface Post {
   user?: number | null; // User ID of the post author
   is_anonymous: boolean;
   user_display_name: string; // Display name (either user's name or nickname)
+  vote_count: number; // Net vote count (upvotes - downvotes)
+  user_vote: 'upvote' | 'downvote' | null; // Current user's vote
+  can_vote: boolean; // Whether current user can vote on this post
 }
 
 /**
@@ -31,6 +34,9 @@ export interface Thread {
   user?: number | null; // User ID of the thread author
   is_anonymous: boolean;
   author_display_name: string; // Display name (either user's name or nickname)
+  vote_count: number; // Net vote count (upvotes - downvotes)
+  user_vote: 'upvote' | 'downvote' | null; // Current user's vote
+  can_vote: boolean; // Whether current user can vote on this thread
   
   // Legacy field for backward compatibility during migration
   post?: number; // Legacy post ID reference
@@ -65,4 +71,20 @@ export interface PostCreateData {
  */
 export interface PostUpdateData {
   content: string;
+}
+
+/**
+ * Interface for voting data
+ */
+export interface VoteData {
+  vote_type: 'upvote' | 'downvote';
+}
+
+/**
+ * Interface for vote response
+ */
+export interface VoteResponse {
+  message: string;
+  vote_count: number;
+  user_vote: 'upvote' | 'downvote' | null;
 }

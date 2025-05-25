@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from django.db import transaction
 from datetime import date, datetime
 
-from .post import Post, Thread, PostSerializer, ThreadSerializer
+from .post import Post, Thread, PostSerializer, ThreadSerializer, Vote, VoteSerializer
+from .post import vote_on_thread, vote_on_post
 from .models import Event
 from .serializers import EventSerializer
 from .forms import EventForm
@@ -220,4 +221,49 @@ def create_thread_with_post(request):
             return Response(thread_data, status=status.HTTP_201_CREATED)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+# ---------- VOTING SECTION ----------
+@api_view(['POST'])
+def vote_thread(request, thread_id):
+    """Vote on a thread (upvote or downvote)"""
+    if not request.user.is_authenticated:
+        return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    vote_type = request.data.get('vote_type')
+    if vote_type not in ['upvote', 'downvote']:
+        return Response({'error': 'Invalid vote type. Must be "upvote" or "downvote"'}, 
+                       status=status.HTTP_400_BAD_REQUEST)
+    
+    success, message, vote_count = vote_on_thread(request.user, thread_id, vote_type)
+    
+    if success:
+        return Response({
+            'message': message,
+            'vote_count': vote_count,
+            'user_vote': vote_type if 'withdrawn' not in message else None
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def vote_post(request, post_id):
+    """Vote on a post (upvote or downvote)"""
+    if not request.user.is_authenticated:
+        return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    vote_type = request.data.get('vote_type')
+    if vote_type not in ['upvote', 'downvote']:
+        return Response({'error': 'Invalid vote type. Must be "upvote" or "downvote"'}, 
+                       status=status.HTTP_400_BAD_REQUEST)
+    
+    success, message, vote_count = vote_on_post(request.user, post_id, vote_type)
+    
+    if success:
+        return Response({
+            'message': message,
+            'vote_count': vote_count,
+            'user_vote': vote_type if 'withdrawn' not in message else None
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
     

@@ -40,12 +40,25 @@
   font-size: 18px;
 }
 
-.upvote-button:hover, .upvote-active {
+.upvote-button:hover:not(:disabled) {
   color: #ff4500;
 }
 
-.downvote-button:hover, .downvote-active {
+.upvote-active {
+  color: #8b0002 !important;
+}
+
+.downvote-button:hover:not(:disabled) {
   color: #7193ff;
+}
+
+.downvote-active {
+  color: #8b0002 !important;
+}
+
+.vote-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
 }
 
 .thread-content {
