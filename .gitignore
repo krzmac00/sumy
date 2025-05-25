@@ -137,4 +137,7 @@ GitHub.sublime-settings
 !.vscode/extensions.json 
 .history
 
+HELP.md
+CLAUDE.md
 tasklist.md
+**/.claude/settings.local.json

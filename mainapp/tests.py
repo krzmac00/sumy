@@ -1,17 +1,17 @@
+import pytest
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sumy.settings')
+django.setup()
+
 from django.test import TestCase
+from rest_framework import status
+from django.urls import reverse
+from rest_framework.test import APITestCase
 
 from mainapp.post import Post, Thread
 from mainapp.post import create_post, get_post, update_post, delete_post
 from mainapp.post import create_thread, get_thread, update_thread, delete_thread
-
-from django.contrib.auth import get_user_model
-from django.urls import reverse
-from rest_framework.test import APITestCase, APIClient
-from rest_framework import status
-from .models import Event
-from datetime import datetime, timezone
-
-# User = get_user_model()
 
 class PostAndThreadTests(TestCase):
     def test_create_post_without_replies(self):
@@ -224,54 +224,3 @@ class ThreadAPITestCase(APITestCase):
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Thread.objects.filter(pk=self.thread.pk).exists())
-
-# ------------ calendar --------------
-
-# class EventSaveTestCase(APITestCase):
-#     def setUp(self):
-#         self.user = User.objects.create_user(
-#             username='testuser',
-#             password='testpass123',
-#             email='test@example.com'
-#         )
-#         self.url = reverse('save-calendar')
-#         self.client = APIClient()
-        
-#         self.valid_payload = {
-#             "events": [
-#                 {
-#                     "title": "Test Event 1",
-#                     "start_date": datetime(2024, 1, 1, 10, 0, tzinfo=timezone.utc).isoformat(),
-#                     "end_date": datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc).isoformat(),
-#                     "category": "private"
-#                 }
-#             ]
-#         }
-
-#     def test_save_calendar_unauthenticated(self):
-#         """Test zapisu bez autentykacji"""
-#         response = self.client.post(self.url, self.valid_payload, format='json')
-#         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-#     def test_save_calendar_authenticated(self):
-#         """Test poprawnego zapisu"""
-#         self.client.force_authenticate(user=self.user)
-        
-#         response = self.client.post(self.url, self.valid_payload, format='json')
-#         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-#         self.assertEqual(Event.objects.count(), 1)
-        
-#         updated_payload = {
-#             "events": [
-#                 {
-#                     "title": "Updated Event",
-#                     "start_date": datetime(2024, 1, 2, 8, 0, tzinfo=timezone.utc).isoformat(),
-#                     "end_date": datetime(2024, 1, 2, 10, 0, tzinfo=timezone.utc).isoformat(),
-#                     "category": "work"
-#                 }
-#             ]
-#         }
-#         response = self.client.post(self.url, updated_payload, format='json')
-#         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-#         self.assertEqual(Event.objects.count(), 1)
-#         self.assertEqual(Event.objects.first().title, "Updated Event")

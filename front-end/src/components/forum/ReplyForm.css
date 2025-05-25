@@ -1,0 +1,164 @@
+.reply-form-container {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.reply-form-title {
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.form-check {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.form-check-input {
+  position: absolute;
+  margin-top: 0.25rem;
+  margin-left: -1.5rem;
+}
+
+.form-check-label {
+  margin-bottom: 0.25rem;
+}
+
+.form-text {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.reply-input,
+.reply-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.reply-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.reply-error {
+  color: #dc3545;
+  margin-bottom: 16px;
+  padding: 8px;
+  background-color: #f8d7da;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.reply-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancel-button,
+.submit-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #495057;
+}
+
+.cancel-button:hover {
+  background-color: #e9ecef;
+}
+
+.submit-button {
+  background-color: #8b0002;
+  border: none;
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #7a0001;
+}
+
+.submit-button:disabled,
+.cancel-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.replying-to-info {
+  margin-bottom: 20px;
+}
+
+.replying-to-info h4 {
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  color: #495057;
+}
+
+.replying-to-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.replying-to-post {
+  background-color: #fff;
+  border-left: 3px solid #6c757d;
+  padding: 10px;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.9rem;
+}
+
+.replying-to-author {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.replying-to-content {
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .reply-form-container {
+    padding: 15px;
+  }
+  
+  .reply-form-actions {
+    flex-direction: column;
+  }
+  
+  .cancel-button,
+  .submit-button {
+    width: 100%;
+  }
+}

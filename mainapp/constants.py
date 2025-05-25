@@ -8,16 +8,9 @@ CATEGORIES = [
 ]
 
 CATEGORY_COLORS = {
-    'important': '#FF0000',  # Czerwony
-    'private': '#00FF00',     # Zielony
-    'exam': '#FFA500',        # Pomarańczowy
-    'club': '#0000FF',        # Niebieski
-    'university': '#800080',  # Fioletowy
-    'timetable': '#800080',  #tymczasowo daje fioletowy, ale kolor do zmiany
+    'important': '#e11d48',         # red
+    'private': '#6b7280',           # gray
+    'club': '#2563eb',              # blue
+    'student_council': '#10b981',   # green
+    'tul_events': '#f59e0b',        # amber
 }
-
-REPEAT_TYPES = [
-    ('none', 'None'),
-    ('weekly', 'Weekly'),
-    ('monthly', 'Monthly'),
-]

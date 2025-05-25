@@ -1,33 +1,33 @@
 // components/Register.tsx
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../contexts/AuthContext';
 
 interface RegisterProps {
-  onRegister: (userData: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    password: string;
-  }) => void;
   onSwitchToLogin: () => void;
+  onRegisterSuccess?: (message: string) => void;
 }
 
-const Register: React.FC<RegisterProps> = ({ onRegister, onSwitchToLogin }) => {
+const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess }) => {
   const { t } = useTranslation();
+  const { register } = useAuth();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  
   const [formData, setFormData] = useState({
     email: '',
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     password: '',
-    confirmPassword: ''
+    password2: ''
   });
   
   const [errors, setErrors] = useState<{
     email?: string;
-    firstName?: string;
-    lastName?: string;
+    first_name?: string;
+    last_name?: string;
     password?: string;
-    confirmPassword?: string;
+    password2?: string;
   }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -39,18 +39,25 @@ const Register: React.FC<RegisterProps> = ({ onRegister, onSwitchToLogin }) => {
   };
 
   const validateEmail = (email: string): boolean => {
-    // Validate email format: XXXXXX@edu.p.lodz.pl where X is a number
-    const regex = /^(\d{6})@edu\.p\.lodz\.pl$/;
-    return regex.test(email);
+    // Updated validation for both student and lecturer emails
+    // Student: XXXXXX@edu.p.lodz.pl where X is a number
+    // Lecturer: firstname.lastname@edu.p.lodz.pl
+    if (!email.endsWith('@edu.p.lodz.pl')) {
+      return false;
+    }
+    
+    const username = email.split('@')[0];
+    return username.match(/^\d{6}$/) !== null || // Student
+           username.match(/^[A-Za-z]+\.[A-Za-z]+$/) !== null; // Lecturer
   };
 
   const validate = (): boolean => {
     const newErrors: {
       email?: string;
-      firstName?: string;
-      lastName?: string;
+      first_name?: string;
+      last_name?: string;
       password?: string;
-      confirmPassword?: string;
+      password2?: string;
     } = {};
     
     // Email validation
@@ -61,42 +68,63 @@ const Register: React.FC<RegisterProps> = ({ onRegister, onSwitchToLogin }) => {
     }
     
     // First name validation
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = t('validation.required', { field: t('register.firstName') });
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = t('validation.required', { field: t('register.firstName') });
     }
     
     // Last name validation
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = t('validation.required', { field: t('register.lastName') });
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = t('validation.required', { field: t('register.lastName') });
     }
     
     // Password validation
     if (!formData.password) {
       newErrors.password = t('validation.required', { field: t('register.password') });
-    } else if (formData.password.length < 6) {
+    } else if (formData.password.length < 8) {
       newErrors.password = t('validation.password.length');
     }
     
     // Confirm password validation
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = t('validation.password.match');
+    if (formData.password !== formData.password2) {
+      newErrors.password2 = t('validation.password.match');
     }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent): void => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     
     if (validate()) {
-      const { confirmPassword, ...userData } = formData;
-      onRegister(userData);
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const response = await register(formData);
+        
+        if (onRegisterSuccess) {
+          onRegisterSuccess(response.message);
+        } else {
+          onSwitchToLogin();
+        }
+      } catch (err) {
+        console.error('Registration error:', err);
+        setError(err instanceof Error ? err.message : 'Registration failed');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="auth-form">
+      {error && (
+        <div className="error-alert">
+          {error}
+        </div>
+      )}
+      
       <div className="form-group">
         <label htmlFor="email">{t('register.email')}</label>
         <input
@@ -107,36 +135,42 @@ const Register: React.FC<RegisterProps> = ({ onRegister, onSwitchToLogin }) => {
           onChange={handleChange}
           placeholder={t('register.email.placeholder')}
           className={errors.email ? 'error' : ''}
+          disabled={isLoading}
         />
         {errors.email && <span className="error-message">{errors.email}</span>}
+        <small className="help-text">
+          {t('register.emailHelp')}
+        </small>
       </div>
       
       <div className="form-group">
-        <label htmlFor="firstName">{t('register.firstName')}</label>
+        <label htmlFor="first_name">{t('register.firstName')}</label>
         <input
           type="text"
-          id="firstName"
-          name="firstName"
-          value={formData.firstName}
+          id="first_name"
+          name="first_name"
+          value={formData.first_name}
           onChange={handleChange}
           placeholder={t('register.firstName.placeholder')}
-          className={errors.firstName ? 'error' : ''}
+          className={errors.first_name ? 'error' : ''}
+          disabled={isLoading}
         />
-        {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+        {errors.first_name && <span className="error-message">{errors.first_name}</span>}
       </div>
       
       <div className="form-group">
-        <label htmlFor="lastName">{t('register.lastName')}</label>
+        <label htmlFor="last_name">{t('register.lastName')}</label>
         <input
           type="text"
-          id="lastName"
-          name="lastName"
-          value={formData.lastName}
+          id="last_name"
+          name="last_name"
+          value={formData.last_name}
           onChange={handleChange}
           placeholder={t('register.lastName.placeholder')}
-          className={errors.lastName ? 'error' : ''}
+          className={errors.last_name ? 'error' : ''}
+          disabled={isLoading}
         />
-        {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+        {errors.last_name && <span className="error-message">{errors.last_name}</span>}
       </div>
       
       <div className="form-group">
@@ -149,28 +183,36 @@ const Register: React.FC<RegisterProps> = ({ onRegister, onSwitchToLogin }) => {
           onChange={handleChange}
           placeholder={t('register.password.placeholder')}
           className={errors.password ? 'error' : ''}
+          disabled={isLoading}
         />
         {errors.password && <span className="error-message">{errors.password}</span>}
       </div>
       
       <div className="form-group">
-        <label htmlFor="confirmPassword">{t('register.confirmPassword')}</label>
+        <label htmlFor="password2">{t('register.confirmPassword')}</label>
         <input
           type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          value={formData.confirmPassword}
+          id="password2"
+          name="password2"
+          value={formData.password2}
           onChange={handleChange}
           placeholder={t('register.confirmPassword.placeholder')}
-          className={errors.confirmPassword ? 'error' : ''}
+          className={errors.password2 ? 'error' : ''}
+          disabled={isLoading}
         />
-        {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+        {errors.password2 && <span className="error-message">{errors.password2}</span>}
       </div>
       
-      <button type="submit" className="submit-button">{t('register.button')}</button>
+      <button 
+        type="submit" 
+        className="submit-button"
+        disabled={isLoading}
+      >
+        {isLoading ? t('register.registering') : t('register.button')}
+      </button>
       
       <div className="form-footer">
-        <p>{t('register.haveAccount')} <button type="button" onClick={onSwitchToLogin}>{t('app.switchToLogin')}</button></p>
+        <p>{t('register.haveAccount')} <button type="button" onClick={onSwitchToLogin} disabled={isLoading}>{t('app.switchToLogin')}</button></p>
       </div>
     </form>
   );

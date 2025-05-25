@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../contexts/AuthContext';
 
 interface LoginProps {
-  onLogin: (username: string, password: string) => void;
   onSwitchToRegister: () => void;
+  onLoginSuccess?: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin, onSwitchToRegister }) => {
+const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => {
   const { t } = useTranslation();
-  const [username, setUsername] = useState<string>('');
+  const { login, error: authError } = useAuth();
+  
+  const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{
-    username?: string;
+    email?: string;
     password?: string;
   }>({});
 
   const validate = (): boolean => {
-    const newErrors: { username?: string; password?: string } = {};
+    const newErrors: { email?: string; password?: string } = {};
     
-    if (!username.trim()) {
-      newErrors.username = t('validation.required', { field: t('login.username') });
+    if (!email.trim()) {
+      newErrors.email = t('validation.required', { field: t('login.email') });
     }
     
     if (!password) {
@@ -30,27 +35,58 @@ const Login: React.FC<LoginProps> = ({ onLogin, onSwitchToRegister }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent): void => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     
     if (validate()) {
-      onLogin(username, password);
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        await login({ email, password });
+        // Wait a moment to ensure token is stored before redirect
+        setTimeout(() => {
+          if (onLoginSuccess) {
+            onLoginSuccess();
+          } else {
+            // Redirect to home if no success callback
+            window.location.href = '/home';
+          }
+        }, 100);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Login failed';
+        setError(errorMessage);
+        
+        // Clear password field on authentication error
+        if (errorMessage.includes('Invalid email or password')) {
+          setPassword('');
+        }
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="auth-form">
+      {(error || authError) && (
+        <div className="error-alert">
+          {error || authError}
+        </div>
+      )}
+      
       <div className="form-group">
-        <label htmlFor="username">{t('login.username')}</label>
+        <label htmlFor="email">{t('login.email')}</label>
         <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder={t('login.username.placeholder')}
-          className={errors.username ? 'error' : ''}
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={t('login.email.placeholder')}
+          className={errors.email ? 'error' : ''}
+          disabled={isLoading}
         />
-        {errors.username && <span className="error-message">{errors.username}</span>}
+        {errors.email && <span className="error-message">{errors.email}</span>}
       </div>
       
       <div className="form-group">
@@ -62,14 +98,21 @@ const Login: React.FC<LoginProps> = ({ onLogin, onSwitchToRegister }) => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder={t('login.password.placeholder')}
           className={errors.password ? 'error' : ''}
+          disabled={isLoading}
         />
         {errors.password && <span className="error-message">{errors.password}</span>}
       </div>
       
-      <button type="submit" className="submit-button">{t('login.button')}</button>
+      <button 
+        type="submit" 
+        className="submit-button"
+        disabled={isLoading}
+      >
+        {isLoading ? t('login.loading') : t('login.button')}
+      </button>
       
       <div className="form-footer">
-        <p>{t('login.noAccount')} <button type="button" onClick={onSwitchToRegister}>{t('app.switchToRegister')}</button></p>
+        <p>{t('login.noAccount')} <button type="button" onClick={onSwitchToRegister} disabled={isLoading}>{t('app.switchToRegister')}</button></p>
       </div>
     </form>
   );

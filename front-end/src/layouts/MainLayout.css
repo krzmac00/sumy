@@ -3,22 +3,28 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .content-container {
   display: flex;
   flex: 1;
+  margin: 0;
+  width: auto;
 }
 
 .main-content {
   flex: 1;
+  min-width: 0;
   padding: 20px;
   transition: margin-left 0.3s ease;
   background-color: white;
 }
 
 .main-content.sidebar-open {
-  margin-left: 250px; /* Width of the expanded sidebar */
+  margin-left: 0px;
 }
 
 @media (max-width: 768px) {

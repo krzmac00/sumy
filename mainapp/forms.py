@@ -7,10 +7,8 @@ class EventForm(forms.ModelForm):
         exclude = ['user']
         fields = '__all__'
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'start_time': forms.TimeInput(attrs={'type': 'time'}),
-            'end_date': forms.DateInput(attrs={'type': 'date'}),
-            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+            'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'rows': 3}),
             'category': forms.Select(attrs={'class': 'form-select'}),
