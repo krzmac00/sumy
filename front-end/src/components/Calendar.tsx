@@ -5,20 +5,23 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import Modal from "react-modal";
 import { parse, startOfWeek, format, getDay } from "date-fns";
-import { enUS } from "date-fns/locale/en-US";
+import { enGB } from "date-fns/locale/en-GB";
 import { pl } from "date-fns/locale/pl";
 import { useTranslation } from "react-i18next";
 import { CategoryKey } from "@/enums/CategoryKey";
 import { RepeatType } from "@/enums/RepeatType";
 import { CustomCalendarEvent } from "@/types/event";
 import { eventAPI } from "@/services/api";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./Calendar.css"
 
 Modal.setAppElement("#root");
 const DragAndDropCalendar = withDragAndDrop(BigCalendar as any);
 
 const Calendar: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const locales = { en: enUS, pl };
+  const locales = { en: enGB, pl };
   const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
   const culture = i18n.language.substring(0, 2);
 
@@ -27,6 +30,17 @@ const Calendar: React.FC = () => {
   const [view, setView] = useState<View>(Views.MONTH);
   const [date, setDate] = useState<Date>(new Date());
   const [events, setEvents] = useState<CustomCalendarEvent[]>([]);
+  const [newStart, setNewStart] = useState<Date>(() => {
+    const date = new Date();
+    date.setHours(8, 0, 0, 0);
+    return date;
+  });
+
+  const [newEnd, setNewEnd] = useState<Date>(() => {
+    const date = new Date();
+    date.setHours(9, 0, 0, 0);
+    return date;
+  });
 
   useEffect(() => {
     eventAPI
@@ -150,91 +164,106 @@ const Calendar: React.FC = () => {
       .catch((err: any) => console.error("Failed to resize event:", err));
   };
 
-  const handleSelectSlot = ({ start, end }: any) => {
-    setPendingSlot({ start: new Date(start), end: new Date(end) });
+  const handleSelectSlot = ({ start }: { start: Date }) => {
+    const clickedDate = new Date(start);
+
+    const startDate = new Date(clickedDate);
+    startDate.setHours(8, 0, 0, 0); // 08:00:00
+
+    const endDate = new Date(clickedDate);
+    endDate.setHours(9, 0, 0, 0); // 09:00:00
+
+    setPendingSlot({ start: startDate, end: endDate });
     setNewTitle("");
     setNewCategory(allCategories[0]);
     setNewRepeatType(RepeatType.None);
+    setNewStart(startDate);
+    setNewEnd(endDate);
     setModalOpen(true);
   };
 
-const handleModalSave = () => {
-  if (!pendingSlot) return;
+  const handleModalSave = () => {
+    if (!pendingSlot) return;
+    if (!newStart || !newEnd) return;
 
-  const start = new Date(pendingSlot.start);
-  start.setHours(8, 0, 0, 0);
-  const end = new Date(start.getTime() + 60 * 60 * 1000);
+    const start = new Date(newStart);
+    const end = new Date(newEnd);
 
-  const newEvent: Omit<CustomCalendarEvent, "id"> = {
-    title: newTitle,
-    description: "",
-    start,
-    end,
-    category: newCategory,
-    color: '#2563eb',
-    repeatType: newRepeatType,
-  };
+    if (end <= start) {
+      alert(t("calendar.invalidRange", "End date must be after start date"));
+      return;
+    }
 
-  eventAPI
-    .create(newEvent)
-    .then((savedEvent: CustomCalendarEvent) => {
-      const expandedEvents: CustomCalendarEvent[] = [savedEvent];
+    const newEvent: Omit<CustomCalendarEvent, "id"> = {
+      title: newTitle,
+      description: "",
+      start,
+      end,
+      category: newCategory,
+      color: '#2563eb',
+      repeatType: newRepeatType,
+    };
 
-      const endOfView = new Date(date);
-      endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
-      const duration = savedEvent.end!.getTime() - savedEvent.start!.getTime();
+    eventAPI
+      .create(newEvent)
+      .then((savedEvent: CustomCalendarEvent) => {
+        const expandedEvents: CustomCalendarEvent[] = [savedEvent];
 
-      if (savedEvent.repeatType === RepeatType.Weekly) {
-        let current = new Date(savedEvent.start as Date);
-        while (true) {
-          current = new Date(current.getTime() + 7 * 24 * 60 * 60 * 1000);
-          if (current > endOfView) break;
+        const endOfView = new Date(date);
+        endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+        const duration = savedEvent.end!.getTime() - savedEvent.start!.getTime();
 
-          expandedEvents.push({
-            ...savedEvent,
-            id: `${savedEvent.id}-weekly-${current.toISOString()}`,
-            start: new Date(current),
-            end: new Date(current.getTime() + duration),
-          });
-        }
-      }
+        if (savedEvent.repeatType === RepeatType.Weekly) {
+          let current = new Date(savedEvent.start as Date);
+          while (true) {
+            current = new Date(current.getTime() + 7 * 24 * 60 * 60 * 1000);
+            if (current > endOfView) break;
 
-      if (savedEvent.repeatType === RepeatType.Monthly) {
-        const baseStart = new Date(savedEvent.start as Date);
-        const dayOfWeek = baseStart.getDay();
-        const nth = Math.floor((baseStart.getDate() - 1) / 7) + 1;
-
-        let current = new Date(baseStart);
-        while (true) {
-          current.setMonth(current.getMonth() + 1);
-          current.setDate(1);
-
-          let weekdayCount = 0;
-          while (current.getMonth() === current.getMonth()) {
-            if (current.getDay() === dayOfWeek) {
-              weekdayCount += 1;
-              if (weekdayCount === nth) break;
-            }
-            current.setDate(current.getDate() + 1);
+            expandedEvents.push({
+              ...savedEvent,
+              id: `${savedEvent.id}-weekly-${current.toISOString()}`,
+              start: new Date(current),
+              end: new Date(current.getTime() + duration),
+            });
           }
-
-          if (current > endOfView) break;
-
-          expandedEvents.push({
-            ...savedEvent,
-            id: `${savedEvent.id}-monthly-${current.toISOString()}`,
-            start: new Date(current),
-            end: new Date(current.getTime() + duration),
-          });
         }
-      }
 
-      setEvents((prev) => [...prev, ...expandedEvents]);
-      setModalOpen(false);
-      setPendingSlot(null);
-    })
-    .catch((err: any) => console.error("Failed to create event:", err));
-};
+        if (savedEvent.repeatType === RepeatType.Monthly) {
+          const baseStart = new Date(savedEvent.start as Date);
+          const dayOfWeek = baseStart.getDay();
+          const nth = Math.floor((baseStart.getDate() - 1) / 7) + 1;
+
+          let current = new Date(baseStart);
+          while (true) {
+            current.setMonth(current.getMonth() + 1);
+            current.setDate(1);
+
+            let weekdayCount = 0;
+            while (current.getMonth() === current.getMonth()) {
+              if (current.getDay() === dayOfWeek) {
+                weekdayCount += 1;
+                if (weekdayCount === nth) break;
+              }
+              current.setDate(current.getDate() + 1);
+            }
+
+            if (current > endOfView) break;
+
+            expandedEvents.push({
+              ...savedEvent,
+              id: `${savedEvent.id}-monthly-${current.toISOString()}`,
+              start: new Date(current),
+              end: new Date(current.getTime() + duration),
+            });
+          }
+        }
+
+        setEvents((prev) => [...prev, ...expandedEvents]);
+        setModalOpen(false);
+        setPendingSlot(null);
+      })
+      .catch((err: any) => console.error("Failed to create event:", err));
+  };
 
 
   const handleModalCancel = () => {
@@ -435,35 +464,72 @@ const handleModalSave = () => {
               </option>
             ))}
           </select>
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
-            <button
-              onClick={handleModalCancel}
-              style={{
-                padding: "8px 12px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-                background: "#f4f4f4",
-                cursor: "pointer",
-              }}
-            >
-              {t("calendar.cancel", "Cancel")}
-            </button>
-            <button
-              onClick={handleModalSave}
-              disabled={!newTitle}
-              style={{
-                padding: "8px 12px",
-                borderRadius: "4px",
-                border: "none",
-                background: "#2563eb",
-                color: "#fff",
-                cursor: newTitle ? "pointer" : "not-allowed",
-                opacity: newTitle ? 1 : 0.6,
-              }}
-            >
-              {t("calendar.save", "Save")}
-            </button>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+            <label>
+              {t("calendar.startDate", "Start date")}
+            </label>
+            <DatePicker
+              selected={newStart}
+              onChange={(date) => date && setNewStart(date)}
+              showTimeSelect
+              timeIntervals={15}
+              dateFormat="Pp"
+              timeCaption={t("calendar.time", "Time")}
+              className="custom-datepicker"
+              locale={i18n.language.startsWith("pl") ? pl : enGB}
+              wrapperClassName="date-picker-wrapper"
+              minTime={new Date(new Date(newStart).setHours(8, 0))}
+              maxTime={new Date(new Date(newStart).setHours(22, 0))}
+            />
           </div>
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+            <label>
+              {t("calendar.endDate", "End date")}
+            </label>
+            <DatePicker
+              selected={newEnd}
+              onChange={(date) => date && setNewEnd(date)}
+              showTimeSelect
+              timeIntervals={15}
+              dateFormat="Pp"
+              timeCaption={t("calendar.time", "Time")}
+              className="custom-datepicker"
+              locale={i18n.language.startsWith("pl") ? pl : enGB}
+              wrapperClassName="date-picker-wrapper"
+              minTime={new Date(new Date(newStart).setHours(8, 0))}
+              maxTime={new Date(new Date(newStart).setHours(22, 0))}
+            />
+          </div>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", paddingTop: "8px" }}>
+          <button
+            onClick={handleModalCancel}
+            style={{
+              padding: "8px 12px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+              background: "#f4f4f4",
+              cursor: "pointer",
+            }}
+          >
+            {t("calendar.cancel", "Cancel")}
+          </button>
+          <button
+            onClick={handleModalSave}
+            disabled={!newTitle}
+            style={{
+              padding: "8px 12px",
+              borderRadius: "4px",
+              border: "none",
+              background: "#2563eb",
+              color: "#fff",
+              cursor: newTitle ? "pointer" : "not-allowed",
+              opacity: newTitle ? 1 : 0.6,
+            }}
+          >
+            {t("calendar.save", "Save")}
+          </button>
         </div>
       </Modal>
     </>

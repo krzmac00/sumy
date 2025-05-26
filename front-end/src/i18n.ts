@@ -240,7 +240,13 @@ const resources = {
       "calendar.newEvent": "New event",
       "calendar.repeat.none": "Once",
       "calendar.repeat.weekly": "Weekly",
-      "calendar.repeat.monthly": "Monthly"
+      "calendar.repeat.monthly": "Monthly",
+      "calendar.startDate": "Start Date",
+      "calendar.endDate": "End Date",
+      "calendar.time": "Time",
+      "calendar.cancel": "Cancel",
+      "calendar.save": "Save",
+      "calendar.invalidRange": "End date must be after start date"
     }
   },
   pl: {
@@ -478,7 +484,13 @@ const resources = {
       "calendar.newEvent": "Nowe wydarzenie",
       "calendar.repeat.none": "Jednorazowo",
       "calendar.repeat.weekly": "Co tydzień",
-      "calendar.repeat.monthly": "Co miesiąc"
+      "calendar.repeat.monthly": "Co miesiąc",
+      "calendar.startDate": "Data Początkowa",
+      "calendar.endDate": "Data Końcowa",
+      "calendar.time": "Czas",
+      "calendar.cancel": "Anuluj",
+      "calendar.save": "Zapisz",
+      "calendar.invalidRange": "Data końcowa musi być później niż data początkowa"
     }
   }
 };
