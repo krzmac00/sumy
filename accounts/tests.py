@@ -315,3 +315,95 @@ class AuthenticationTests(TestCase):
         refresh_response = self.client.post(self.refresh_url, refresh_payload)
         
         self.assertEqual(refresh_response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+#User Profile Tests:
+class UserProfileAPITests(TestCase):
+    def setUp(self):
+        # URLs
+        self.token_url = reverse('token_obtain_pair')
+        self.profile_url = reverse('my-profile')
+        self.update_url = reverse('update-profile')
+
+        # Create primary user
+        self.user = User.objects.create_user(
+            email='user@example.com',
+            password='testpass123',
+            first_name='Test',
+            last_name='User',
+            is_active=True
+        )
+        # Ensure profile exists
+        self.user.profile.bio = ''
+        self.user.profile.save()
+
+        # Create another user
+        self.other_user = User.objects.create_user(
+            email='other@example.com',
+            password='testpass123',
+            first_name='Other',
+            last_name='User',
+            is_active=True
+        )
+        # Set custom bio for other user
+        self.other_user.profile.bio = 'Other user bio'
+        self.other_user.profile.save()
+        self.other_profile_url = reverse('user-profile', args=[self.other_user.id])
+
+        # Authenticate primary user and store access token
+        self.client = APIClient()
+        login_response = self.client.post(self.token_url, {
+            'email': 'user@example.com',
+            'password': 'testpass123'
+        })
+        self.assertEqual(login_response.status_code, status.HTTP_200_OK)
+        access = login_response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access}')
+
+    def test_get_own_profile_unauthenticated(self):
+        client = APIClient()
+        response = client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_own_profile_success(self):
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Check response contains expected fields
+        self.assertIn('bio', response.data)
+        self.assertEqual(response.data['bio'], self.user.profile.bio)
+
+    def test_get_other_profile_success(self):
+        response = self.client.get(self.other_profile_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('bio', response.data)
+        self.assertEqual(response.data['bio'], 'Other user bio')
+
+    def test_get_other_profile_not_found(self):
+        url = reverse('user-profile', args=[9999])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_profile_unauthenticated(self):
+        client = APIClient()
+        response = client.put(self.update_url, {'bio': 'Should not work'})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_update_profile_success(self):
+        payload = {'bio': 'New bio content'}
+        response = self.client.put(self.update_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('message'), 'Profile updated successfully.')
+        # Refresh from db
+        self.user.profile.refresh_from_db()
+        self.assertEqual(self.user.profile.bio, 'New bio content')
+
+    def test_update_profile_invalid_data(self):
+        """
+        Test that sending unknown field is ignored and profile remains unchanged."""
+        # Sending an unknown field will be ignored
+        response = self.client.put(self.update_url, {'unknown_field': 'value'})
+        # Should still return 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('message'), 'Profile updated successfully.')
+        # Ensure bio remains unchanged
+        self.user.profile.refresh_from_db()
+        self.assertEqual(self.user.profile.bio, '')

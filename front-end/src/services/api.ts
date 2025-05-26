@@ -1,3 +1,4 @@
+import { CustomCalendarEvent } from '@/types/event';
 import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData, VoteData, VoteResponse } from '../types/forum';
 
 /**
@@ -18,13 +19,16 @@ const JSON_HEADERS = {
  */
 export const threadAPI = {
   /**
-   * Get all threads
+   * Get all threads with optional blacklist parameter
    */
-  getAll: async (): Promise<Thread[]> => {
-    const response = await fetch(`${API_BASE}/threads/`);
+  getAll: async (blacklistOn = true): Promise<Thread[]> => {
+    const url = blacklistOn ? `${API_BASE}/threads/` : `${API_BASE}/threads/?blacklist=off`;
+
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to fetch threads: ${response.statusText}`);
     }
+
     const data = await response.json();
     
     // Check if response is paginated (Django REST Framework pagination)
@@ -52,64 +56,6 @@ export const threadAPI = {
     }
     return response.json();
   },
-
-  /**
-   * Create a new thread
-   
-  create: async (data: ThreadCreateData): Promise<Thread> => {
-    const response = await fetch(`${API_BASE}/threads/`, {
-      method: 'POST',
-      headers: JSON_HEADERS,
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to create thread: ${response.statusText}`);
-    }
-    return response.json();
-  },*/
-
-
-  /**
- * Create a new thread
- 
-create: async (data: ThreadCreateData): Promise<Thread> => {
-  // First, create a post
-  const postResponse = await fetch(`${API_BASE}/posts/`, {
-    method: 'POST',
-    headers: JSON_HEADERS,
-    body: JSON.stringify({
-      nickname: data.nickname,
-      content: data.content,
-    }),
-  });
-  
-  if (!postResponse.ok) {
-    const error = await postResponse.text();
-    throw new Error(`Failed to create post: ${error}`);
-  }
-  
-  const post = await postResponse.json();
-  
-  // Then, create the thread referencing the post
-  const threadResponse = await fetch(`${API_BASE}/threads/`, {
-    method: 'POST',
-    headers: JSON_HEADERS,
-    body: JSON.stringify({
-      post: post.id, // Reference the created post
-      category: data.category,
-      title: data.title,
-      visible_for_teachers: data.visible_for_teachers,
-      can_be_answered: data.can_be_answered,
-    }),
-  });
-  
-  if (!threadResponse.ok) {
-    const error = await threadResponse.text();
-    throw new Error(`Failed to create thread: ${error}`);
-  }
-  
-  return threadResponse.json();
-}, */
 
   /**
    * Create a new thread
@@ -308,5 +254,105 @@ export const voteAPI = {
     }
     
     return response.json();
+  },
+};
+
+/**
+ * Event API service
+ */
+export const eventAPI = {
+  /**
+   * Get all events
+   */
+  getAll: async (): Promise<CustomCalendarEvent[]> => {
+    const response = await fetch(`${API_BASE}/events/`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch events: ${response.statusText}`);
+    }
+    const data = await response.json();
+
+    return data.results.map((event: any) => ({
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      repeatType: event.repeat_type
+    }));
+  },
+
+  /**
+   * Get a specific event by ID
+   */
+  getOne: async (id: number): Promise<CustomCalendarEvent> => {
+    const response = await fetch(`${API_BASE}/events/${id}/`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch event ${id}: ${response.statusText}`);
+    }
+    const event = await response.json();
+    return {
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      repeatType: event.repeat_type
+    };
+  },
+
+  /**
+   * Create a new event
+   */
+  create: async (data: Omit<CustomCalendarEvent, "id">): Promise<CustomCalendarEvent> => {
+    const response = await fetch(`${API_BASE}/events/`, {
+      method: "POST",
+      headers: JSON_HEADERS,
+      body: JSON.stringify({
+        ...data,
+        repeat_type: data.repeatType,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to create event: ${response.statusText}`);
+    }
+    const event = await response.json();
+    return {
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      repeatType: event.repeat_type,
+    };
+  },
+
+  /**
+   * Update an existing event
+   */
+  update: async (id: number, data: Partial<CustomCalendarEvent>): Promise<CustomCalendarEvent> => {
+    const response = await fetch(`${API_BASE}/events/${id}/`, {
+      method: "PUT",
+      headers: JSON_HEADERS,
+      body: JSON.stringify({
+        ...data,
+        repeat_type: data.repeatType
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to update event ${id}: ${response.statusText}`);
+    }
+    const event = await response.json();
+    return {
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      repeatType: event.repeat_type,
+    };
+  },
+
+  /**
+   * Delete an event
+   */
+  delete: async (id: number): Promise<void> => {
+    const response = await fetch(`${API_BASE}/events/${id}/`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to delete event ${id}: ${response.statusText}`);
+    }
   },
 };

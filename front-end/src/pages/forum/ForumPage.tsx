@@ -17,7 +17,7 @@ const ForumPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const threadsData = await threadAPI.getAll();
+      const threadsData = await threadAPI.getAll(blacklistOn);
       
       // Ensure threadsData is an array before attempting to sort
       if (!Array.isArray(threadsData)) {
@@ -38,11 +38,11 @@ const ForumPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, [t, blacklistOn]);
 
   useEffect(() => {
-    fetchThreads();
-  }, [fetchThreads]);
+  fetchThreads();
+}, [fetchThreads, blacklistOn]);
 
   return (
     <MainLayout>

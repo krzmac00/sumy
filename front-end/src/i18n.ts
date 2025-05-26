@@ -66,7 +66,7 @@ const resources = {
       "user.profile": "Profile",
       "user.settings": "Settings",
       "user.logout": "Logout",
-      
+
       // Sidebar
       "sidebar.title": "Navigation",
       "sidebar.home": "Home",
@@ -105,6 +105,8 @@ const resources = {
       "forum.error.fetchThreads": "Error loading threads. Please try again later.",
       "forum.error.fetchThread": "Error loading thread. Please try again later.",
       "forum.error.threadNotFound": "Thread not found.",
+      "forum.blacklist_on": "Blacklist is on:",
+      "forum.blacklist_off": "Blacklist is off:",
       
       // Forum - Thread List
       "forum.threadList.title": "Discussion Threads",
@@ -222,7 +224,69 @@ const resources = {
       "forum.action.save": "Save",
       "forum.action.info": "More Info",
       "forum.action.upvote": "Upvote",
-      "forum.action.downvote": "Downvote"
+      "forum.action.downvote": "Downvote",
+
+	    //Calendar
+      "calendar.enterClass": "Enter class title",
+      "calendar.deleteClass": "Delete event '{{title}}'?",
+      "calendar.previous": "Back",
+      "calendar.next": "Next",
+      "calendar.month": "Month",
+      "calendar.week": "Week",
+      "calendar.day": "Day",
+      "calendar.category.important": "Important",
+      "calendar.category.private": "Private",
+      "calendar.category.club": "Science Club",
+      "calendar.category.student_council": "Student Council",
+      "calendar.category.tul_events": "TUL Events",
+      "calendar.newEvent": "New event",
+      "calendar.repeat.none": "Once",
+      "calendar.repeat.weekly": "Weekly",
+      "calendar.repeat.monthly": "Monthly",
+
+      //MapFilterPanel
+      "map.filter.mapFilters": "Map filters",
+      "map.filter.buildingType": "Builingd type:",
+      "map.filter.generalAcademic": "General academic building",
+      "map.filter.faculty": "Faculty",
+      "map.filter.nonFaculty": "Non-faculty",
+      "map.filter.administration": "Administraion",
+      "map.filter.porter": "Porter's lodge",
+      "map.filter.roomType": "Room type:",
+      "map.filter.choice": "--select--",
+      "map.filter.auditorium": "Aula",
+      "map.filter.class": "Class",
+      "map.filter.laboratory": "Laboratory",
+      "map.filter.applyFilters": "Apply filters",
+
+      //UserProfile
+      "profile.userProfile": "User profile",
+      "profile.firstName": "First name:",
+      "profile.lastName": "Last name:",
+      "profile.indexNumber": "Index number:",
+      "profile.editProfile": "Edit profile",
+      "profile.blackListForum": "Forum blacklist",
+      "profile.addBlacklistedCotent": "Add content to the blacklist",
+      "profile.blacklistExample": "Phrases should be placed in quotation marks: \"First phrase\", \"Second phrase\", etc.",
+      "profile.bio": "Profile bio",
+      "profile.bioPlaceholder": "Add your bio",
+
+      //UserProfileEdit
+      "profile.edit.editProfile": "Edit profile",
+      "profile.edit.changePassword": "Change password",
+      "profile.edit.changePasswordCancel": "Cancel password change",
+      "profile.edit.saveChanges": "Save changes",
+      "profile.edit.oldPassword": "Current password:",
+      "profile.edit.newPassword": "New password:",
+      "profile.edit.repeatPassword": "Repeat password:",
+      "profile.edit.cancel": "Cancel",
+      "profile.edit.empty_names": "First and last name cannot be empty",
+      "profile.edit.fill_both_passwords": "Fill both password fields",
+      "profile.edit.password_len": "Password must be at least 6 characters long",
+      "profile.edit.password_no_match": "Passwords do not match",
+      "profile.edit.successful_update": "Data has been successfully updated",
+      "profile.edit.unsuccessful_update": "Failed to update data",
+
     }
   },
   pl: {
@@ -286,7 +350,7 @@ const resources = {
       "user.profile": "Profil",
       "user.settings": "Ustawienia",
       "user.logout": "Wyloguj",
-      
+
       // Sidebar
       "sidebar.title": "Nawigacja",
       "sidebar.home": "Strona główna",
@@ -325,6 +389,8 @@ const resources = {
       "forum.error.fetchThreads": "Błąd podczas ładowania wątków. Spróbuj ponownie później.",
       "forum.error.fetchThread": "Błąd podczas ładowania wątku. Spróbuj ponownie później.",
       "forum.error.threadNotFound": "Wątek nie został znaleziony.",
+      "forum.blacklist_on": "Czarna lista wł:",
+      "forum.blacklist_off": "Czarna lista wył:",
       
       // Forum - Thread List
       "forum.threadList.title": "Wątki dyskusyjne",
@@ -442,7 +508,70 @@ const resources = {
       "forum.action.save": "Zapisz",
       "forum.action.info": "Więcej Informacji",
       "forum.action.upvote": "Głosuj za",
-      "forum.action.downvote": "Głosuj przeciw"
+      "forum.action.downvote": "Głosuj przeciw",
+	  
+	    //Calendar
+      "calendar.enterClass": "Wprowadź tytuł zajęć",
+      "calendar.deleteClass": "Usunąć wydarzenie '{{title}}'?",
+      "calendar.previous": "Wstecz",
+      "calendar.next": "Dalej",
+      "calendar.month": "Miesiąc",
+      "calendar.week": "Tydzień",
+      "calendar.day": "Dzień",
+      "calendar.category.important": "Ważne",
+      "calendar.category.private": "Prywatne",
+      "calendar.category.club": "Koło naukowe",
+      "calendar.category.student_council": "Samorząd Studencki",
+      "calendar.category.tul_events": "Wydarzenia PŁ",
+      "calendar.newEvent": "Nowe wydarzenie",
+      "calendar.repeat.none": "Jednorazowo",
+      "calendar.repeat.weekly": "Co tydzień",
+      "calendar.repeat.monthly": "Co miesiąc",
+
+      //MapFilterPanel
+      "map.filter.mapFilters": "Filtry mapy",
+      "map.filter.buildingType": "Typ budynku:",
+      "map.filter.generalAcademic": "Ogólnouczelniane",
+      "map.filter.faculty": "Wydziałowy",
+      "map.filter.nonFaculty": "Pozawydziałowy",
+      "map.filter.administration": "Administracja",
+      "map.filter.porter": "Portiernia",
+      "map.filter.roomType": "Typ pomieszczenia:",
+      "map.filter.choice": "--wybierz--",
+      "map.filter.auditorium": "Aula",
+      "map.filter.class": "Sala",
+      "map.filter.laboratory": "Laboratorium",
+      "map.filter.applyFilters": "Zastosuj filtry",
+
+      //UserProfile
+      "profile.userProfile": "Profil użytkownika",
+      "profile.firstName": "Imię:",
+      "profile.lastName": "Nazwisko:",
+      "profile.indexNumber": "Numer indeksu:",
+      "profile.editProfile": "Edytuj profil",
+      "profile.blackListForum": "Czarna lista forum:",
+      "profile.addBlacklistedCotent": "Dodaj treść do czarnej listy...",
+      "profile.blacklistExample": "Frazy należy włożyć w cudzysłów: \"Pierwsza fraza\" \"Druga\" itd.",
+      "profile.bio": "O mnie",
+      "profile.bioPlaceholder": "Dodaj coś o sobie",
+
+      //UserProfileEdit
+      "profile.edit.editProfile": "Edytuj profil",
+      "profile.edit.changePassword": "Zmień hasło",
+      "profile.edit.changePasswordCancel": "Anuluj zmianę hasła",
+      "profile.edit.saveChanges": "Zapisz zmiany",
+      "profile.edit.oldPassword": "Obecne hasło:",
+      "profile.edit.newPassword": "Nowe hasło:",
+      "profile.edit.repeatPassword": "Powtórz hasło:",
+      "profile.edit.cancel": "Anuluj:",
+      "profile.edit.empty_names": "Pola na imię i nazwisko nie mogą być puste",
+      "profile.edit.fill_both_passwords": "Wypełnij oba pola na hasło",
+      "profile.edit.password_len": "Hasło musi posiadać minimum 6 znaków",
+      "profile.edit.password_no_match": "Hasła nie są identyczne",
+      "profile.edit.successful_update": "Dane zostały zaktualizowane",
+      "profile.edit.unsuccessful_update": "Nie udało się zaktualizować danych",
+
+
     }
   }
 };

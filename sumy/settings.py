@@ -11,9 +11,17 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+if os.name == 'posix':  # Unix/Linux
+    GDAL_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/libgdal.so'
+    GEOS_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/libgeos_c.so'
+elif os.name == 'nt':  # Windows
+    GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal310.dll'
+    GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
 
 
 # Quick-start development settings - unsuitable for production
@@ -42,7 +50,9 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "mainapp",
-    "accounts"
+    "accounts",
+    "map",
+    "django.contrib.gis",
 ]
 
 MIDDLEWARE = [
@@ -201,15 +211,16 @@ SIMPLE_JWT = {
 }
 
 # Email configuration - update with your actual email settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
 # For production use:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.your-email-provider.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-email@p.lodz.pl'
-# EMAIL_HOST_PASSWORD = 'your-password'
-# DEFAULT_FROM_EMAIL = 'University System <your-email@p.lodz.pl>'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'sumypoliconnect@gmail.com'  # Twój adres Gmail
+EMAIL_HOST_PASSWORD = 'ubuh luux ivzk fdhj'        # Wklej hasło aplikacji (bez spacji)
+DEFAULT_FROM_EMAIL = 'University System <sumypoliconnect@gmail.com>'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite development server
