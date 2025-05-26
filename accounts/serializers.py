@@ -29,16 +29,23 @@ class RegisterSerializer(serializers.ModelSerializer):
         
         # Validate university email
         email = attrs['email']
-        if not email.endswith('@edu.p.lodz.pl'):
-            raise serializers.ValidationError({"email": "Only university emails ending with @edu.p.lodz.pl are allowed."})
-        
-        # Validate username format based on email
         username_part = email.split('@')[0]
         
-        # Check if it's a student (numeric ID) or lecturer (name.surname)
-        if not (username_part.isdigit() or re.match(r'^[A-Za-z]+\.[A-Za-z]+$', username_part)):
+        if email.endswith('@edu.p.lodz.pl'):
+            # Student email validation
+            if not username_part.isdigit():
+                raise serializers.ValidationError({
+                    "email": "Student emails must use numeric ID format: 123456@edu.p.lodz.pl"
+                })
+        elif email.endswith('@p.lodz.pl'):
+            # Lecturer email validation
+            if not re.match(r'^[A-Za-z]+\.[A-Za-z]+$', username_part):
+                raise serializers.ValidationError({
+                    "email": "Lecturer emails must use firstname.lastname format: firstname.lastname@p.lodz.pl"
+                })
+        else:
             raise serializers.ValidationError({
-                "email": "Email format must be either a numeric ID (for students) or firstname.lastname (for lecturers)."
+                "email": "Only university emails are allowed. Students: 123456@edu.p.lodz.pl, Lecturers: firstname.lastname@p.lodz.pl"
             })
             
         return attrs

@@ -25,8 +25,8 @@ const resources = {
       // Register page
       "register.title": "Register",
       "register.email": "Email",
-      "register.email.placeholder": "123456@edu.p.lodz.pl or firstname.lastname@edu.p.lodz.pl",
-      "register.emailHelp": "Use your university email (123456@edu.p.lodz.pl for students, firstname.lastname@edu.p.lodz.pl for lecturers)",
+      "register.email.placeholder": "123456@edu.p.lodz.pl or firstname.lastname@p.lodz.pl",
+      "register.emailHelp": "Use your university email (123456@edu.p.lodz.pl for students, firstname.lastname@p.lodz.pl for lecturers)",
       "register.firstName": "First Name",
       "register.firstName.placeholder": "Enter your first name",
       "register.lastName": "Last Name",
@@ -42,7 +42,7 @@ const resources = {
 
       // Validation messages
       "validation.required": "{{field}} is required",
-      "validation.email.format": "Email must be in format 123456@edu.p.lodz.pl (for students) or firstname.lastname@edu.p.lodz.pl (for lecturers)",
+      "validation.email.format": "Email must be in format 123456@edu.p.lodz.pl (for students) or firstname.lastname@p.lodz.pl (for lecturers)",
       "validation.password.length": "Password must be at least 8 characters",
       "validation.password.match": "Passwords do not match",
 
@@ -245,8 +245,8 @@ const resources = {
       // Register page
       "register.title": "Rejestracja",
       "register.email": "Email",
-      "register.email.placeholder": "123456@edu.p.lodz.pl lub imie.nazwisko@edu.p.lodz.pl",
-      "register.emailHelp": "Użyj emaila uniwersyteckiego (123456@edu.p.lodz.pl dla studentów, imie.nazwisko@edu.p.lodz.pl dla wykładowców)",
+      "register.email.placeholder": "123456@edu.p.lodz.pl lub imie.nazwisko@p.lodz.pl",
+      "register.emailHelp": "Użyj emaila uniwersyteckiego (123456@edu.p.lodz.pl dla studentów, imie.nazwisko@p.lodz.pl dla wykładowców)",
       "register.firstName": "Imię",
       "register.firstName.placeholder": "Wprowadź swoje imię",
       "register.lastName": "Nazwisko",
@@ -262,7 +262,7 @@ const resources = {
 
       // Validation messages
       "validation.required": "Pole {{field}} jest wymagane",
-      "validation.email.format": "Email musi być w formacie 123456@edu.p.lodz.pl (dla studentów) lub imie.nazwisko@edu.p.lodz.pl (dla wykładowców)",
+      "validation.email.format": "Email musi być w formacie 123456@edu.p.lodz.pl (dla studentów) lub imie.nazwisko@p.lodz.pl (dla wykładowców)",
       "validation.password.length": "Hasło musi mieć co najmniej 8 znaków",
       "validation.password.match": "Hasła nie są takie same",
 

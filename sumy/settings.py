@@ -207,9 +207,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For developm
 # EMAIL_HOST = 'smtp.your-email-provider.com'
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-email@edu.p.lodz.pl'
+# EMAIL_HOST_USER = 'your-email@p.lodz.pl'
 # EMAIL_HOST_PASSWORD = 'your-password'
-# DEFAULT_FROM_EMAIL = 'University System <your-email@edu.p.lodz.pl>'
+# DEFAULT_FROM_EMAIL = 'University System <your-email@p.lodz.pl>'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite development server

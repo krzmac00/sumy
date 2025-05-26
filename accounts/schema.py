@@ -13,7 +13,7 @@ class AuthenticationSchema(AutoSchema):
                         location='form',
                         required=True,
                         schema=coreschema.String(
-                            description='University email ending with @edu.p.lodz.pl'
+                            description='University email: students use @edu.p.lodz.pl, lecturers use @p.lodz.pl'
                         )
                     ),
                     coreapi.Field(
