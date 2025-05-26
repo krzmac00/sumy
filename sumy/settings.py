@@ -11,12 +11,17 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
-GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal310.dll'
+if os.name == 'posix':  # Unix/Linux
+    GDAL_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/libgdal.so'
+    GEOS_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/libgeos_c.so'
+elif os.name == 'nt':  # Windows
+    GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal310.dll'
+    GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
 
 
 # Quick-start development settings - unsuitable for production
