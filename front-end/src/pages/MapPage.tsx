@@ -11,7 +11,7 @@ import type { BuildingFeature } from "../types/BuildingFeature";
 import "./MapPage.css";
 
 /* ---------- Budynki do wyszukiwarki ---------- */
-const buildingList: { name: string; position: LatLngExpression }[] = [
+const buildingList: { name: string; position: LatLngExpression; buildingCode?: string; floor?: string; roomId?: string }[] = [
   { name: "B9 Lodex", position: [51.747192, 19.453947] },
   { name: "B14 Instytut Fizyki", position: [51.746575, 19.455451] },
   { name: "B19 Centrum Technologii Informatycznych CTI", position: [51.746992, 19.455847] },
@@ -29,6 +29,13 @@ const buildingList: { name: string; position: LatLngExpression }[] = [
   { name: "C15 SDS", position: [51.749120433928596, 19.449427400249085] },
   { name: "E1 IX Dom Studencki", position: [51.74695479499577, 19.45977903555612] },
   { name: "F1 V Dom Studencki", position: [51.7789650157646, 19.494415789858092] },
+  { name: "B9 Aula F2", position: [51.747263, 19.453623], buildingCode: "B9", floor: "Parter", roomId: "F2" },
+  { name: "B9 Aula F3", position: [51.747229, 19.453357], buildingCode: "B9", floor: "Parter", roomId: "F3" },
+  { name: "B9 Aula F7", position: [51.747211, 19.453157], buildingCode: "B9", floor: "Piętro 3", roomId: "F7" },
+  { name: "B9 Aula F9", position: [51.747126, 19.453178], buildingCode: "B9", floor: "Piętro 3", roomId: "F9" },
+  { name: "B9 Aula F10", position: [51.747149, 19.452928], buildingCode: "B9", floor: "Piętro 3", roomId: "F10" },
+  { name: "B19 Sala kinowa CTI", position: [51.747007, 19.455864], buildingCode: "B19", floor: "Parter", roomId: "Sala kinowa" },
+  { name: "B14 Aula Major Instytut Fizyki", position: [51.746474, 19.455167], buildingCode: "B14", floor: "Parter", roomId: "Aula major" },
   ];
 
 const DEFAULT_POSITION: LatLngExpression = [51.746032, 19.453547];
@@ -74,12 +81,27 @@ const MapPage: React.FC = () => {
     );
   };
 
-  const handleSelect = (name: string) => {
-    setSearchTerm(name);
-    setSuggestions([]);
-    const building = buildingList.find((b) => b.name === name);
-    if (building) setSelectedPos(building.position);
-  };
+const handleSelect = (name: string) => {
+  setSearchTerm(name);
+  setSuggestions([]);
+  const item = buildingList.find((b) => b.name === name);
+
+  if (item) {
+    setSelectedPos(item.position);
+
+    if (item.buildingCode && item.floor && item.roomId) {
+      setSelectedBuilding({
+        properties: {
+          name: item.buildingCode,
+          label: name,
+        },
+        roomId: item.roomId,
+        defaultFloor: item.floor,
+      } as any);
+    }
+  }
+};
+
 
   return (
     <MainLayout>
@@ -169,7 +191,8 @@ const MapPage: React.FC = () => {
           onClose={() => setSelectedBuilding(null)}
           buildingCode={selectedBuilding.properties.name}   // "B9" lub "B19"
           buildingName={selectedBuilding.properties.label}  // przyjazny tytuł
-          defaultFloor="Parter"
+          defaultFloor={(selectedBuilding as any).defaultFloor ?? "Parter"}
+          highlightedRoomId={(selectedBuilding as any).roomId}
         />
      )}
     </MainLayout>

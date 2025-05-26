@@ -20,7 +20,9 @@ interface BuildingFloorModalProps {
   buildingCode: string;
   buildingName: string;
   defaultFloor?: string;
+  highlightedRoomId?: string;
 }
+
 
 interface Room {
   id: string;
@@ -29,16 +31,15 @@ interface Room {
 
 const floorsOrder = ["Parter", "Piętro 1", "Piętro 2", "Piętro 3", "Piętro 4"];
 
-// floorSvgs mapuje nazwę piętra na komponent SVG
 const buildingFloorSvgs: Record<string, Record<string, React.FC<React.SVGProps<SVGSVGElement>>>> = {
   B9: {
     Parter: ParterSvg,
     // "Piętro 1": Pietro1Svg,
-    "Piętro 3": Pietro3Svg,
+    "Piętro 3": Pietro3Svg
   },
   B19: {
     Parter: ctiSvg,
-    // kolejne piętra CTI jeżeli powstaną
+    // kolejne piętra CTI 
   },
   B14: {
     Parter: iFizykiSvg,
@@ -51,6 +52,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
   buildingCode,
   buildingName,
   defaultFloor = "Parter",
+  highlightedRoomId,
 }) => {
   const [selectedFloor, setSelectedFloor] = useState(defaultFloor);
   const [selectedRoom, setSelectedRoom]   = useState<Room|null>(null);
@@ -64,7 +66,18 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
   useEffect(() => {
     const svgEl = svgRef.current;
     if (!svgEl) return;
+
     const rooms = Array.from(svgEl.querySelectorAll<SVGElement>("polygon.room[id]"));
+
+    if (highlightedRoomId) {
+      const highlighted = svgEl.querySelector<SVGElement>(`polygon.room#${highlightedRoomId}`);
+      if (highlighted) {
+        highlighted.setAttribute("stroke", "red");
+        highlighted.setAttribute("stroke-width", "4");
+        highlighted.setAttribute("fill-opacity", "0.6");
+      }
+    }
+
     rooms.forEach(el => {
       el.style.cursor = "pointer";
       const onClick = () => {
@@ -75,12 +88,18 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
       };
       el.addEventListener("click", onClick);
       el.addEventListener("mouseover", () => el.setAttribute("fill-opacity", "0.5"));
-      el.addEventListener("mouseout",  () => el.setAttribute("fill-opacity", "0.2"));
+      el.addEventListener("mouseout",  () => {
+        // Jeśli to nie jest podświetlony, przywróć
+        if (el.id !== highlightedRoomId) el.setAttribute("fill-opacity", "0.2");
+      });
     });
+
+    // 🧹 Clean up
     return () => {
       rooms.forEach(el => el.replaceWith(el.cloneNode(true)));
     };
-  }, [selectedFloor, buildingCode]);
+  }, [selectedFloor, buildingCode, highlightedRoomId]);
+
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
