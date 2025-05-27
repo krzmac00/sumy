@@ -128,6 +128,10 @@ const resources = {
       "forum.threadList.totalCount_other": "{{count}} threads",
       "forum.filter.category": "Category",
       "forum.filter.allCategories": "All Categories",
+      "forum.filter.dateFrom": "From",
+      "forum.filter.dateTo": "To",
+      "forum.filter.clearDates": "Clear dates",
+      "forum.filter.invalidDateRange": "From date must be before To date",
 
       // Thread Categories
       "categories.general": "General",
@@ -422,9 +426,13 @@ const resources = {
       "forum.threadList.noThreadsInCategory": "Nie znaleziono wątków w kategorii '{{category}}'.",
       "forum.threadList.showingFilteredCount": "Wyświetlanie {{count}} z {{total}} wątków w \"{{category}}\"",
       "forum.threadList.totalCount_one": "{{count}} wątek",
-      "forum.threadList.totalCount_other": "{{count}} wątków",
+      "forum.threadList.totalCount_other": "{{count}} wątki",
       "forum.filter.category": "Kategoria",
       "forum.filter.allCategories": "Wszystkie kategorie",
+      "forum.filter.dateFrom": "Od",
+      "forum.filter.dateTo": "Do",
+      "forum.filter.clearDates": "Wyczyść daty",
+      "forum.filter.invalidDateRange": "Data początkowa musi być przed datą końcową",
 
       // Thread Categories
       "categories.general": "Ogólne",

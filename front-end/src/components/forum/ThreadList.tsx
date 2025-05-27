@@ -12,6 +12,7 @@ interface ThreadListProps {
   error: string | null;
   onRefresh?: () => void;
   onCategoryChange?: (category: string) => void;
+  onDateRangeChange?: (dateFrom: string, dateTo: string) => void;
   blacklistOn: boolean;
   setBlacklistOn: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -20,7 +21,8 @@ const ThreadList: React.FC<ThreadListProps> = ({
   threads, 
   loading, 
   error, 
-  onCategoryChange, 
+  onCategoryChange,
+  onDateRangeChange,
   onRefresh,
   blacklistOn,
   setBlacklistOn 
@@ -28,6 +30,9 @@ const ThreadList: React.FC<ThreadListProps> = ({
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category') || '';
+  const dateFrom = searchParams.get('dateFrom') || '';
+  const dateTo = searchParams.get('dateTo') || '';
+  const [dateError, setDateError] = React.useState<string>('');
   
   // Get translated categories for the dropdown
   const translatedCategories = getTranslatedCategories(t);
@@ -39,18 +44,68 @@ const ThreadList: React.FC<ThreadListProps> = ({
 
   // Handle category filter change
   const handleCategoryChange = (newCategory: string) => {
+    const newParams = new URLSearchParams(searchParams);
     if (newCategory) {
-      setSearchParams({ category: newCategory });
+      newParams.set('category', newCategory);
     } else {
-      setSearchParams({});
+      newParams.delete('category');
     }
+    setSearchParams(newParams);
     onCategoryChange?.(newCategory);
   };
 
-  // Sync with parent component when category changes
+  // Handle date range change
+  const handleDateChange = (type: 'from' | 'to', value: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    
+    if (type === 'from') {
+      if (value) {
+        newParams.set('dateFrom', value);
+      } else {
+        newParams.delete('dateFrom');
+      }
+    } else {
+      if (value) {
+        newParams.set('dateTo', value);
+      } else {
+        newParams.delete('dateTo');
+      }
+    }
+    
+    setSearchParams(newParams);
+    
+    // Validate date range
+    const newDateFrom = type === 'from' ? value : dateFrom;
+    const newDateTo = type === 'to' ? value : dateTo;
+    
+    if (newDateFrom && newDateTo && newDateFrom > newDateTo) {
+      setDateError(t('forum.filter.invalidDateRange'));
+    } else {
+      setDateError('');
+      onDateRangeChange?.(newDateFrom, newDateTo);
+    }
+  };
+
+  // Clear date filters
+  const clearDateFilters = () => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('dateFrom');
+    newParams.delete('dateTo');
+    setSearchParams(newParams);
+    setDateError('');
+    onDateRangeChange?.('', '');
+  };
+
+  // Sync with parent component when filters change
   useEffect(() => {
     onCategoryChange?.(categoryFilter);
   }, [categoryFilter, onCategoryChange]);
+
+  useEffect(() => {
+    if (!dateError) {
+      onDateRangeChange?.(dateFrom, dateTo);
+    }
+  }, [dateFrom, dateTo, dateError, onDateRangeChange]);
 
   if (loading) {
     return (
@@ -91,9 +146,7 @@ const ThreadList: React.FC<ThreadListProps> = ({
 
   return (
     <div className="thread-list-container">
-      <div className="thread-list-header">
-        <h2>{t('forum.threadList.title')}</h2>
-        <div className="thread-list-actions">
+      <div className="thread-list-actions">
           {/* Blacklist Toggle */}
           <div className="blacklist-toggle" style={{ 
             display: 'flex', 
@@ -141,6 +194,48 @@ const ThreadList: React.FC<ThreadListProps> = ({
             </div>
           </div>
 
+          {/* Date Range Picker */}
+          <div className="date-range-picker">
+            <div className="date-input-group">
+              <label htmlFor="date-from">{t('forum.filter.dateFrom')}:</label>
+              <input
+                type="date"
+                id="date-from"
+                value={dateFrom}
+                onChange={(e) => handleDateChange('from', e.target.value)}
+                className="date-input"
+                max={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            <div className="date-input-group">
+              <label htmlFor="date-to">{t('forum.filter.dateTo')}:</label>
+              <input
+                type="date"
+                id="date-to"
+                value={dateTo}
+                onChange={(e) => handleDateChange('to', e.target.value)}
+                className="date-input"
+                max={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            {(dateFrom || dateTo) && (
+              <button
+                onClick={clearDateFilters}
+                className="clear-dates-button"
+                title={t('forum.filter.clearDates')}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Date Error Message */}
+          {dateError && (
+            <div className="date-error">
+              {dateError}
+            </div>
+          )}
+
           {/* Category Filter */}
           <div className="category-filter">
             <label htmlFor="category-select">{t('forum.filter.category')}:</label>
@@ -148,12 +243,7 @@ const ThreadList: React.FC<ThreadListProps> = ({
               id="category-select"
               value={categoryFilter}
               onChange={(e) => handleCategoryChange(e.target.value)}
-              style={{
-                marginLeft: '0.5rem',
-                padding: '0.25rem 0.5rem',
-                borderRadius: '4px',
-                border: '1px solid #ccc'
-              }}
+              className="category-select"
             >
               <option value="">{t('forum.filter.allCategories')}</option>
               {translatedCategories.map(category => (
@@ -161,14 +251,6 @@ const ThreadList: React.FC<ThreadListProps> = ({
               ))}
             </select>
           </div>
-
-          {/* Create Thread Button */}
-          <Link 
-            to="/forum/create-thread" 
-            className="create-thread-button"
-          >
-            {t('forum.threadList.createNew')}
-          </Link>
 
           {/* Refresh Button */}
           {onRefresh && (
@@ -180,8 +262,15 @@ const ThreadList: React.FC<ThreadListProps> = ({
               ↻
             </button>
           )}
+
+          {/* Create Thread Button */}
+          <Link 
+            to="/forum/create-thread" 
+            className="create-thread-button"
+          >
+            {t('forum.threadList.createNew')}
+          </Link>
         </div>
-      </div>
       
       {filteredThreads.length === 0 ? (
         <div className="no-threads-message" style={{

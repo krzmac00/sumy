@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.db import transaction
 from django.db.models import Q
-from datetime import date, datetime
+from datetime import date, datetime, time
 
 from .post import Post, Thread, PostSerializer, ThreadSerializer, Vote, VoteSerializer
 from .post import vote_on_thread, vote_on_post
@@ -150,15 +150,16 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['last_activity_date', 'date']
     ordering = ['-last_activity_date']
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         queryset = Thread.objects.all()
         user = self.request.user
 
-        apply_blacklist = self.request.query_params.get("blacklist",
-                                                        "on") != "off"
+        # Apply blacklist filter
+        apply_blacklist = self.request.query_params.get("blacklist", "on") != "off"
 
-        if apply_blacklist:
+        if apply_blacklist and user.is_authenticated:
             blacklist = getattr(user, 'blacklist', [])
             if isinstance(blacklist, str):
                 try:
@@ -171,6 +172,28 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
                 queryset = queryset.exclude(
                     Q(title__contains=phrase) | Q(content__contains=phrase)
                 )
+
+        # Apply date range filter
+        date_from = self.request.query_params.get('date_from')
+        date_to = self.request.query_params.get('date_to')
+        
+        if date_from:
+            try:
+                # Parse the date and filter threads created on or after this date
+                from_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+                queryset = queryset.filter(created_date__gte=from_date)
+            except ValueError:
+                pass  # Invalid date format, ignore filter
+                
+        if date_to:
+            try:
+                # Parse the date and filter threads created on or before this date
+                # Add one day to include the entire day
+                to_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+                to_datetime = datetime.combine(to_date, time.max)
+                queryset = queryset.filter(created_date__lte=to_datetime)
+            except ValueError:
+                pass  # Invalid date format, ignore filter
 
         return queryset
 

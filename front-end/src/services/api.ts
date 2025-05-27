@@ -19,10 +19,25 @@ const JSON_HEADERS = {
  */
 export const threadAPI = {
   /**
-   * Get all threads with optional blacklist parameter
+   * Get all threads with optional blacklist and date range parameters
    */
-  getAll: async (blacklistOn = true): Promise<Thread[]> => {
-    const url = blacklistOn ? `${API_BASE}/threads/` : `${API_BASE}/threads/?blacklist=off`;
+  getAll: async (blacklistOn = true, dateFrom?: string, dateTo?: string): Promise<Thread[]> => {
+    const params = new URLSearchParams();
+    
+    if (!blacklistOn) {
+      params.append('blacklist', 'off');
+    }
+    
+    if (dateFrom) {
+      params.append('date_from', dateFrom);
+    }
+    
+    if (dateTo) {
+      params.append('date_to', dateTo);
+    }
+    
+    const queryString = params.toString();
+    const url = `${API_BASE}/threads/${queryString ? `?${queryString}` : ''}`;
 
     const response = await fetch(url);
     if (!response.ok) {

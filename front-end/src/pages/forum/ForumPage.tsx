@@ -12,13 +12,15 @@ const ForumPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [blacklistOn, setBlacklistOn] = useState<boolean>(false);
+  const [dateFrom, setDateFrom] = useState<string>('');
+  const [dateTo, setDateTo] = useState<string>('');
   // Category filtering is handled by ThreadList component via URL params
 
   const fetchThreads = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const threadsData = await threadAPI.getAll(blacklistOn);
+      const threadsData = await threadAPI.getAll(blacklistOn, dateFrom, dateTo);
       
       // Ensure threadsData is an array before attempting to sort
       if (!Array.isArray(threadsData)) {
@@ -39,11 +41,16 @@ const ForumPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [t, blacklistOn]);
+  }, [t, blacklistOn, dateFrom, dateTo]);
 
   useEffect(() => {
-  fetchThreads();
-}, [fetchThreads, blacklistOn]);
+    fetchThreads();
+  }, [fetchThreads]);
+
+  const handleDateRangeChange = useCallback((newDateFrom: string, newDateTo: string) => {
+    setDateFrom(newDateFrom);
+    setDateTo(newDateTo);
+  }, []);
 
   return (
     <MainLayout>
@@ -59,6 +66,7 @@ const ForumPage: React.FC = () => {
           error={error}
           onRefresh={fetchThreads}
           onCategoryChange={() => {}} // URL state is managed by ThreadList itself
+          onDateRangeChange={handleDateRangeChange}
           blacklistOn={blacklistOn}
           setBlacklistOn={setBlacklistOn}
         />
