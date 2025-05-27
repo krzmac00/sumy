@@ -61,14 +61,14 @@
   height: 40px;
   border-radius: 50%;
   border: none;
-  background-color: #6c757d;
+  background-color: #c8ced3;
   cursor: pointer;
   font-size: 18px;
   transition: background-color 0.2s, transform 0.2s;
 }
 
 .refresh-button:hover {
-  background-color: #333638;
+  background-color: #6c757d;
 }
 
 .refresh-button:active {
