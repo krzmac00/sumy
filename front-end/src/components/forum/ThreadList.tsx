@@ -290,7 +290,11 @@ const ThreadList: React.FC<ThreadListProps> = ({
           gap: '1rem'
         }}>
           {filteredThreads.map(thread => (
-            <ThreadCard key={thread.id} thread={thread} />
+            <ThreadCard 
+              key={thread.id} 
+              thread={thread} 
+              onThreadDeleted={onRefresh}
+            />
           ))}
         </div>
       )}

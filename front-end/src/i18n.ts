@@ -25,6 +25,9 @@ const resources = {
       // Common
       "common.retry": "Retry",
       "common.refresh": "Refresh",
+      "common.underConstruction": "Under Construction",
+      "common.underConstruction.message": "We're working hard to bring you something amazing. Check back soon!",
+      "common.underConstruction.progress": "{{progress}}% Complete",
       
       // Register page
       "register.title": "Register",
@@ -328,6 +331,9 @@ const resources = {
       // Common
       "common.retry": "Ponów próbę",
       "common.refresh": "Odśwież",
+      "common.underConstruction": "W budowie",
+      "common.underConstruction.message": "Ciężko pracujemy, aby dostarczyć Ci coś niesamowitego. Wróć wkrótce!",
+      "common.underConstruction.progress": "{{progress}}% Ukończono",
       
       // Register page
       "register.title": "Rejestracja",

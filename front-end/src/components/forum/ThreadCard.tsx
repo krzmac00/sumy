@@ -11,9 +11,10 @@ import './ThreadCard.css';
 interface ThreadCardProps {
   thread: Thread;
   onVoteUpdate?: (threadId: number, newVoteCount: number, userVote: 'upvote' | 'downvote' | null) => void;
+  onThreadDeleted?: () => void;
 }
 
-const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate }) => {
+const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadDeleted }) => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -73,7 +74,10 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate }) => {
     e.preventDefault();
     try {
       await threadAPI.delete(thread.id);
-      navigate('/forum');
+      // Call the refresh function if provided
+      if (onThreadDeleted) {
+        onThreadDeleted();
+      }
     } catch (err) {
       console.error('Error deleting thread:', err);
       if (err instanceof Error) {
