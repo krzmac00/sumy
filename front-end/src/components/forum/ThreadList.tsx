@@ -166,15 +166,6 @@ const ThreadList: React.FC<ThreadListProps> = ({
           <Link 
             to="/forum/create-thread" 
             className="create-thread-button"
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: '#007bff',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '4px',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
           >
             {t('forum.threadList.createNew')}
           </Link>
@@ -184,16 +175,7 @@ const ThreadList: React.FC<ThreadListProps> = ({
             <button
               onClick={onRefresh}
               className="refresh-button"
-              style={{
-                padding: '0.5rem',
-                backgroundColor: '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-              title={t('common.refresh', 'Refresh')}
+              title={t('forum.refresh', 'Refresh')}
             >
               ↻
             </button>
@@ -242,8 +224,9 @@ const ThreadList: React.FC<ThreadListProps> = ({
             }) || 
             `Showing ${filteredThreads.length} of ${threads.length} threads in "${translateCategory(categoryFilter, t)}"`
           ) : (
-            t('forum.threadList.totalCount', { count: threads.length }) ||
-            `${threads.length} thread${threads.length === 1 ? '' : 's'} total`
+            threads.length === 1 
+              ? t('forum.threadList.totalCount_one', { count: threads.length })
+              : t('forum.threadList.totalCount_other', { count: threads.length })
           )}
         </div>
       )}

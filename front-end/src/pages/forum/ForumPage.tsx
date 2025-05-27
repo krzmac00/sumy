@@ -49,22 +49,7 @@ const ForumPage: React.FC = () => {
     <MainLayout>
       <div className="forum-page">
         <div className="forum-header">
-          <div className="forum-header-title">
-            <h1>{t('forum.title')}</h1>
-            <button 
-              className="refresh-button" 
-              onClick={fetchThreads}
-              disabled={loading}
-              aria-label={t('forum.refresh')}
-              title={t('forum.refresh')}
-            >
-              {loading ? (
-                <div className="loading-spinner" aria-hidden="true"></div>
-              ) : (
-                <span className="refresh-icon" aria-hidden="true">↻</span>
-              )}
-            </button>
-          </div>
+          <h1>{t('forum.title')}</h1>
           <p className="forum-description">{t('forum.description')}</p>
         </div>
         

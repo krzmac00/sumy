@@ -122,9 +122,10 @@ const resources = {
       "forum.threadList.posts": "posts",
       "forum.threadList.lastActivity": "Last activity",
       "forum.threadList.noThreads": "No threads found. Be the first to create one!",
-      "forum.threadList.noThreadsInCategory": "Brak wątków w kategorii '{{category}}'.",
-      "forum.threadList.showingFilteredCount": "Wyświetlanie {{count}} z {{total}} wątków w \"{{category}}\"",
-      "forum.threadList.totalCount": "{{count}} {{count === 1 ? 'wątek' : 'wątków'}} łącznie",
+      "forum.threadList.noThreadsInCategory": "No threads found in the '{{category}}' category.",
+      "forum.threadList.showingFilteredCount": "Showing {{count}} of {{total}} threads in \"{{category}}\"",
+      "forum.threadList.totalCount_one": "{{count}} thread",
+      "forum.threadList.totalCount_other": "{{count}} threads",
       "forum.filter.category": "Category",
       "forum.filter.allCategories": "All Categories",
 
@@ -140,6 +141,12 @@ const resources = {
       "categories.other": "Other",
       
       // Forum - Thread View
+      "forum.thread.edit": "Edit",
+      "forum.thread.delete": "Delete",
+      "forum.thread.confirmDelete": "Are you sure?",
+      "forum.thread.confirmYes": "Yes",
+      "forum.thread.confirmNo": "No",
+      "forum.thread.errorDelete": "Error deleting thread",
       "forum.thread.newReply": "New Reply",
       "forum.thread.replyToMultiple": "Reply to Multiple Posts",
       "forum.thread.cancelSelection": "Cancel Selection",
@@ -413,6 +420,9 @@ const resources = {
       "forum.threadList.lastActivity": "Ostatnia aktywność",
       "forum.threadList.noThreads": "Nie znaleziono wątków. Bądź pierwszy i utwórz nowy!",
       "forum.threadList.noThreadsInCategory": "Nie znaleziono wątków w kategorii '{{category}}'.",
+      "forum.threadList.showingFilteredCount": "Wyświetlanie {{count}} z {{total}} wątków w \"{{category}}\"",
+      "forum.threadList.totalCount_one": "{{count}} wątek",
+      "forum.threadList.totalCount_other": "{{count}} wątków",
       "forum.filter.category": "Kategoria",
       "forum.filter.allCategories": "Wszystkie kategorie",
 
@@ -428,6 +438,12 @@ const resources = {
       "categories.other": "Inne",
       
       // Forum - Thread View
+      "forum.thread.edit": "Edytuj",
+      "forum.thread.delete": "Usuń",
+      "forum.thread.confirmDelete": "Czy na pewno?",
+      "forum.thread.confirmYes": "Tak",
+      "forum.thread.confirmNo": "Nie",
+      "forum.thread.errorDelete": "Błąd podczas usuwania wątku",
       "forum.thread.newReply": "Nowa odpowiedź",
       "forum.thread.replyToMultiple": "Odpowiedz na kilka postów",
       "forum.thread.cancelSelection": "Anuluj wybór",
