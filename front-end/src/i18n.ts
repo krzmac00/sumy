@@ -22,6 +22,10 @@ const resources = {
       "login.loading": "Logging in...",
       "login.noAccount": "Don't have an account?",
       
+      // Common
+      "common.retry": "Retry",
+      "common.refresh": "Refresh",
+      
       // Register page
       "register.title": "Register",
       "register.email": "Email",
@@ -105,8 +109,10 @@ const resources = {
       "forum.error.fetchThreads": "Error loading threads. Please try again later.",
       "forum.error.fetchThread": "Error loading thread. Please try again later.",
       "forum.error.threadNotFound": "Thread not found.",
-      "forum.blacklist_on": "Blacklist is on:",
-      "forum.blacklist_off": "Blacklist is off:",
+      "forum.blacklist_on": "Czarna lista wł:",
+      "forum.blacklist_off": "Czarna lista wył:",
+      "forum.disable_blacklist": "Wyłącz czarną listę",
+      "forum.enable_blacklist": "Włącz czarną listę",
       
       // Forum - Thread List
       "forum.threadList.title": "Discussion Threads",
@@ -116,7 +122,9 @@ const resources = {
       "forum.threadList.posts": "posts",
       "forum.threadList.lastActivity": "Last activity",
       "forum.threadList.noThreads": "No threads found. Be the first to create one!",
-      "forum.threadList.noThreadsInCategory": "No threads found in the '{{category}}' category.",
+      "forum.threadList.noThreadsInCategory": "Brak wątków w kategorii '{{category}}'.",
+      "forum.threadList.showingFilteredCount": "Wyświetlanie {{count}} z {{total}} wątków w \"{{category}}\"",
+      "forum.threadList.totalCount": "{{count}} {{count === 1 ? 'wątek' : 'wątków'}} łącznie",
       "forum.filter.category": "Category",
       "forum.filter.allCategories": "All Categories",
 
@@ -305,6 +313,10 @@ const resources = {
       "login.button": "Zaloguj się",
       "login.loading": "Logowanie...",
       "login.noAccount": "Nie masz konta?",
+      
+      // Common
+      "common.retry": "Ponów próbę",
+      "common.refresh": "Odśwież",
       
       // Register page
       "register.title": "Rejestracja",
