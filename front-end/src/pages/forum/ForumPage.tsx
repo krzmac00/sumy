@@ -20,6 +20,7 @@ const ForumPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
+      await threadAPI.threadsFromEmail()
       const threadsData = await threadAPI.getAll(blacklistOn, dateFrom, dateTo);
       
       // Ensure threadsData is an array before attempting to sort
@@ -41,6 +42,7 @@ const ForumPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+
   }, [t, blacklistOn, dateFrom, dateTo]);
 
   useEffect(() => {

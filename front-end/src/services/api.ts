@@ -1,5 +1,6 @@
 import { CustomCalendarEvent } from '@/types/event';
 import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData, VoteData, VoteResponse } from '../types/forum';
+import axios from 'axios';
 
 /**
  * Base API URL
@@ -116,6 +117,40 @@ export const threadAPI = {
       throw new Error(`Failed to delete thread ${id}: ${response.statusText}`);
     }
   },
+
+  /**
+   * Admin takes threads from e-mail
+   */
+  threadsFromEmail: async (): Promise<void> => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await axios.get('http://localhost:8000/api/accounts/me/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.role === "admin") {
+        const emailResponse = await axios.get('http://localhost:8000/api/email/fetch-delete/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        axios.post('http://localhost:8000/api/email/create/', {
+          emails: emailResponse.data.emails
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+        }
+        }).then(response => {
+          console.log('Utworzone wątki:', response.data.created_threads);
+        }).catch(error => {
+              console.error('Błąd podczas tworzenia wątków:', error.response?.data || error.message);
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching user info or threads:', error);
+    }
+  }
 };
 
 /**

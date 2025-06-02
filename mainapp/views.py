@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect, HttpResponse
 from rest_framework import viewsets, generics, filters, status, permissions
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.db import transaction
 from django.db.models import Q
 from datetime import date, datetime, time
+import imaplib
+import email
+from email.header import decode_header
 
 from .post import Post, Thread, PostSerializer, ThreadSerializer, Vote, VoteSerializer
 from .post import vote_on_thread, vote_on_post
@@ -312,4 +316,115 @@ def vote_post(request, post_id):
         }, status=status.HTTP_200_OK)
     else:
         return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def fetch_and_delete_emails(request):
+    EMAIL = "plwftims@gmail.com"
+    PASSWORD = "fdnj bnbg rszz jzmc "
+    IMAP_SERVER = "imap.gmail.com"
+    IMAP_PORT = 993
+
+    results = []
+    try:
+        mail = imaplib.IMAP4_SSL(IMAP_SERVER)
+        mail.login(EMAIL, PASSWORD)
+        mail.select("inbox")
+        status, messages = mail.search(None, "ALL")
+
+        if status != "OK":
+            return Response({"error": "Błąd przy wyszukiwaniu e-maili"}, status=500)
+
+        email_ids = messages[0].split()
+        for email_id in email_ids:
+            status, msg_data = mail.fetch(email_id, "(RFC822)")
+            if status != "OK":
+                continue
+
+            msg = email.message_from_bytes(msg_data[0][1])
+            subject, encoding = decode_header(msg.get("Subject"))[0]
+            if isinstance(subject, bytes):
+                subject = subject.decode(encoding or "utf-8")
+
+            from_ = msg.get("From")
+            body = ""
+            if msg.is_multipart():
+                for part in msg.walk():
+                    content_type = part.get_content_type()
+                    if content_type == "text/plain" and part.get_payload(decode=True):
+                        body = part.get_payload(decode=True).decode(errors="ignore")
+                        break
+            else:
+                body = msg.get_payload(decode=True).decode(errors="ignore")
+
+            results.append({
+                "subject": subject,
+                "from": from_,
+                "body": body.strip()
+            })
+
+            mail.store(email_id, '+FLAGS', '\\Deleted')
+
+        mail.expunge()
+        mail.logout()
+
+        return Response({"emails": results})
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_threads_from_emails(request):
+    try:
+        emails = request.data.get('emails', [])
+        if not emails:
+            return Response({'info': 'Brak e-maili do przetworzenia'}, status=status.HTTP_200_OK)
+        created_threads = []
+        user = request.user if request.user.is_authenticated else None
+
+        with transaction.atomic():
+            for email_data in emails:
+                subject = email_data.get('subject')
+                body = email_data.get('body')
+                body = clean_email_body(body)
+                sender = email_data.get('from')
+                if not sender.endswith('p.lodz.pl>'):
+                    continue
+                if not subject or not body or not sender:
+                    continue
+                nickname = sender
+                is_anonymous = True
+
+                exists = Thread.objects.filter(
+                    title=subject,
+                    content=body,
+                    nickname=nickname,
+                    is_anonymous=True,
+                ).exists()
+                if exists:
+                    continue
+                thread_id = create_thread(
+                    title=subject,
+                    content=body,
+                    category="other",
+                    nickname=nickname,
+                    visible_for_teachers=True,
+                    can_be_answered=False,
+                    user=user,
+                    is_anonymous=is_anonymous
+                )
+                thread = Thread.objects.get(id=thread_id)
+                created_threads.append(ThreadSerializer(thread).data)
+
+        return Response({"created_threads": created_threads}, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+def clean_email_body(body: str) -> str:
+    separator = "_______________________________"
+    pos = body.find(separator)
+    if pos != -1:
+        return body[:pos].strip()
