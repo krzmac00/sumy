@@ -107,7 +107,7 @@ const AppRoutes: React.FC = () => {
 
       {/* Default Routes */}
       <Route path="/" element={<Navigate to="/auth" replace />} />
-      <Route path="*" element={<Navigate to="/home" replace />} />
+      <Route path="*" element={<Navigate to="/forum" replace />} />
     </Routes>
   );
 };

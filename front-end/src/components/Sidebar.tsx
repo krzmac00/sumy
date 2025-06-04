@@ -56,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const isNewsfeedSection = location.pathname.startsWith('/newsfeed');
 
   return (
-    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
+    <div className={`sidebar ${/*isOpen ? 'open' : */''}`}>
       <div className="sidebar-header">
         <h3>{t('sidebar.title')}</h3>
       </div>

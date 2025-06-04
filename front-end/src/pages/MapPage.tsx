@@ -167,7 +167,6 @@ const handleSelect = (name: string) => {
                         ${hasPlan ? `<button id="${btnId}" class="map-popup-button">Plan budynku</button>` : ""}
                       </div>
                     `;
-                    poly.bindPopup(html).openPopup();
 
                     poly.once("popupopen", () => {
                       setTimeout(() => {
@@ -175,6 +174,7 @@ const handleSelect = (name: string) => {
                         if (btn) btn.onclick = () => setSelectedBuilding(feature);
                       }, 50);
                     });
+                    poly.bindPopup(html).openPopup();
                   });
                 }}
               />
