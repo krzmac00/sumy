@@ -13,7 +13,7 @@ const ctiSvg: React.FC<CtiSvgProps> = props => (
     <path d="M382.312 97.651H1184V790.578H382.312V97.651Z" fill="white"/>
     <path d="M382.312 97.651H1183.51V790.578H382.312V97.651Z" fill="white"/>
     <path d="M382.312 97.651H1184.22V790.573H382.312V97.651Z" fill="white"/>
-    <path d="M382.312 97.651H1184.22V790.573H382.312V97.651Z" stroke="black" stroke-width="8"/>
+    <path d="M382.312 97.651H1184.22V790.573H382.312V97.651Z" stroke="black" stroke-width="8" fill="none"/>
     <path d="M386.734 104.198H731.135V428.729H386.734V104.198Z" fill="white"/>
     <path d="M386.734 104.198H731.547V428.729H386.734V104.198Z" fill="#FFF9E2"/>
     <path d="M642.922 604.104H943.458" stroke="black" stroke-width="2"/>

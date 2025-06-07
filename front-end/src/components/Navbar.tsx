@@ -64,7 +64,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
         
         <div className="brand">
           <img src={pcLogo} alt="Policonnect Logo" className="logo" />
-          <h1 className="brand-name">Policonnect</h1>
+          <h1 className="brand-name">PoliConnect</h1>
         </div>
       </div>
       
