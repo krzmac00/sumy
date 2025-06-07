@@ -6,7 +6,6 @@ import "leaflet/dist/leaflet.css";
 import MainLayout from "../layouts/MainLayout";
 import MapFilterPanel from "../components/MapFilterPanel";
 import BuildingFloorModal from "../components/BuildingFloorModal";
-// import { buildingPlans } from "../data/buildingPlans";
 import type { BuildingFeature } from "../types/BuildingFeature";
 import "./MapPage.css";
 
@@ -36,7 +35,7 @@ const buildingList: { name: string; position: LatLngExpression; buildingCode?: s
   { name: "B9 Aula F10", position: [51.747149, 19.452928], buildingCode: "B9", floor: "Piętro 3", roomId: "F10" },
   { name: "B19 Sala kinowa CTI", position: [51.747007, 19.455864], buildingCode: "B19", floor: "Parter", roomId: "Sala kinowa" },
   { name: "B14 Aula Major Instytut Fizyki", position: [51.746474, 19.455167], buildingCode: "B14", floor: "Parter", roomId: "Aula major" },
-  ];
+];
 
 const DEFAULT_POSITION: LatLngExpression = [51.746032, 19.453547];
 
@@ -61,6 +60,7 @@ const MapPage: React.FC = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedPos, setSelectedPos] = useState<LatLngExpression | null>(null);
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingFeature | null>(null);
+  const [layersMap, setLayersMap] = useState<Record<string, L.Polygon>>({});
 
   useEffect(() => {
     fetch("/data/buildings.geojson")
@@ -81,8 +81,7 @@ const MapPage: React.FC = () => {
     );
   };
 
-const handleSelect = (name: string) => {
-  setSearchTerm(name);
+  const handleSelect = (name: string) => {
   setSuggestions([]);
   const item = buildingList.find((b) => b.name === name);
 
@@ -99,18 +98,46 @@ const handleSelect = (name: string) => {
         defaultFloor: item.floor,
       } as any);
     }
-  }
-};
 
+    const layer = layersMap[name];
+    if (layer) {
+      const map = layer._map;
+      if (map) {
+        const feature = layer.feature as BuildingFeature;
+        const { label, description, website, hasPlan, name: code } = feature.properties;
+
+        const btnId = `plan-btn-${code}`;
+        const html = `
+          <div style="max-width:240px">
+            <strong>${label}</strong><br/>
+            <p style="margin:6px 0">${description ?? ""}</p>
+            ${website ? `<a href="${website}" target="_blank">Przejdź do strony</a><br/>` : ""}
+            ${hasPlan ? `<button id="${btnId}" class="map-popup-button">Plan budynku</button>` : ""}
+          </div>
+        `;
+
+        layer.once("popupopen", () => {
+          setTimeout(() => {
+            const btn = document.getElementById(btnId);
+            if (btn) btn.onclick = () => setSelectedBuilding(feature);
+          }, 50);
+        });
+
+        layer.bindPopup(html).openPopup();
+      }
+    }
+  }
+
+  // ✨ Ostatecznie wyczyść pole wyszukiwarki
+  setSearchTerm("");
+};
 
   return (
     <MainLayout>
       <div style={{ display: "flex", gap: 20 }}>
         <MapFilterPanel />
 
-        {/* Mapa */}
         <div style={{ flex: 1, position: "relative" }}>
-          {/* Wyszukiwarka */}
           <div className="search-container">
             <input
               className="search-input"
@@ -129,13 +156,7 @@ const handleSelect = (name: string) => {
             )}
           </div>
 
-          {/* Leaflet Map */}
-          <MapContainer
-            className="leaflet-map"
-            center={DEFAULT_POSITION}
-            zoom={17}
-            scrollWheelZoom
-          >
+          <MapContainer className="leaflet-map" center={DEFAULT_POSITION} zoom={17} scrollWheelZoom>
             <TileLayer
               //@ts-ignore
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -153,6 +174,8 @@ const handleSelect = (name: string) => {
                   poly.bindTooltip(label, { direction: "top", sticky: true });
                   poly.on("mouseover", () => poly.setStyle({ fillOpacity: 0.3 }));
                   poly.on("mouseout", () => poly.setStyle({ fillOpacity: 0.15 }));
+
+                  setLayersMap((prev) => ({ ...prev, [label]: poly }));
 
                   poly.on("click", () => {
                     const center = poly.getBounds().getCenter();
@@ -174,6 +197,7 @@ const handleSelect = (name: string) => {
                         if (btn) btn.onclick = () => setSelectedBuilding(feature);
                       }, 50);
                     });
+
                     poly.bindPopup(html).openPopup();
                   });
                 }}
@@ -189,12 +213,12 @@ const handleSelect = (name: string) => {
         <BuildingFloorModal
           isOpen
           onClose={() => setSelectedBuilding(null)}
-          buildingCode={selectedBuilding.properties.name}   // "B9" lub "B19"
-          buildingName={selectedBuilding.properties.label}  // przyjazny tytuł
+          buildingCode={selectedBuilding.properties.name}
+          buildingName={selectedBuilding.properties.label}
           defaultFloor={(selectedBuilding as any).defaultFloor ?? "Parter"}
           highlightedRoomId={(selectedBuilding as any).roomId}
         />
-     )}
+      )}
     </MainLayout>
   );
 };
