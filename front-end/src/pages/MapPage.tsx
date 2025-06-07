@@ -144,6 +144,11 @@ const MapPage: React.FC = () => {
               placeholder="Szukaj budynku…"
               value={searchTerm}
               onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && suggestions.length === 1) {
+                  handleSelect(suggestions[0]);
+                }
+              }}
             />
             {!!suggestions.length && (
               <ul className="suggestions-list">
