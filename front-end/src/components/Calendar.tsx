@@ -136,18 +136,103 @@ const Calendar: React.FC = () => {
 
   const filtered = events.filter((e) => e.category && selectedCategories.includes(e.category));
 
+  const expandEvent = (event: CustomCalendarEvent, endOfView: Date): CustomCalendarEvent[] => {
+    if (!event.start || !event.end) return [];
+
+    const events: CustomCalendarEvent[] = [event];
+    const duration = event.end.getTime() - event.start.getTime();
+
+    if (event.repeatType === RepeatType.Weekly) {
+      let current = new Date(event.start);
+      while (true) {
+        current = new Date(current.getTime() + 7 * 24 * 60 * 60 * 1000);
+        if (current > endOfView) break;
+
+        events.push({
+          ...event,
+          id: `${event.id}-weekly-${current.toISOString()}`,
+          start: new Date(current),
+          end: new Date(current.getTime() + duration),
+        });
+      }
+    }
+
+    if (event.repeatType === RepeatType.Monthly) {
+      const baseStart = new Date(event.start);
+      const dayOfWeek = baseStart.getDay();
+      const nth = Math.floor((baseStart.getDate() - 1) / 7) + 1;
+
+      let current = new Date(baseStart);
+      while (true) {
+        current.setMonth(current.getMonth() + 1);
+        current.setDate(1);
+
+        let weekdayCount = 0;
+        while (current.getMonth() === current.getMonth()) {
+          if (current.getDay() === dayOfWeek) {
+            weekdayCount += 1;
+            if (weekdayCount === nth) break;
+          }
+          current.setDate(current.getDate() + 1);
+        }
+
+        if (current > endOfView) break;
+
+        events.push({
+          ...event,
+          id: `${event.id}-monthly-${current.toISOString()}`,
+          start: new Date(current),
+          end: new Date(current.getTime() + duration),
+        });
+      }
+    }
+
+    return events;
+  };
+
+
   const handleEventDrop = ({ event, start, end }: any) => {
     const ev = event as CustomCalendarEvent;
-    if (typeof ev.id !== "number") return;
 
-    const updated = { ...ev, start: new Date(start), end: new Date(end) };
+    const baseId = typeof ev.id === "string" && ev.id.includes("-")
+      ? parseInt(ev.id.split("-")[0])
+      : (typeof ev.id === "number" ? ev.id : NaN);
+
+    if (!Number.isFinite(baseId)) return;
+
+    const originalBase = events.find(e => {
+      const id = typeof e.id === "number" ? e.id : parseInt((e.id as string).split("-")[0]);
+      return id === baseId && typeof e.id === "number"; // only the base
+    });
+
+    if (!originalBase || !originalBase.start || !originalBase.end) return;
+
+    const deltaMs = new Date(start).getTime() - new Date(ev.start!).getTime();
+
+    const updatedBase: CustomCalendarEvent = {
+      ...originalBase,
+      start: new Date(originalBase.start.getTime() + deltaMs),
+      end: new Date(originalBase.end.getTime() + deltaMs),
+    };
 
     eventAPI
-      .update(ev.id, updated)
+      .update(baseId, updatedBase)
       .then((savedEvent: any) => {
-        setEvents((prev) => prev.map((e) => (e.id === savedEvent.id ? savedEvent : e)));
+        const endOfView = new Date(date);
+        endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+
+        setEvents((prev) => {
+          const idStr = savedEvent.id.toString();
+          return [
+            ...prev.filter((e) => {
+              const eId = typeof e.id === "number" ? e.id.toString() : e.id;
+              return !eId.startsWith(idStr);
+            }),
+            ...expandEvent(savedEvent, endOfView),
+          ];
+        });
       })
-      .catch((err: any) => console.error("Failed to update event:", err));
+      .catch((err: any) => console.error("Failed to update recurring event:", err));
   };
 
   const handleEventResize = ({ event, start, end }: any) => {
@@ -159,7 +244,19 @@ const Calendar: React.FC = () => {
     eventAPI
       .update(ev.id, updated)
       .then((savedEvent: any) => {
-        setEvents((prev) => prev.map((e) => (e.id === savedEvent.id ? savedEvent : e)));
+        const endOfView = new Date(date);
+        endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+
+        setEvents((prev) => {
+          const baseId = savedEvent.id.toString();
+          return [
+            ...prev.filter((e) => {
+              const eId = typeof e.id === "number" ? e.id.toString() : e.id;
+              return !eId.startsWith(baseId);
+            }),
+            ...expandEvent(savedEvent, endOfView),
+          ];
+        });
       })
       .catch((err: any) => console.error("Failed to resize event:", err));
   };
