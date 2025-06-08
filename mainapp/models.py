@@ -101,7 +101,9 @@ class Event(models.Model):
         null=True,
         blank=True
     )
-    is_template = models.BooleanField(default=False)
+    is_template = models.BooleanField(default=False),
+    room = models.CharField(max_length=50, null=True)
+    teacher = models.CharField(max_length=100, null=True)
 
     def save(self, *args, **kwargs):
         self.color = CATEGORY_COLORS.get(self.category, '#808080')

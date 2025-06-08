@@ -6,11 +6,13 @@ export interface CustomCalendarEvent extends CalendarEvent {
   id: number | string;
   title: string;
   description: string;
-  category?: CategoryKey;
-  color?: string;
+  category: CategoryKey;
+  color: string;
   repeatType: RepeatType;
   start: Date;
   end: Date;
-  schedule_plan?: number | null;
-  is_template?: boolean;
+  schedule_plan: number | null;
+  is_template: boolean | null;
+  room: string | null;
+  teacher: string | null;
 }

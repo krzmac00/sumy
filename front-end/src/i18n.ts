@@ -251,6 +251,8 @@ const resources = {
 	    //Calendar
       "calendar.enterClass": "Enter class title",
       "calendar.deleteClass": "Delete event '{{title}}'?",
+      "calendar.enterRoom": "Enter room",
+      "calendar.enterTeacher": "Enter teacher",
       "calendar.previous": "Back",
       "calendar.next": "Next",
       "calendar.month": "Month",
@@ -273,6 +275,8 @@ const resources = {
       "calendar.cancel": "Cancel",
       "calendar.save": "Save",
       "calendar.invalidRange": "End date must be after start date",
+      "calendar.room": "Room",
+      "calendar.teacher": "Teacher",
 
       //MapFilterPanel
       "map.filter.mapFilters": "Map filters",
@@ -563,6 +567,8 @@ const resources = {
 	    //Calendar
       "calendar.enterClass": "Wprowadź tytuł zajęć",
       "calendar.deleteClass": "Usunąć wydarzenie '{{title}}'?",
+      "calendar.enterRoom": "Wprowadź pomieszczenie",
+      "calendar.enterTeacher": "Wprowadź nauczyciela",
       "calendar.previous": "Wstecz",
       "calendar.next": "Dalej",
       "calendar.month": "Miesiąc",
@@ -585,6 +591,8 @@ const resources = {
       "calendar.cancel": "Anuluj",
       "calendar.save": "Zapisz",
       "calendar.invalidRange": "Data końcowa musi być później niż data początkowa",
+      "calendar.room": "Pomieszczenie",
+      "calendar.teacher": "Nauczyciel",
 
       //MapFilterPanel
       "map.filter.mapFilters": "Filtry mapy",

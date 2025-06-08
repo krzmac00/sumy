@@ -58,6 +58,10 @@ const Calendar: React.FC = () => {
             category: event.category,
             color: event.color,
             repeatType: event.repeat_type as RepeatType,
+            schedule_plan: event.schedule_plan,
+            is_template: event.is_template,
+            room: event.room,
+            teacher: event.teacher
           };
 
           normalizedEvents.push(base);
@@ -155,8 +159,22 @@ const Calendar: React.FC = () => {
     repeatType: RepeatType;
     start: Date;
     end: Date;
+    schedule_plan: number | null;
+    is_template: boolean | null;
+    room: string | null;
+    teacher: string | null;
   }) => {
-    const { title, category, repeatType, start, end } = data;
+    const {
+      title,
+      category,
+      repeatType,
+      start,
+      end,
+      schedule_plan,
+      is_template,
+      room,
+      teacher,
+    } = data;
 
     const newEvent: Omit<CustomCalendarEvent, "id"> = {
       title,
@@ -164,8 +182,12 @@ const Calendar: React.FC = () => {
       start,
       end,
       category,
-      color: "#2563eb",
       repeatType,
+      schedule_plan,
+      is_template,
+      room,
+      teacher,
+      color: ""
     };
 
     eventAPI
@@ -275,7 +297,7 @@ const Calendar: React.FC = () => {
   const handleNavigate = (d: Date) => setDate(d);
   const handleView = (v: View) => setView(v);
 
-  function CustomToolbar(toolbar: ToolbarProps) {
+  function CustomCalendarToolbar(toolbar: ToolbarProps) {
     const prev = () => toolbar.onNavigate("PREV");
     const next = () => toolbar.onNavigate("NEXT");
     const views = Array.isArray(toolbar.views)
@@ -323,7 +345,7 @@ const Calendar: React.FC = () => {
 
   function EventRenderer({ event }: EventProps<CalendarEvent>) {
     const customEvent = event as CustomCalendarEvent;
-    const repeatLabel =
+    const repeatTypeLabel =
       customEvent.repeatType !== RepeatType.None
         ? ` (${t(`calendar.repeat.${customEvent.repeatType}`, customEvent.repeatType)})`
         : "";
@@ -331,10 +353,27 @@ const Calendar: React.FC = () => {
     return (
       <span>
         <strong>{customEvent.title}</strong>
-        <div style={{ fontSize: "0.85em", opacity: 0.75 }}>
-          {t(`calendar.category.${customEvent.category ?? "undefined"}`, customEvent.category ?? "")}
+        {customEvent.category != CategoryKey.Timetable && (
+          <div style={{ fontSize: "0.85em", opacity: 0.8 }}>
+            {t(`calendar.category.${customEvent.category ?? "timetable"}`, customEvent.category ?? "")}
+          </div>
+        )}
+        {customEvent.category == CategoryKey.Timetable && (
+          <div></div>
+        )}
+        <div style={{ fontSize: "0.85em", opacity: 0.8 }}>
+          {repeatTypeLabel}
         </div>
-        <div style={{ fontSize: "0.85em", opacity: 0.75 }}>{repeatLabel}</div>
+        {customEvent.room && (
+          <div style={{ fontSize: "0.85em", opacity: 0.8 }}>
+            {t("calendar.room", "Room")}: {customEvent.room}
+          </div>
+        )}
+        {customEvent.teacher && (
+          <div style={{ fontSize: "0.85em", opacity: 0.8 }}>
+            {t("calendar.teacher", "Teacher")}: {customEvent.teacher}
+          </div>
+        )}
       </span>
     );
   }
@@ -358,7 +397,7 @@ const Calendar: React.FC = () => {
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
         components={{
-          toolbar: CustomToolbar,
+          toolbar: CustomCalendarToolbar,
           event: EventRenderer,
         }}
         views={[Views.MONTH, Views.WEEK]}

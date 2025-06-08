@@ -326,8 +326,10 @@ export const eventAPI = {
       start: new Date(event.start_date),
       end: new Date(event.end_date),
       repeatType: event.repeat_type,
-      schedule_plan: event.schedule_plan,
-      is_template: event.is_template,
+      schedule_plan: event.schedule_plan ?? null,
+      is_template: event.is_template ?? false,
+      room: event.room ?? null,
+      teacher: event.teacher ?? null,
     }));
   },
 
@@ -345,8 +347,10 @@ export const eventAPI = {
       start: new Date(event.start_date),
       end: new Date(event.end_date),
       repeatType: event.repeat_type,
-      schedule_plan: event.schedule_plan,
-      is_template: event.is_template,
+      schedule_plan: event.schedule_plan ?? null,
+      is_template: event.is_template ?? false,
+      room: event.room ?? null,
+      teacher: event.teacher ?? null,
     };
   },
 
@@ -364,6 +368,8 @@ export const eventAPI = {
         repeat_type: data.repeatType,
         schedule_plan: data.schedule_plan ?? null,
         is_template: data.is_template ?? false,
+        room: data.room ?? null,
+        teacher: data.teacher ?? null,
       }),
     });
     if (!response.ok) {
@@ -375,8 +381,10 @@ export const eventAPI = {
       start: new Date(event.start_date),
       end: new Date(event.end_date),
       repeatType: event.repeat_type,
-      schedule_plan: event.schedule_plan,
-      is_template: event.is_template,
+      schedule_plan: event.schedule_plan ?? null,
+      is_template: event.is_template ?? false,
+      room: event.room ?? null,
+      teacher: event.teacher ?? null,
     };
   },
 
@@ -389,11 +397,13 @@ export const eventAPI = {
       headers: JSON_HEADERS,
       body: JSON.stringify({
         ...data,
-        start_date: data.start ?? undefined,
-        end_date: data.end ?? undefined,
+        start_date: data.start,
+        end_date: data.end,
         repeat_type: data.repeatType,
         schedule_plan: data.schedule_plan ?? null,
         is_template: data.is_template ?? false,
+        room: data.room ?? null,
+        teacher: data.teacher ?? null,
       }),
     });
     if (!response.ok) {
@@ -405,8 +415,10 @@ export const eventAPI = {
       start: new Date(event.start_date),
       end: new Date(event.end_date),
       repeatType: event.repeat_type,
-      schedule_plan: event.schedule_plan,
-      is_template: event.is_template,
+      schedule_plan: event.schedule_plan ?? null,
+      is_template: event.is_template ?? false,
+      room: event.room ?? null,
+      teacher: event.teacher ?? null,
     };
   },
 
