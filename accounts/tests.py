@@ -31,13 +31,13 @@ class UserModelTests(TestCase):
     def test_create_lecturer_user(self):
         """Test creating a lecturer user from email."""
         user = User.objects.create_user(
-            email='jan.kowalski@edu.p.lodz.pl',
+            email='jan.kowalski@p.lodz.pl',
             password='testpass123',
             first_name='Jan',
             last_name='Kowalski'
         )
         
-        self.assertEqual(user.email, 'jan.kowalski@edu.p.lodz.pl')
+        self.assertEqual(user.email, 'jan.kowalski@p.lodz.pl')
         self.assertEqual(user.login, 'jan.kowalski')
         self.assertEqual(user.role, 'lecturer')
         self.assertFalse(user.is_active)
@@ -46,13 +46,13 @@ class UserModelTests(TestCase):
     def test_create_superuser(self):
         """Test creating a superuser."""
         user = User.objects.create_superuser(
-            email='admin@edu.p.lodz.pl',
+            email='admin@p.lodz.pl',
             password='testpass123',
             first_name='Admin',
             last_name='User'
         )
         
-        self.assertEqual(user.email, 'admin@edu.p.lodz.pl')
+        self.assertEqual(user.email, 'admin@p.lodz.pl')
         self.assertEqual(user.role, 'admin')
         self.assertTrue(user.is_active)
         self.assertTrue(user.is_staff)
@@ -89,7 +89,7 @@ class RegistrationAPITests(TestCase):
     def test_register_valid_lecturer_user(self):
         """Test registering a valid lecturer user."""
         payload = {
-            'email': 'jan.kowalski@edu.p.lodz.pl',
+            'email': 'jan.kowalski@p.lodz.pl',
             'password': 'StrongP@ssword123',
             'password2': 'StrongP@ssword123',
             'first_name': 'Jan',
@@ -126,6 +126,21 @@ class RegistrationAPITests(TestCase):
         """Test that registration fails with invalid student email format."""
         payload = {
             'email': 'invalid@edu.p.lodz.pl',  # Not numeric
+            'password': 'StrongP@ssword123',
+            'password2': 'StrongP@ssword123',
+            'first_name': 'John',
+            'last_name': 'Doe'
+        }
+        
+        response = self.client.post(self.register_url, payload)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(User.objects.filter(email=payload['email']).exists())
+    
+    def test_register_invalid_lecturer_email_format(self):
+        """Test that registration fails with invalid lecturer email format."""
+        payload = {
+            'email': 'invalidformat@p.lodz.pl',  # Not firstname.lastname
             'password': 'StrongP@ssword123',
             'password2': 'StrongP@ssword123',
             'first_name': 'John',

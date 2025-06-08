@@ -1,4 +1,3 @@
-import { TFunction } from 'i18next';
 
 /**
  * Categories for threads across different forum sections
@@ -14,7 +13,9 @@ export const THREAD_CATEGORIES = [
   'events',
   'technical',
   'other'
-];
+] as const;
+
+export type ThreadCategory = typeof THREAD_CATEGORIES[number];
 
 /**
  * Get translated category options for selection components
@@ -22,20 +23,20 @@ export const THREAD_CATEGORIES = [
  * @param t Translation function
  * @returns Array of objects with value and label for each category
  */
-export const getTranslatedCategories = (t: TFunction) => {
+export const getTranslatedCategories = (t: (key: string) => string) => {
   return THREAD_CATEGORIES.map(category => ({
     value: category,
-    label: t(`categories.${category}`)
+    label: translateCategory(category, t)
   }));
 };
 
 /**
  * Translate a category ID to its localized display name
  * 
- * @param categoryId The category ID to translate
+ * @param category The category ID to translate
  * @param t Translation function
  * @returns Translated category name
  */
-export const translateCategory = (categoryId: string, t: TFunction): string => {
-  return t(`categories.${categoryId}`);
+export const translateCategory = (category: string, t: (key: string) => string): string => {
+  return t(`categories.${category}`);
 };

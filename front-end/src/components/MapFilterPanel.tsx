@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import './MapFilterPanel.css';
+import { useTranslation } from 'react-i18next';
 
 const MapFilterPanel: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [type, setType] = useState('');
-  const [radius, setRadius] = useState(5);
+  const [radius] = useState(5);
+  const { t } = useTranslation();
 
   const handleCheckboxChange = (value: string) => {
     setSelectedCategories((prev) =>
@@ -19,50 +21,46 @@ const MapFilterPanel: React.FC = () => {
 
   return (
     <div className="map-filter-panel">
-      <h2>Filtry mapy</h2>
+      <h2>{t('map.filter.mapFilters')}</h2>
 
       <div className="filter-group">
-        <label>Kategorie:</label>
+        <label>{t('map.filter.buildingType')}</label>
         <div className="checkbox-group">
           <label>
             <input type="checkbox" onChange={() => handleCheckboxChange('faculty')} />
-            Budynki wydziału
+            {t('map.filter.faculty')}
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => handleCheckboxChange('non-faculty')} />
+            {t('map.filter.nonFaculty')}
           </label>
           <label>
             <input type="checkbox" onChange={() => handleCheckboxChange('academic')} />
-            Budynki ogólnoakademickie
+            {t('map.filter.generalAcademic')}
           </label>
           <label>
             <input type="checkbox" onChange={() => handleCheckboxChange('administration')} />
-            Administracja
+            {t('map.filter.administration')}
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => handleCheckboxChange('lodge')} />
+            {t('map.filter.porter')}
           </label>
         </div>
       </div>
 
       <div className="filter-group">
-        <label>Typ obiektu:</label>
+        <label>{t('map.filter.roomType')}</label>
         <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="">-- wybierz --</option>
-          <option value="academic">Akademicki</option>
-          <option value="dorm">Akademik</option>
-          <option value="facility">Obiekt sportowy</option>
+          <option value="">{t('map.filter.choice')}</option>
+          <option value="auditorium">{t('map.filter.auditorium')}</option>
+          <option value="class">{t('map.filter.class')}</option>
+          <option value="lab">{t('map.filter.laboratory')}</option>
         </select>
       </div>
 
-      <div className="filter-group">
-        <label>Promień (km):</label>
-        <input
-          type="range"
-          min="1"
-          max="20"
-          value={radius}
-          onChange={(e) => setRadius(Number(e.target.value))}
-        />
-        <span>{radius} km</span>
-      </div>
-
       <button className="apply-button" onClick={handleApply}>
-        Zastosuj filtry
+        {t('map.filter.applyFilters')}
       </button>
     </div>
   );

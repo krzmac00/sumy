@@ -1,5 +1,5 @@
 // src/components/Navbar.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,12 +14,20 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const { t, i18n } = useTranslation();
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const [displayName, setDisplayName] = useState('');
   
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   
   const currentLanguage = i18n.language.substring(0, 2).toUpperCase();
-  
+
+  useEffect(() => {
+    if (currentUser) {
+    const name = `${currentUser.first_name} ${currentUser.last_name}`;
+    setDisplayName(name);
+  }
+  }, [currentUser]);
+
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
     setIsLanguageDropdownOpen(false);
@@ -47,11 +55,12 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <button className="sidebar-toggle" onClick={toggleSidebar}>
+        {/*<button className="sidebar-toggle" onClick={toggleSidebar}>
           <span></span>
           <span></span>
           <span></span>
         </button>
+        */}
         
         <div className="brand">
           <img src={pcLogo} alt="Policonnect Logo" className="logo" />
@@ -61,11 +70,9 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
       
       <div className="navbar-center">
         <ul className="nav-tabs">
-          <li className="nav-item"><a href="/home">{t('nav.home')}</a></li>
-          <li className="nav-item"><a href="/forum">{t('nav.newsfeed')}</a></li>
+          <li className="nav-item"><a href="/forum">{t('nav.home')}</a></li>
           <li className="nav-item"><a href="/map">{t('nav.map')}</a></li>
           <li className="nav-item"><a href="/calendar">{t('nav.calendar')}</a></li>
-          <li className="nav-item"><a href="/calendar">{t('nav.timetable')}</a></li>
         </ul>
       </div>
       
@@ -96,7 +103,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
           {isUserDropdownOpen && (
             <div className="dropdown-menu user-dropdown">
               <a href="/profile">{t('user.profile')}</a>
-              <a href="#settings">{t('user.settings')}</a>
               <button onClick={handleLogout} className="dropdown-button">
                 {t('user.logout')}
               </button>

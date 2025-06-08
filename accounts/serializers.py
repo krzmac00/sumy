@@ -11,10 +11,11 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     blacklist = serializers.CharField(required=False)
+    bio = serializers.CharField(source='profile.bio', allow_blank=True)
 
     class Meta:
         model = User
-        fields = ['id', 'login', 'email', 'first_name', 'last_name', 'role', 'blacklist']
+        fields = ['id', 'login', 'email', 'first_name', 'last_name', 'role', 'blacklist', 'bio']
         read_only_fields = ['login', 'role']
 
     def to_representation(self, instance):
@@ -33,6 +34,8 @@ class UserSerializer(serializers.ModelSerializer):
         return matches
 
     def update(self, instance, validated_data):
+        bio = validated_data.pop('profile', {}).get('bio', None)
+
         request = self.context.get('request')
         if request and request.user != instance:
             validated_data.pop('blacklist', None)
@@ -41,8 +44,15 @@ class UserSerializer(serializers.ModelSerializer):
             if isinstance(blacklist, str):
                 validated_data['blacklist'] = self.validate_blacklist(blacklist)
 
-        return super().update(instance, validated_data)
+        user = super().update(instance, validated_data)
 
+        # zapis bio w modelu UserProfile
+        profile, _ = UserProfile.objects.get_or_create(user=user)
+        if bio is not None:
+            profile.bio = bio
+            profile.save()
+
+        return user
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
@@ -59,16 +69,23 @@ class RegisterSerializer(serializers.ModelSerializer):
         
         # Validate university email
         email = attrs['email']
-        if not email.endswith('@edu.p.lodz.pl'):
-            raise serializers.ValidationError({"email": "Only university emails ending with @edu.p.lodz.pl are allowed."})
-        
-        # Validate username format based on email
         username_part = email.split('@')[0]
         
-        # Check if it's a student (numeric ID) or lecturer (name.surname)
-        if not (username_part.isdigit() or re.match(r'^[A-Za-z]+\.[A-Za-z]+$', username_part)):
+        if email.endswith('@edu.p.lodz.pl'):
+            # Student email validation
+            if not username_part.isdigit():
+                raise serializers.ValidationError({
+                    "email": "Student emails must use numeric ID format: 123456@edu.p.lodz.pl"
+                })
+        elif email.endswith('@p.lodz.pl'):
+            # Lecturer email validation
+            if not re.match(r'^[A-Za-z]+\.[A-Za-z]+$', username_part):
+                raise serializers.ValidationError({
+                    "email": "Lecturer emails must use firstname.lastname format: firstname.lastname@p.lodz.pl"
+                })
+        else:
             raise serializers.ValidationError({
-                "email": "Email format must be either a numeric ID (for students) or firstname.lastname (for lecturers)."
+                "email": "Only university emails are allowed. Students: 123456@edu.p.lodz.pl, Lecturers: firstname.lastname@p.lodz.pl"
             })
             
         return attrs

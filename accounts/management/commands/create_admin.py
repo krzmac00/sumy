@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Default admin credentials
-        admin_email = 'admin@edu.p.lodz.pl'
+        admin_email = 'admin@p.lodz.pl'
         admin_password = 'admin123'  # In production, use a strong password
         
         # Check if admin user already exists

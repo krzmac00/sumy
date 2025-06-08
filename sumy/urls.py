@@ -10,6 +10,8 @@ urlpatterns = [
         path("v1/", include("mainapp.urls")),  # Versioned API
     ])),
 
+    path('api/map/', include('map.urls')),
+
     # Legacy (non-versioned) API and root paths
     path("", include("mainapp.urls")),
 ]

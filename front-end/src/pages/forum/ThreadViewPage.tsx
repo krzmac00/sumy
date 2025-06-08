@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import MainLayout from '../../layouts/MainLayout';
 import PostCard from '../../components/forum/PostCard';
 import ReplyForm from '../../components/forum/ReplyForm';
 import { Thread, Post } from '../../types/forum';
-import { threadAPI } from '../../services/api';
+import { threadAPI, voteAPI } from '../../services/api';
+import { formatTimeAgo } from '../../utils/dateUtils';
+import { translateCategory } from '../../utils/categories';
 import './ThreadViewPage.css';
 
 const ThreadViewPage: React.FC = () => {
   const { t } = useTranslation();
   const { threadId } = useParams<{ threadId: string }>();
-  const navigate = useNavigate();
   
   const [thread, setThread] = useState<Thread | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -20,19 +21,41 @@ const ThreadViewPage: React.FC = () => {
   const [showReplyForm, setShowReplyForm] = useState<boolean>(false);
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
   const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
+  const [voteStatus, setVoteStatus] = useState<'upvote' | 'downvote' | null>(null);
+  const [voteCount, setVoteCount] = useState<number>(0);
+  const [voting, setVoting] = useState<boolean>(false);
+
+  // Default user image path
+  const userImagePath = "/user_default_image.png";
 
   useEffect(() => {
     fetchThread();
   }, [threadId]);
 
   const fetchThread = async () => {
-    if (!threadId) return;
+    if (!threadId) {
+      setError(t('forum.error.invalidThreadId'));
+      setLoading(false);
+      return;
+    }
+    
+    // Validate that threadId is a valid number
+    const threadIdNum = parseInt(threadId);
+    if (isNaN(threadIdNum) || threadIdNum <= 0) {
+      setError(t('forum.error.invalidThreadId'));
+      setLoading(false);
+      return;
+    }
     
     try {
       setLoading(true);
       setError(null);
-      const threadData = await threadAPI.getOne(parseInt(threadId));
+      const threadData = await threadAPI.getOne(threadIdNum);
       setThread(threadData);
+      
+      // Initialize voting state from thread data
+      setVoteCount(threadData.vote_count || 0);
+      setVoteStatus(threadData.user_vote || null);
     } catch (err) {
       console.error('Error fetching thread:', err);
       setError(t('forum.error.fetchThread'));
@@ -87,6 +110,44 @@ const ThreadViewPage: React.FC = () => {
     setReplyingTo([]);
   };
 
+  const handleThreadVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!thread) return;
+    
+    if (!thread.can_vote) {
+      setError(t('forum.error.cannotVoteOwnThread'));
+      return;
+    }
+
+    if (voting) return;
+
+    try {
+      setVoting(true);
+      setError(null);
+      
+      const response = await voteAPI.voteThread(thread.id, voteType);
+      
+      setVoteCount(response.vote_count);
+      setVoteStatus(response.user_vote);
+      
+    } catch (err) {
+      console.error('Error voting on thread:', err);
+      setError(err instanceof Error ? err.message : t('forum.error.voteGeneric'));
+    } finally {
+      setVoting(false);
+    }
+  };
+
+  const handleUpvote = (e: React.MouseEvent) => handleThreadVote('upvote', e);
+  const handleDownvote = (e: React.MouseEvent) => handleThreadVote('downvote', e);
+
+  const handlePostVoteUpdate = (postId: number, newVoteCount: number, userVote: 'upvote' | 'downvote' | null) => {
+    // Optionally update local state or just let the PostCard handle its own state
+    // This callback can be used for any global state management if needed
+    console.log(`Post ${postId} vote updated: ${newVoteCount} (${userVote})`);
+  };
+
   if (loading) {
     return (
       <MainLayout>
@@ -130,38 +191,96 @@ const ThreadViewPage: React.FC = () => {
   return (
     <MainLayout>
       <div className="thread-view-container">
-        <div className="thread-view-header">
-          <div className="thread-view-navigation">
-            <Link to="/forum" className="back-to-forum-link">
-              ← {t('forum.backToList')}
-            </Link>
-            <div className="thread-category">{thread.category}</div>
+        <div className="thread-navigation">
+          <Link to="/forum" className="back-to-forum-link">
+            ← {t('forum.backToList')}
+          </Link>
+          <Link to={`/forum?category=${thread.category}`} className="thread-category">
+            {translateCategory(thread.category, t)}
+          </Link>
+        </div>
+        
+        {/* Original Post as Thread Card */}
+        <div className="thread-card original-post">
+          <div className="vote-section">
+            <button 
+              className={`upvote-button ${voteStatus === 'upvote' ? 'upvote-active' : ''} ${!thread.can_vote || voting ? 'vote-disabled' : ''}`}
+              onClick={handleUpvote}
+              disabled={!thread.can_vote || voting}
+              aria-label={t('forum.action.upvote')}
+            >
+              ▲
+            </button>
+            <span className="vote-count">{voteCount}</span>
+            <button 
+              className={`downvote-button ${voteStatus === 'downvote' ? 'downvote-active' : ''} ${!thread.can_vote || voting ? 'vote-disabled' : ''}`}
+              onClick={handleDownvote}
+              disabled={!thread.can_vote || voting}
+              aria-label={t('forum.action.downvote')}
+            >
+              ▼
+            </button>
           </div>
-          <h1 className="thread-title">{thread.title}</h1>
           
-          {thread.visible_for_teachers && (
-            <div className="thread-visibility-badge teacher">
-              {t('forum.thread.visibleForTeachers')}
+          <div className="thread-content">
+            <div className="thread-header">
+              <Link to={`/forum?category=${thread.category}`} className="thread-category">
+                {translateCategory(thread.category, t)}
+              </Link>
+              <span className="thread-separator">•</span>
+              <img src={userImagePath} alt="User" className="thread-author-image" />
+              <span className="thread-author">
+                {t('forum.threadList.by')} {thread.author_display_name || thread.nickname}
+                {thread.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+              </span>
+              <span className="thread-separator">•</span>
+              <span className="thread-time">{formatTimeAgo(thread.last_activity_date, t)}</span>
+              
+              {thread.visible_for_teachers && (
+                <>
+                  <span className="thread-separator">•</span>
+                  <span className="thread-visibility-badge teacher">
+                    {t('forum.thread.visibleForTeachers')}
+                  </span>
+                </>
+              )}
+              
+              {thread.can_be_answered && (
+                <>
+                  <span className="thread-separator">•</span>
+                  <span className="thread-visibility-badge answerable">
+                    {t('forum.thread.canBeAnswered')}
+                  </span>
+                </>
+              )}
             </div>
-          )}
-          
-          {thread.can_be_answered && (
-            <div className="thread-visibility-badge answerable">
-              {t('forum.thread.canBeAnswered')}
+            
+            <h1 className="thread-title">{thread.title}</h1>
+            
+            <div className="post-content">
+              {thread.content}
             </div>
-          )}
-          
-          {/* Thread author info */}
-          <div className="thread-author-info">
-            <span className="thread-author">
-              {thread.author_display_name}
-              {thread.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
-            </span>
-          </div>
-          
-          {/* Thread content */}
-          <div className="thread-content-text">
-            {thread.content}
+
+            <div className="thread-footer">
+              <div className="thread-action">
+                <span className="thread-action-icon">💬</span>
+                <span>
+                  {replies.length} {replies.length === 1 
+                    ? t('forum.thread.reply') 
+                    : t('forum.thread.replies')}
+                </span>
+              </div>
+              
+              <div className="thread-action">
+                <span className="thread-action-icon">🔄</span>
+                <span>{t('forum.action.share')}</span>
+              </div>
+              
+              <div className="thread-action">
+                <span className="thread-action-icon">💾</span>
+                <span>{t('forum.action.save')}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -239,6 +358,7 @@ const ThreadViewPage: React.FC = () => {
                     onReply={handleReply}
                     onReplyMultiple={() => {}}
                     onRefresh={fetchThread}
+                    onVoteUpdate={handlePostVoteUpdate}
                   />
                 </div>
               ))}

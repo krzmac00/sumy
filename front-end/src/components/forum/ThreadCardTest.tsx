@@ -1,9 +1,9 @@
 import React from 'react';
 import { Thread } from '../../types/forum';
-import RedditThreadCard from './RedditThreadCard';
+import ThreadCard from './ThreadCard';
 
 // Test component to display multiple threads with different timestamps
-const RedditThreadCardTest: React.FC = () => {
+const ThreadCardTest: React.FC = () => {
   // Current date to calculate relative dates
   const now = new Date();
   
@@ -114,16 +114,16 @@ const RedditThreadCardTest: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <h1 style={{ color: '#8b0002', marginBottom: '20px' }}>Reddit-Style Thread Cards</h1>
-      <p style={{ marginBottom: '20px' }}>This page demonstrates Reddit-style thread cards with different timestamps:</p>
+      <h1 style={{ color: '#8b0002', marginBottom: '20px' }}>Thread Cards</h1>
+      <p style={{ marginBottom: '20px' }}>This page demonstrates thread cards with different timestamps:</p>
       
       <div>
         {testThreads.map(thread => (
-          <RedditThreadCard key={thread.post} thread={thread} />
+          <ThreadCard key={thread.post} thread={thread} />
         ))}
       </div>
     </div>
   );
 };
 
-export default RedditThreadCardTest;
+export default ThreadCardTest;

@@ -1,4 +1,3 @@
-import pytest
 import os
 import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sumy.settings')
@@ -11,7 +10,9 @@ from rest_framework.test import APITestCase
 
 from mainapp.post import Post, Thread
 from mainapp.post import create_post, get_post, update_post, delete_post
-from mainapp.post import create_thread, get_thread, update_thread, delete_thread
+from mainapp.post import create_thread, get_thread, update_thread, delete_thread, create_thread_legacy
+from accounts.models import CustomUser
+from django.contrib.auth import get_user_model
 
 class PostAndThreadTests(TestCase):
     def test_create_post_without_replies(self):
@@ -224,3 +225,338 @@ class ThreadAPITestCase(APITestCase):
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Thread.objects.filter(pk=self.thread.pk).exists())
+
+
+class NewThreadModelTests(TestCase):
+    """Tests for the refactored Thread model without placeholder posts."""
+    
+    def setUp(self):
+        User = get_user_model()
+        self.user = User.objects.create_user(
+            email='test@edu.p.lodz.pl',
+            first_name='Test',
+            last_name='User',
+            login='123456',
+            role='student',
+            password='testpassword'
+        )
+    
+    def test_create_thread_without_placeholder_post(self):
+        """Test that creating a thread doesn't create placeholder posts."""
+        initial_post_count = Post.objects.count()
+        
+        thread_id = create_thread(
+            title="Test Thread",
+            content="Test content",
+            category="general",
+            nickname="TestUser"
+        )
+        
+        # No new posts should be created
+        self.assertEqual(Post.objects.count(), initial_post_count)
+        
+        # Thread should exist and have correct data
+        thread = Thread.objects.get(id=thread_id)
+        self.assertEqual(thread.title, "Test Thread")
+        self.assertEqual(thread.content, "Test content")
+        self.assertEqual(thread.category, "general")
+        self.assertEqual(thread.nickname, "TestUser")
+        self.assertFalse(thread.is_anonymous)
+        
+    def test_create_anonymous_thread(self):
+        """Test creating an anonymous thread."""
+        thread_id = create_thread(
+            title="Anonymous Thread",
+            content="Anonymous content",
+            category="general",
+            nickname="AnonUser",
+            is_anonymous=True
+        )
+        
+        thread = Thread.objects.get(id=thread_id)
+        self.assertTrue(thread.is_anonymous)
+        self.assertEqual(thread.nickname, "AnonUser")
+        self.assertIsNone(thread.author)
+        
+    def test_create_authenticated_thread(self):
+        """Test creating a thread with authenticated user."""
+        thread_id = create_thread(
+            title="User Thread",
+            content="User content",
+            category="exams",
+            nickname="UserNick",
+            user=self.user,
+            is_anonymous=False
+        )
+        
+        thread = Thread.objects.get(id=thread_id)
+        self.assertEqual(thread.author, self.user)
+        self.assertFalse(thread.is_anonymous)
+        self.assertEqual(thread.nickname, "UserNick")
+        
+    def test_thread_post_relationship(self):
+        """Test that posts can still be associated with threads."""
+        thread_id = create_thread(
+            title="Test Thread",
+            content="Content",
+            category="general"
+        )
+        thread = Thread.objects.get(id=thread_id)
+        
+        # Create a post associated with the thread
+        post = Post.objects.create(
+            nickname="TestUser",
+            content="Reply to thread",
+            thread=thread
+        )
+        
+        self.assertEqual(thread.posts.count(), 1)
+        self.assertEqual(thread.posts.first().content, "Reply to thread")
+        
+    def test_thread_serializer_without_posts(self):
+        """Test ThreadSerializer works with standalone threads."""
+        from mainapp.post import ThreadSerializer
+        
+        thread = Thread.objects.create(
+            title="Serializer Test",
+            content="Test content",
+            category="general",
+            nickname="SerializerUser"
+        )
+        
+        serializer = ThreadSerializer(thread)
+        data = serializer.data
+        
+        self.assertEqual(data['title'], "Serializer Test")
+        self.assertEqual(data['content'], "Test content")
+        self.assertEqual(data['category'], "general")
+        self.assertEqual(data['nickname'], "SerializerUser")
+        self.assertEqual(len(data['posts']), 0)
+        
+    def test_thread_serializer_with_posts(self):
+        """Test ThreadSerializer includes associated posts."""
+        from mainapp.post import ThreadSerializer
+        
+        thread = Thread.objects.create(
+            title="Thread with Posts",
+            content="Original content",
+            category="assignments",
+            nickname="ThreadAuthor"
+        )
+        
+        # Add some posts to the thread
+        Post.objects.create(
+            nickname="Responder1",
+            content="First response",
+            thread=thread
+        )
+        Post.objects.create(
+            nickname="Responder2",
+            content="Second response",
+            thread=thread
+        )
+        
+        serializer = ThreadSerializer(thread)
+        data = serializer.data
+        
+        self.assertEqual(len(data['posts']), 2)
+        self.assertEqual(data['posts'][0]['content'], "First response")
+        self.assertEqual(data['posts'][1]['content'], "Second response")
+        
+    def test_thread_author_display_name(self):
+        """Test author display name generation."""
+        from mainapp.post import ThreadSerializer
+        
+        # Test anonymous thread
+        anon_thread = Thread.objects.create(
+            title="Anonymous Thread",
+            content="Content",
+            category="general",
+            nickname="AnonNick",
+            is_anonymous=True
+        )
+        
+        serializer = ThreadSerializer(anon_thread)
+        self.assertEqual(serializer.data['author_display_name'], "AnonNick")
+        
+        # Test authenticated user thread
+        auth_thread = Thread.objects.create(
+            title="Auth Thread",
+            content="Content",
+            category="general",
+            nickname="AuthNick",
+            author=self.user,
+            is_anonymous=False
+        )
+        
+        serializer = ThreadSerializer(auth_thread)
+        expected_name = f"{self.user.first_name} {self.user.last_name} {self.user.login}"
+        self.assertEqual(serializer.data['author_display_name'], expected_name)
+        
+    def test_legacy_create_thread_compatibility(self):
+        """Test that legacy create_thread function still works."""
+        initial_post_count = Post.objects.count()
+        
+        thread_id = create_thread_legacy(
+            nickname="LegacyUser",
+            content="Legacy content",
+            category="general",
+            title="Legacy Thread",
+            visibleforteachers=True,
+            canbeanswered=False,
+            user=self.user,
+            is_anonymous=False
+        )
+        
+        # Should not create placeholder posts
+        self.assertEqual(Post.objects.count(), initial_post_count)
+        
+        thread = Thread.objects.get(id=thread_id)
+        self.assertEqual(thread.title, "Legacy Thread")
+        self.assertEqual(thread.content, "Legacy content")
+        self.assertTrue(thread.visible_for_teachers)
+        self.assertFalse(thread.can_be_answered)
+        
+    def test_get_thread_by_id(self):
+        """Test getting thread by new ID format."""
+        thread = Thread.objects.create(
+            title="Get Test Thread",
+            content="Get test content",
+            category="technical",
+            nickname="GetTestUser"
+        )
+        
+        result = get_thread(thread.id)
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result['id'], thread.id)
+        self.assertEqual(result['title'], "Get Test Thread")
+        self.assertEqual(result['content'], "Get test content")
+        self.assertEqual(result['category'], "technical")
+        
+    def test_update_thread_new_format(self):
+        """Test updating thread with new format."""
+        thread = Thread.objects.create(
+            title="Original Title",
+            content="Original content",
+            category="general",
+            nickname="UpdateUser"
+        )
+        
+        update_thread(thread.id, "Updated Title", "Updated content")
+        
+        thread.refresh_from_db()
+        self.assertEqual(thread.title, "Updated Title")
+        self.assertEqual(thread.content, "Updated content")
+        
+    def test_delete_thread_new_format(self):
+        """Test deleting thread with new format."""
+        thread = Thread.objects.create(
+            title="Delete Test",
+            content="To be deleted",
+            category="general",
+            nickname="DeleteUser"
+        )
+        thread_id = thread.id
+        
+        delete_thread(thread_id)
+        
+        self.assertFalse(Thread.objects.filter(id=thread_id).exists())
+
+
+class ThreadAPIIntegrationTests(APITestCase):
+    """Integration tests for Thread API with new model structure."""
+    
+    def setUp(self):
+        User = get_user_model()
+        self.user = User.objects.create_user(
+            email='api@edu.p.lodz.pl',
+            first_name='API',
+            last_name='User',
+            login='999999',
+            role='student',
+            password='apipassword'
+        )
+        
+    def test_create_thread_api_endpoint(self):
+        """Test thread creation via API doesn't create placeholder posts."""
+        initial_post_count = Post.objects.count()
+        
+        data = {
+            'title': 'API Test Thread',
+            'content': 'Test content via API',
+            'category': 'general',
+            'nickname': 'APIUser',
+            'visible_for_teachers': False,
+            'can_be_answered': True,
+            'is_anonymous': True
+        }
+        
+        response = self.client.post('/create-thread/', data)
+        
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Post.objects.count(), initial_post_count)  # No new posts
+        
+        # Verify thread was created correctly
+        thread = Thread.objects.get(title='API Test Thread')
+        self.assertEqual(thread.content, 'Test content via API')
+        self.assertEqual(thread.category, 'general')
+        self.assertTrue(thread.is_anonymous)
+        
+    def test_thread_api_response_format(self):
+        """Test that API response maintains expected format for frontend."""
+        data = {
+            'title': 'Format Test Thread',
+            'content': 'Format test content',
+            'category': 'exams',
+            'nickname': 'FormatUser',
+            'visible_for_teachers': True,
+            'can_be_answered': False,
+            'is_anonymous': False
+        }
+        
+        response = self.client.post('/create-thread/', data)
+        
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Check response structure
+        thread_data = response.data
+        expected_fields = [
+            'id', 'title', 'content', 'category', 'nickname',
+            'visible_for_teachers', 'can_be_answered', 'is_anonymous',
+            'posts', 'date', 'user', 'author_display_name', 'last_activity_date'
+        ]
+        
+        for field in expected_fields:
+            self.assertIn(field, thread_data, f"Missing field: {field}")
+            
+        self.assertEqual(thread_data['title'], 'Format Test Thread')
+        self.assertEqual(thread_data['content'], 'Format test content')
+        self.assertEqual(thread_data['category'], 'exams')
+        self.assertTrue(thread_data['visible_for_teachers'])
+        self.assertFalse(thread_data['can_be_answered'])
+        
+    def test_authenticated_user_thread_creation(self):
+        """Test creating thread as authenticated user."""
+        self.client.force_authenticate(user=self.user)
+        
+        data = {
+            'title': 'Authenticated Thread',
+            'content': 'Content from authenticated user',
+            'category': 'courses',
+            'visible_for_teachers': False,
+            'can_be_answered': True,
+            'is_anonymous': False
+        }
+        
+        response = self.client.post('/create-thread/', data)
+        
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        thread = Thread.objects.get(title='Authenticated Thread')
+        self.assertEqual(thread.author, self.user)
+        self.assertFalse(thread.is_anonymous)
+        
+        # Check that author_display_name is properly formatted
+        expected_display_name = f"{self.user.first_name} {self.user.last_name} {self.user.login}"
+        self.assertEqual(response.data['author_display_name'], expected_display_name)

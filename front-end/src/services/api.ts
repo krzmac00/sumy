@@ -1,5 +1,6 @@
 import { CustomCalendarEvent } from '@/types/event';
-import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData } from '../types/forum';
+import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData, VoteData, VoteResponse } from '../types/forum';
+import axios from 'axios';
 
 /**
  * Base API URL
@@ -19,13 +20,31 @@ const JSON_HEADERS = {
  */
 export const threadAPI = {
   /**
-   * Get all threads
+   * Get all threads with optional blacklist and date range parameters
    */
-  getAll: async (): Promise<Thread[]> => {
-    const response = await fetch(`${API_BASE}/threads/`);
+  getAll: async (blacklistOn = true, dateFrom?: string, dateTo?: string): Promise<Thread[]> => {
+    const params = new URLSearchParams();
+    
+    if (!blacklistOn) {
+      params.append('blacklist', 'off');
+    }
+    
+    if (dateFrom) {
+      params.append('date_from', dateFrom);
+    }
+    
+    if (dateTo) {
+      params.append('date_to', dateTo);
+    }
+    
+    const queryString = params.toString();
+    const url = `${API_BASE}/threads/${queryString ? `?${queryString}` : ''}`;
+
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to fetch threads: ${response.statusText}`);
     }
+
     const data = await response.json();
     
     // Check if response is paginated (Django REST Framework pagination)
@@ -53,63 +72,6 @@ export const threadAPI = {
     }
     return response.json();
   },
-
-  /**
-   * Create a new thread
-   
-  create: async (data: ThreadCreateData): Promise<Thread> => {
-    const response = await fetch(`${API_BASE}/threads/`, {
-      method: 'POST',
-      headers: JSON_HEADERS,
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to create thread: ${response.statusText}`);
-    }
-    return response.json();
-  },*/
-
-  /**
- * Create a new thread
- 
-create: async (data: ThreadCreateData): Promise<Thread> => {
-  // First, create a post
-  const postResponse = await fetch(`${API_BASE}/posts/`, {
-    method: 'POST',
-    headers: JSON_HEADERS,
-    body: JSON.stringify({
-      nickname: data.nickname,
-      content: data.content,
-    }),
-  });
-  
-  if (!postResponse.ok) {
-    const error = await postResponse.text();
-    throw new Error(`Failed to create post: ${error}`);
-  }
-  
-  const post = await postResponse.json();
-  
-  // Then, create the thread referencing the post
-  const threadResponse = await fetch(`${API_BASE}/threads/`, {
-    method: 'POST',
-    headers: JSON_HEADERS,
-    body: JSON.stringify({
-      post: post.id, // Reference the created post
-      category: data.category,
-      title: data.title,
-      visible_for_teachers: data.visible_for_teachers,
-      can_be_answered: data.can_be_answered,
-    }),
-  });
-  
-  if (!threadResponse.ok) {
-    const error = await threadResponse.text();
-    throw new Error(`Failed to create thread: ${error}`);
-  }
-  
-  return threadResponse.json();
-}, */
 
   /**
    * Create a new thread
@@ -155,6 +117,40 @@ create: async (data: ThreadCreateData): Promise<Thread> => {
       throw new Error(`Failed to delete thread ${id}: ${response.statusText}`);
     }
   },
+
+  /**
+   * Admin takes threads from e-mail
+   */
+  threadsFromEmail: async (): Promise<void> => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await axios.get('http://localhost:8000/api/accounts/me/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.role === "admin") {
+        const emailResponse = await axios.get('http://localhost:8000/api/email/fetch-delete/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        axios.post('http://localhost:8000/api/email/create/', {
+          emails: emailResponse.data.emails
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+        }
+        }).then(response => {
+          console.log('Utworzone wątki:', response.data.created_threads);
+        }).catch(error => {
+              console.error('Błąd podczas tworzenia wątków:', error.response?.data || error.message);
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching user info or threads:', error);
+    }
+  }
 };
 
 /**
@@ -252,13 +248,68 @@ export const postAPI = {
   delete: async (id: number): Promise<void> => {
     const response = await fetch(`${API_BASE}/posts/${id}/`, {
       method: 'DELETE',
+      credentials: 'include', // Include credentials to send authentication cookies
     });
+
     if (!response.ok) {
-      throw new Error(`Failed to delete post ${id}: ${response.statusText}`);
+      // Try to parse detailed error message
+      try {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to delete post ${id}: ${response.statusText}`);
+      } catch (jsonError) {
+        // If can't parse JSON, fall back to statusText
+        throw new Error(`Failed to delete post ${id}: ${response.statusText}`);
+      }
     }
   },
 };
 
+/**
+ * Vote API service
+ */
+export const voteAPI = {
+  /**
+   * Vote on a thread
+   */
+  voteThread: async (threadId: number, voteType: 'upvote' | 'downvote'): Promise<VoteResponse> => {
+    const response = await fetch(`${API_BASE}/threads/${threadId}/vote/`, {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      credentials: 'include',
+      body: JSON.stringify({ vote_type: voteType }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: response.statusText }));
+      throw new Error(errorData.error || `Failed to vote on thread: ${response.statusText}`);
+    }
+    
+    return response.json();
+  },
+
+  /**
+   * Vote on a post
+   */
+  votePost: async (postId: number, voteType: 'upvote' | 'downvote'): Promise<VoteResponse> => {
+    const response = await fetch(`${API_BASE}/posts/${postId}/vote/`, {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      credentials: 'include',
+      body: JSON.stringify({ vote_type: voteType }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: response.statusText }));
+      throw new Error(errorData.error || `Failed to vote on post: ${response.statusText}`);
+    }
+    
+    return response.json();
+  },
+};
+
+/**
+ * Event API service
+ */
 export const eventAPI = {
   /**
    * Get all events

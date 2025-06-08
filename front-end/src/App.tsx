@@ -18,8 +18,14 @@ import EditProfile from './pages/EditProfile';
 
 const AuthLayout: React.FC = () => {
   const { t } = useTranslation();
+  const { isAuthenticated } = useAuth();
   const [message, setMessage] = useState<string>('');
   const [isLoginView, setIsLoginView] = useState<boolean>(true);
+  
+  // Redirect to home if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/home" replace />;
+  }
   
   const handleRegisterSuccess = (successMessage: string) => {
     setMessage(successMessage || t('register.accountCreated'));
@@ -101,7 +107,7 @@ const AppRoutes: React.FC = () => {
 
       {/* Default Routes */}
       <Route path="/" element={<Navigate to="/auth" replace />} />
-      <Route path="*" element={<Navigate to="/home" replace />} />
+      <Route path="*" element={<Navigate to="/forum" replace />} />
     </Routes>
   );
 };

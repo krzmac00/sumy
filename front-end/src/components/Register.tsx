@@ -41,14 +41,18 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
   const validateEmail = (email: string): boolean => {
     // Updated validation for both student and lecturer emails
     // Student: XXXXXX@edu.p.lodz.pl where X is a number
-    // Lecturer: firstname.lastname@edu.p.lodz.pl
-    if (!email.endsWith('@edu.p.lodz.pl')) {
-      return false;
+    // Lecturer: firstname.lastname@p.lodz.pl
+    const username = email.split('@')[0];
+    
+    if (email.endsWith('@edu.p.lodz.pl')) {
+      // Student email validation
+      return username.match(/^\d{6}$/) !== null;
+    } else if (email.endsWith('@p.lodz.pl')) {
+      // Lecturer email validation
+      return username.match(/^[A-Za-z]+\.[A-Za-z]+$/) !== null;
     }
     
-    const username = email.split('@')[0];
-    return username.match(/^\d{6}$/) !== null || // Student
-           username.match(/^[A-Za-z]+\.[A-Za-z]+$/) !== null; // Lecturer
+    return false;
   };
 
   const validate = (): boolean => {

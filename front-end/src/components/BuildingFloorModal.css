@@ -1,0 +1,122 @@
+.building-floor-modal {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 760px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.building-floor-modal-title {
+  font-size: 20px;
+  color: #8b0002;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.floor-selector-horizontal {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap; /* nie łamie wierszy */
+  gap: 10px;
+  overflow-x: auto; /* dodaje poziomy scroll jeśli za dużo */
+  padding-bottom: 8px;
+}
+
+.floor-selector-horizontal::-webkit-scrollbar {
+  height: 6px;
+}
+.floor-selector-horizontal::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.floor-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  color: #333;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.floor-button.selected {
+  background-color: #8b0002;
+  color: white;
+}
+
+.floor-plan {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.modal-footer {
+  text-align: right;
+}
+
+.close-button {
+  background-color: #ccc;
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  background-color: #aaa;
+}
+
+.floor-plan-container {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.building-floor-modal {
+  background-color: #ffffff; 
+}
+
+.floor-plan-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.room-overlay {
+  position: absolute;
+  background-color: #fff9e288;
+  border: 0.5px solid #ffdc51;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.room-overlay:hover {
+  background-color: #ffefad8e;
+}
+
+.floor-plan-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.floor-plan-svg .room {
+  fill: #ffdc51;
+  fill-opacity: 0.2;
+
+  transition: fill-opacity 0.2s, stroke-width 0.2s;
+}
+.floor-plan-svg .room:hover {
+  fill: rgba(139,0,2,0.1);
+  stroke-width: 3;
+  cursor: pointer;
+}
+.floor-plan-svg {
+  background-color: #fff;
+}

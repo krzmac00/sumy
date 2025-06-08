@@ -22,11 +22,18 @@ const resources = {
       "login.loading": "Logging in...",
       "login.noAccount": "Don't have an account?",
       
+      // Common
+      "common.retry": "Retry",
+      "common.refresh": "Refresh",
+      "common.underConstruction": "Under Construction",
+      "common.underConstruction.message": "We're working hard to bring you something amazing. Check back soon!",
+      "common.underConstruction.progress": "{{progress}}% Complete",
+      
       // Register page
       "register.title": "Register",
       "register.email": "Email",
-      "register.email.placeholder": "123456@edu.p.lodz.pl or firstname.lastname@edu.p.lodz.pl",
-      "register.emailHelp": "Use your university email (123456@edu.p.lodz.pl for students, firstname.lastname@edu.p.lodz.pl for lecturers)",
+      "register.email.placeholder": "123456@edu.p.lodz.pl or firstname.lastname@p.lodz.pl",
+      "register.emailHelp": "Use your university email (123456@edu.p.lodz.pl for students, firstname.lastname@p.lodz.pl for lecturers)",
       "register.firstName": "First Name",
       "register.firstName.placeholder": "Enter your first name",
       "register.lastName": "Last Name",
@@ -42,7 +49,7 @@ const resources = {
 
       // Validation messages
       "validation.required": "{{field}} is required",
-      "validation.email.format": "Email must be in format 123456@edu.p.lodz.pl (for students) or firstname.lastname@edu.p.lodz.pl (for lecturers)",
+      "validation.email.format": "Email must be in format 123456@edu.p.lodz.pl (for students) or firstname.lastname@p.lodz.pl (for lecturers)",
       "validation.password.length": "Password must be at least 8 characters",
       "validation.password.match": "Passwords do not match",
 
@@ -66,7 +73,7 @@ const resources = {
       "user.profile": "Profile",
       "user.settings": "Settings",
       "user.logout": "Logout",
-      
+
       // Sidebar
       "sidebar.title": "Navigation",
       "sidebar.home": "Home",
@@ -105,6 +112,10 @@ const resources = {
       "forum.error.fetchThreads": "Error loading threads. Please try again later.",
       "forum.error.fetchThread": "Error loading thread. Please try again later.",
       "forum.error.threadNotFound": "Thread not found.",
+      "forum.blacklist_on": "Czarna lista wł:",
+      "forum.blacklist_off": "Czarna lista wył:",
+      "forum.disable_blacklist": "Wyłącz czarną listę",
+      "forum.enable_blacklist": "Włącz czarną listę",
       
       // Forum - Thread List
       "forum.threadList.title": "Discussion Threads",
@@ -115,8 +126,15 @@ const resources = {
       "forum.threadList.lastActivity": "Last activity",
       "forum.threadList.noThreads": "No threads found. Be the first to create one!",
       "forum.threadList.noThreadsInCategory": "No threads found in the '{{category}}' category.",
+      "forum.threadList.showingFilteredCount": "Showing {{count}} of {{total}} threads in \"{{category}}\"",
+      "forum.threadList.totalCount_one": "{{count}} thread",
+      "forum.threadList.totalCount_other": "{{count}} threads",
       "forum.filter.category": "Category",
       "forum.filter.allCategories": "All Categories",
+      "forum.filter.dateFrom": "From",
+      "forum.filter.dateTo": "To",
+      "forum.filter.clearDates": "Clear dates",
+      "forum.filter.invalidDateRange": "From date must be before To date",
 
       // Thread Categories
       "categories.general": "General",
@@ -130,6 +148,12 @@ const resources = {
       "categories.other": "Other",
       
       // Forum - Thread View
+      "forum.thread.edit": "Edit",
+      "forum.thread.delete": "Delete",
+      "forum.thread.confirmDelete": "Are you sure?",
+      "forum.thread.confirmYes": "Yes",
+      "forum.thread.confirmNo": "No",
+      "forum.thread.errorDelete": "Error deleting thread",
       "forum.thread.newReply": "New Reply",
       "forum.thread.replyToMultiple": "Reply to Multiple Posts",
       "forum.thread.cancelSelection": "Cancel Selection",
@@ -246,7 +270,51 @@ const resources = {
       "calendar.time": "Time",
       "calendar.cancel": "Cancel",
       "calendar.save": "Save",
-      "calendar.invalidRange": "End date must be after start date"
+      "calendar.invalidRange": "End date must be after start date",
+
+      //MapFilterPanel
+      "map.filter.mapFilters": "Map filters",
+      "map.filter.buildingType": "Builingd type:",
+      "map.filter.generalAcademic": "General academic building",
+      "map.filter.faculty": "Faculty",
+      "map.filter.nonFaculty": "Non-faculty",
+      "map.filter.administration": "Administraion",
+      "map.filter.porter": "Porter's lodge",
+      "map.filter.roomType": "Room type:",
+      "map.filter.choice": "--select--",
+      "map.filter.auditorium": "Aula",
+      "map.filter.class": "Class",
+      "map.filter.laboratory": "Laboratory",
+      "map.filter.applyFilters": "Apply filters",
+
+      //UserProfile
+      "profile.userProfile": "User profile",
+      "profile.firstName": "First name:",
+      "profile.lastName": "Last name:",
+      "profile.indexNumber": "Index number:",
+      "profile.editProfile": "Edit profile",
+      "profile.blackListForum": "Forum blacklist",
+      "profile.addBlacklistedCotent": "Add content to the blacklist",
+      "profile.blacklistExample": "Phrases should be placed in quotation marks: \"First phrase\", \"Second phrase\", etc.",
+      "profile.bio": "Profile bio",
+      "profile.bioPlaceholder": "Add your bio",
+
+      //UserProfileEdit
+      "profile.edit.editProfile": "Edit profile",
+      "profile.edit.changePassword": "Change password",
+      "profile.edit.changePasswordCancel": "Cancel password change",
+      "profile.edit.saveChanges": "Save changes",
+      "profile.edit.oldPassword": "Current password:",
+      "profile.edit.newPassword": "New password:",
+      "profile.edit.repeatPassword": "Repeat password:",
+      "profile.edit.cancel": "Cancel",
+      "profile.edit.empty_names": "First and last name cannot be empty",
+      "profile.edit.fill_both_passwords": "Fill both password fields",
+      "profile.edit.password_len": "Password must be at least 6 characters long",
+      "profile.edit.password_no_match": "Passwords do not match",
+      "profile.edit.successful_update": "Data has been successfully updated",
+      "profile.edit.unsuccessful_update": "Failed to update data",
+
     }
   },
   pl: {
@@ -266,11 +334,18 @@ const resources = {
       "login.loading": "Logowanie...",
       "login.noAccount": "Nie masz konta?",
       
+      // Common
+      "common.retry": "Ponów próbę",
+      "common.refresh": "Odśwież",
+      "common.underConstruction": "W budowie",
+      "common.underConstruction.message": "Ciężko pracujemy, aby dostarczyć Ci coś niesamowitego. Wróć wkrótce!",
+      "common.underConstruction.progress": "{{progress}}% Ukończono",
+      
       // Register page
       "register.title": "Rejestracja",
       "register.email": "Email",
-      "register.email.placeholder": "123456@edu.p.lodz.pl lub imie.nazwisko@edu.p.lodz.pl",
-      "register.emailHelp": "Użyj emaila uniwersyteckiego (123456@edu.p.lodz.pl dla studentów, imie.nazwisko@edu.p.lodz.pl dla wykładowców)",
+      "register.email.placeholder": "123456@edu.p.lodz.pl lub imie.nazwisko@p.lodz.pl",
+      "register.emailHelp": "Użyj emaila uniwersyteckiego (123456@edu.p.lodz.pl dla studentów, imie.nazwisko@p.lodz.pl dla wykładowców)",
       "register.firstName": "Imię",
       "register.firstName.placeholder": "Wprowadź swoje imię",
       "register.lastName": "Nazwisko",
@@ -286,7 +361,7 @@ const resources = {
 
       // Validation messages
       "validation.required": "Pole {{field}} jest wymagane",
-      "validation.email.format": "Email musi być w formacie 123456@edu.p.lodz.pl (dla studentów) lub imie.nazwisko@edu.p.lodz.pl (dla wykładowców)",
+      "validation.email.format": "Email musi być w formacie 123456@edu.p.lodz.pl (dla studentów) lub imie.nazwisko@p.lodz.pl (dla wykładowców)",
       "validation.password.length": "Hasło musi mieć co najmniej 8 znaków",
       "validation.password.match": "Hasła nie są takie same",
 
@@ -310,7 +385,7 @@ const resources = {
       "user.profile": "Profil",
       "user.settings": "Ustawienia",
       "user.logout": "Wyloguj",
-      
+
       // Sidebar
       "sidebar.title": "Nawigacja",
       "sidebar.home": "Strona główna",
@@ -349,6 +424,8 @@ const resources = {
       "forum.error.fetchThreads": "Błąd podczas ładowania wątków. Spróbuj ponownie później.",
       "forum.error.fetchThread": "Błąd podczas ładowania wątku. Spróbuj ponownie później.",
       "forum.error.threadNotFound": "Wątek nie został znaleziony.",
+      "forum.blacklist_on": "Czarna lista wł:",
+      "forum.blacklist_off": "Czarna lista wył:",
       
       // Forum - Thread List
       "forum.threadList.title": "Wątki dyskusyjne",
@@ -359,8 +436,15 @@ const resources = {
       "forum.threadList.lastActivity": "Ostatnia aktywność",
       "forum.threadList.noThreads": "Nie znaleziono wątków. Bądź pierwszy i utwórz nowy!",
       "forum.threadList.noThreadsInCategory": "Nie znaleziono wątków w kategorii '{{category}}'.",
+      "forum.threadList.showingFilteredCount": "Wyświetlanie {{count}} z {{total}} wątków w \"{{category}}\"",
+      "forum.threadList.totalCount_one": "{{count}} wątek",
+      "forum.threadList.totalCount_other": "{{count}} wątki",
       "forum.filter.category": "Kategoria",
       "forum.filter.allCategories": "Wszystkie kategorie",
+      "forum.filter.dateFrom": "Od",
+      "forum.filter.dateTo": "Do",
+      "forum.filter.clearDates": "Wyczyść daty",
+      "forum.filter.invalidDateRange": "Data początkowa musi być przed datą końcową",
 
       // Thread Categories
       "categories.general": "Ogólne",
@@ -374,6 +458,12 @@ const resources = {
       "categories.other": "Inne",
       
       // Forum - Thread View
+      "forum.thread.edit": "Edytuj",
+      "forum.thread.delete": "Usuń",
+      "forum.thread.confirmDelete": "Czy na pewno?",
+      "forum.thread.confirmYes": "Tak",
+      "forum.thread.confirmNo": "Nie",
+      "forum.thread.errorDelete": "Błąd podczas usuwania wątku",
       "forum.thread.newReply": "Nowa odpowiedź",
       "forum.thread.replyToMultiple": "Odpowiedz na kilka postów",
       "forum.thread.cancelSelection": "Anuluj wybór",
@@ -490,7 +580,52 @@ const resources = {
       "calendar.time": "Czas",
       "calendar.cancel": "Anuluj",
       "calendar.save": "Zapisz",
-      "calendar.invalidRange": "Data końcowa musi być później niż data początkowa"
+      "calendar.invalidRange": "Data końcowa musi być później niż data początkowa",
+
+      //MapFilterPanel
+      "map.filter.mapFilters": "Filtry mapy",
+      "map.filter.buildingType": "Typ budynku:",
+      "map.filter.generalAcademic": "Ogólnouczelniane",
+      "map.filter.faculty": "Wydziałowy",
+      "map.filter.nonFaculty": "Pozawydziałowy",
+      "map.filter.administration": "Administracja",
+      "map.filter.porter": "Portiernia",
+      "map.filter.roomType": "Typ pomieszczenia:",
+      "map.filter.choice": "--wybierz--",
+      "map.filter.auditorium": "Aula",
+      "map.filter.class": "Sala",
+      "map.filter.laboratory": "Laboratorium",
+      "map.filter.applyFilters": "Zastosuj filtry",
+
+      //UserProfile
+      "profile.userProfile": "Profil użytkownika",
+      "profile.firstName": "Imię:",
+      "profile.lastName": "Nazwisko:",
+      "profile.indexNumber": "Numer indeksu:",
+      "profile.editProfile": "Edytuj profil",
+      "profile.blackListForum": "Czarna lista forum:",
+      "profile.addBlacklistedCotent": "Dodaj treść do czarnej listy...",
+      "profile.blacklistExample": "Frazy należy włożyć w cudzysłów: \"Pierwsza fraza\" \"Druga\" itd.",
+      "profile.bio": "O mnie",
+      "profile.bioPlaceholder": "Dodaj coś o sobie",
+
+      //UserProfileEdit
+      "profile.edit.editProfile": "Edytuj profil",
+      "profile.edit.changePassword": "Zmień hasło",
+      "profile.edit.changePasswordCancel": "Anuluj zmianę hasła",
+      "profile.edit.saveChanges": "Zapisz zmiany",
+      "profile.edit.oldPassword": "Obecne hasło:",
+      "profile.edit.newPassword": "Nowe hasło:",
+      "profile.edit.repeatPassword": "Powtórz hasło:",
+      "profile.edit.cancel": "Anuluj:",
+      "profile.edit.empty_names": "Pola na imię i nazwisko nie mogą być puste",
+      "profile.edit.fill_both_passwords": "Wypełnij oba pola na hasło",
+      "profile.edit.password_len": "Hasło musi posiadać minimum 6 znaków",
+      "profile.edit.password_no_match": "Hasła nie są identyczne",
+      "profile.edit.successful_update": "Dane zostały zaktualizowane",
+      "profile.edit.unsuccessful_update": "Nie udało się zaktualizować danych",
+
+
     }
   }
 };

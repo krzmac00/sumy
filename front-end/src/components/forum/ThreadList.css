@@ -23,6 +23,11 @@
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
+  width: 100%;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 .category-filter {
@@ -31,11 +36,93 @@
   gap: 8px;
 }
 
-.category-filter select {
+.category-filter select,
+.category-select {
   padding: 6px 12px;
   border-radius: 4px;
   border: 1px solid #ccc;
   background-color: #fff;
+  margin-left: 8px;
+}
+
+/* Date Range Picker Styles */
+.date-range-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.date-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-input-group label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.date-input {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.date-input:hover {
+  border-color: #8b0002;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #8b0002;
+  box-shadow: 0 0 0 2px rgba(139, 0, 2, 0.1);
+}
+
+.clear-dates-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background-color: #8b0002;
+  color: white;
+  border-radius: 50%;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.clear-dates-button:hover {
+  background-color: #7a0001;
+  transform: scale(1.1);
+}
+
+.clear-dates-button:active {
+  transform: scale(0.95);
+}
+
+.date-error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  padding: 8px 12px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 10;
 }
 
 .create-thread-button {
@@ -51,6 +138,34 @@
 
 .create-thread-button:hover {
   background-color: #7a0001;
+}
+
+.refresh-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: #c8ced3;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.2s, transform 0.2s;
+  margin-left: 20px;
+}
+
+.refresh-button:hover {
+  background-color: #6c757d;
+}
+
+.refresh-button:active {
+  transform: scale(0.95);
+}
+
+.refresh-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .thread-list {
@@ -169,6 +284,36 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+  }
+  
+  .thread-list-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .date-range-picker {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  
+  .date-input-group {
+    width: 100%;
+  }
+  
+  .date-input {
+    width: 100%;
+  }
+  
+  .category-filter {
+    width: 100%;
+  }
+  
+  .category-select {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 8px;
   }
   
   .thread-item {

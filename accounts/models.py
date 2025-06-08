@@ -25,14 +25,18 @@ class UserManager(BaseUserManager):
                     login = username_part
                     extra_fields.setdefault('role', 'student')
                 else:
-                    # Lecturer - extract first_name.last_name
-                    match = re.match(r'^([a-zA-Z]+)\.([a-zA-Z]+)$', username_part)
-                    if match:
-                        login = username_part
-                        extra_fields.setdefault('role', 'lecturer')
-                    else:
-                        # Default case
-                        login = username_part
+                    # Default case for @edu.p.lodz.pl (shouldn't happen for lecturers now)
+                    login = username_part
+            elif email.endswith('@p.lodz.pl'):
+                username_part = email.split('@')[0]
+                # Lecturer - extract first_name.last_name
+                match = re.match(r'^([a-zA-Z]+)\.([a-zA-Z]+)$', username_part)
+                if match:
+                    login = username_part
+                    extra_fields.setdefault('role', 'lecturer')
+                else:
+                    # Default case
+                    login = username_part
             else:
                 # Default fallback for non-university emails
                 login = email.split('@')[0]
