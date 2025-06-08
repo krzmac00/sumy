@@ -191,7 +191,7 @@ const Calendar: React.FC = () => {
   };
 
 
-  const handleEventDrop = ({ event, start, end }: any) => {
+  const handleEventDrop = ({ event, start }: any) => {
     const ev = event as CustomCalendarEvent;
 
     const baseId = typeof ev.id === "string" && ev.id.includes("-")
@@ -202,7 +202,7 @@ const Calendar: React.FC = () => {
 
     const originalBase = events.find(e => {
       const id = typeof e.id === "number" ? e.id : parseInt((e.id as string).split("-")[0]);
-      return id === baseId && typeof e.id === "number"; // only the base
+      return id === baseId && typeof e.id === "number";
     });
 
     if (!originalBase || !originalBase.start || !originalBase.end) return;

@@ -323,9 +323,11 @@ export const eventAPI = {
 
     return data.results.map((event: any) => ({
       ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-      repeatType: event.repeat_type
+      start: new Date(event.start_date),
+      end: new Date(event.end_date),
+      repeatType: event.repeat_type,
+      schedule_plan: event.schedule_plan,
+      is_template: event.is_template,
     }));
   },
 
@@ -340,9 +342,11 @@ export const eventAPI = {
     const event = await response.json();
     return {
       ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-      repeatType: event.repeat_type
+      start: new Date(event.start_date),
+      end: new Date(event.end_date),
+      repeatType: event.repeat_type,
+      schedule_plan: event.schedule_plan,
+      is_template: event.is_template,
     };
   },
 
@@ -355,7 +359,11 @@ export const eventAPI = {
       headers: JSON_HEADERS,
       body: JSON.stringify({
         ...data,
+        start_date: data.start,
+        end_date: data.end,
         repeat_type: data.repeatType,
+        schedule_plan: data.schedule_plan ?? null,
+        is_template: data.is_template ?? false,
       }),
     });
     if (!response.ok) {
@@ -364,9 +372,11 @@ export const eventAPI = {
     const event = await response.json();
     return {
       ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
+      start: new Date(event.start_date),
+      end: new Date(event.end_date),
       repeatType: event.repeat_type,
+      schedule_plan: event.schedule_plan,
+      is_template: event.is_template,
     };
   },
 
@@ -379,7 +389,11 @@ export const eventAPI = {
       headers: JSON_HEADERS,
       body: JSON.stringify({
         ...data,
-        repeat_type: data.repeatType
+        start_date: data.start ?? undefined,
+        end_date: data.end ?? undefined,
+        repeat_type: data.repeatType,
+        schedule_plan: data.schedule_plan ?? null,
+        is_template: data.is_template ?? false,
       }),
     });
     if (!response.ok) {
@@ -388,9 +402,11 @@ export const eventAPI = {
     const event = await response.json();
     return {
       ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
+      start: new Date(event.start_date),
+      end: new Date(event.end_date),
       repeatType: event.repeat_type,
+      schedule_plan: event.schedule_plan,
+      is_template: event.is_template,
     };
   },
 
