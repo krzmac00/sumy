@@ -14,10 +14,11 @@ from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from datetime import timedelta
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 def home(request):
-    return HttpResponse("Jesteś na stronie głównej")
+    return HttpResponse("Jesteś na stronie głównej, just")
 
 class SchedulePlanViewSet(viewsets.ModelViewSet):
     queryset = SchedulePlan.objects.filter(is_active=True)
@@ -184,26 +185,29 @@ class EventViewSet(viewsets.ModelViewSet):
         plan = serializer.save()
         return Response(SchedulePlanSerializer(plan).data, status=201)
 
-    
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_events_for_month(request):
     year = int(request.query_params.get('year', datetime.now().year))
     month = int(request.query_params.get('month', datetime.now().month))
+
     events = Event.objects.filter(start_date__year=year, start_date__month=month)
-    events_data = [{"title": event.title, "date": event.date} for event in events]
+    #przypisanie eventu do kontretnego uzytkownika
     if not request.user.is_superuser:
         events = events.filter(user=request.user)
+
+    #czy lepiej tak? bo mam datefield()
+    events_data = [{"title": event.title, "date": event.start_date} for event in events]
+    # events_data = [{"title": event.title, "date": event.date} for event in events]
     return Response(events_data)
     
-# @login_required
+@login_required
 def add_event(request):
     if request.method == 'POST':
         form = EventForm(request.POST)
         if form.is_valid():
             event = form.save(commit=False)
-            # event.profile = request.user
+            event.profile = request.user
             event.user = request.user
             event.save()
             return redirect('event_list')
@@ -212,14 +216,34 @@ def add_event(request):
     return render(request, 'add_event.html', {'form': form})
 
 
+# def event_list(request):
+#     events = Event.objects.all().order_by('start_date', 'start_time')
+#     return render(request, 'event_list.html', {
+#         'events': events,
+#         'category_colors': CATEGORY_COLORS
+#     })
+
+# def event_list(request):
+#     events = Event.objects.filter(user=request.user)
+#     available_plans = SchedulePlan.objects.filter(
+#         Q(administrator=request.user)
+#     )
+#     return render(request, 'event_list.html', {
+#         'events': events,
+#         'available_plans': available_plans,
+#         'category_colors': CATEGORY_COLORS
+#     })
+
+#polaczone 2 wyzej 
+@login_required
 def event_list(request):
-    events = Event.objects.all().order_by('start_date', 'start_time')
+    events = Event.objects.filter(user=request.user).order_by('start_date')
+    available_plans = SchedulePlan.objects.filter(administrator=request.user)
     return render(request, 'event_list.html', {
         'events': events,
+        'available_plans': available_plans,
         'category_colors': CATEGORY_COLORS
     })
-
-from django.contrib.admin.views.decorators import staff_member_required
 
 @staff_member_required
 def create_plan(request):
@@ -255,14 +279,4 @@ def plans_list(request):
 def admin_create_plan(request):
     return render(request, 'admin/create_plan.html')
 
-def event_list(request):
-    events = Event.objects.filter(user=request.user)
-    available_plans = SchedulePlan.objects.filter(
-        Q(administrator=request.user)
-    )
-    return render(request, 'event_list.html', {
-        'events': events,
-        'available_plans': available_plans,
-        'category_colors': CATEGORY_COLORS
-    })
 
