@@ -1,8 +1,21 @@
+.map-page-wrapper {
+  flex: 1;
+  display: flex;
+  height: 100%;
+}
+
+.map-container-wrapper {
+  flex: 1;
+  position: relative;
+  height: 100%;
+}
+
 .leaflet-map {
-    height: 500px;
+    height: 100%;
     width: 100%;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    z-index: 800;
   }
 
 /* Search box container, positioned below map zoom controls */
@@ -12,7 +25,7 @@
   left: 50px;
   width: 320px; /* increased width for longer names */
   max-width: calc(100% - 40px);
-  z-index: 1000;
+  z-index: 900;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;

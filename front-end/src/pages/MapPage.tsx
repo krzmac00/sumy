@@ -134,10 +134,10 @@ const MapPage: React.FC = () => {
 
   return (
     <MainLayout>
-      <div style={{ display: "flex", gap: 20 }}>
+      <div className="map-page-wrapper" style={{ display: "flex", gap: 20 }}>
         <MapFilterPanel />
 
-        <div style={{ flex: 1, position: "relative" }}>
+        <div className="map-container-wrapper">
           <div className="search-container">
             <input
               className="search-input"
