@@ -33,30 +33,28 @@ class SchedulePlanViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], serializer_class=ApplyPlanSerializer)
     def apply(self, request, pk=None):
+
         plan = self.get_object()
-        serializer = self.get_serializer(data=request.data)
+        serializer = ApplyPlanSerializer(data=request.data)
+        #serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        # Sprawdź czy plan jest już przypisany
         if AppliedPlan.objects.filter(user=request.user, plan=plan).exists():
             return Response(
                 {'detail': 'Plan is already applied'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Utwórz AppliedPlan
         applied_plan = AppliedPlan.objects.create(
             user=request.user,
             plan=plan,
             **serializer.validated_data
         )
 
-        # Generuj wydarzenia
         start_date = serializer.validated_data['start_date']
         events = []
         
         for schedule_event in plan.events.all():
-            # Znajdź pierwszy dzień tygodnia po dacie startowej
             days_ahead = (schedule_event.day_of_week - start_date.weekday() + 7) % 7
             event_date = start_date + timedelta(days=days_ahead)
             
@@ -82,17 +80,25 @@ class SchedulePlanViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED
         )
 
+    @action(detail=False, methods=['post'], url_path='add-by-code')
+    def add_plan_by_code(self, request):
+        code = request.data.get('code')
+        plan = get_object_or_404(SchedulePlan, code=code)
+        
+        if AppliedPlan.objects.filter(user=request.user, plan=plan).exists():
+            return Response(
+                {'detail': 'Plan już został dodany'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        AppliedPlan.objects.create(user=request.user, plan=plan)
+        return Response({'status': 'Plan dodany pomyślnie'})
+
     def perform_create(self, serializer):
         if not self.request.user.is_staff:
             raise PermissionDenied("Only administrators can create plans")
         serializer.save(administrator=self.request.user)
-
-    @action(detail=False, methods=['post'])
-    def add_plan_by_code(self, request):
-        code = request.data.get('code')
-        plan = get_object_or_404(SchedulePlan, code=code)
-        AppliedPlan.objects.create(user=request.user, plan=plan)
-        return Response({'status': 'Plan added'})
+        
 
 class PublicSchedulePlanViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SchedulePlan.objects.all()
@@ -218,14 +224,12 @@ from django.contrib.admin.views.decorators import staff_member_required
 @staff_member_required
 def create_plan(request):
     if request.method == 'POST':
-        # Przetwarzanie danych formularza
         data = {
             'name': request.POST.get('name'),
             'description': request.POST.get('description'),
             'events': []
         }
         
-        # Pobierz wszystkie eventy z formularza
         event_count = sum(1 for key in request.POST if key.startswith('events.'))
         for i in range(event_count//5):
             data['events'].append({
@@ -237,11 +241,10 @@ def create_plan(request):
                 'teacher': request.POST.get(f'events.{i}.teacher')
             })
         
-        # Wyślij do API
-        response = SchedulePlanViewSet.as_view({'post': 'create'})(request._request)
+        response = SchedulePlanViewSet.as_view({'post': 'create'})(request)
         return redirect('plans-list')
     
-    return render(request, 'admin/create_plan.html')
+    return render(request, 'create_plan.html')
 
 @login_required
 def plans_list(request):

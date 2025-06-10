@@ -1,13 +1,21 @@
 from rest_framework import serializers
-from .models import SchedulePlan, ScheduleEvent, AppliedPlan, Event
+from .models import SchedulePlan, AppliedPlan, Event
 
-class ScheduleEventSerializer(serializers.ModelSerializer):
+# class EventSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Event
+#         fields = '__all__'
+class EventSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ScheduleEvent
+        model = Event
         fields = '__all__'
-
+        extra_kwargs = {
+            'user': {'read_only': True},
+            'color': {'read_only': True}
+        }
+        
 class SchedulePlanSerializer(serializers.ModelSerializer):
-    events = ScheduleEventSerializer(many=True, read_only=True)
+    events = EventSerializer(many=True, read_only=True)
     administrator = serializers.StringRelatedField()
     is_applied = serializers.SerializerMethodField()
 
@@ -39,11 +47,3 @@ class ApplyPlanSerializer(serializers.ModelSerializer):
         model = AppliedPlan
         fields = ['start_date', 'end_date']
 
-class EventSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Event
-        fields = '__all__'
-        extra_kwargs = {
-            'user': {'read_only': True},
-            'color': {'read_only': True}
-        }
