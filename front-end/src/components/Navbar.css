@@ -1,4 +1,6 @@
 /* src/components/Navbar.css */
+@import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -53,8 +55,8 @@
   }
   
   .brand-name {
-    font-family: "Myriad Pro", Arial, sans-serif;
-    font-size: 20px;
+    font-family: 'Anta', sans-serif;
+    font-size: 30px;
     font-weight: 600;
     margin: 0;
   }
