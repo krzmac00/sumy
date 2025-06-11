@@ -1,5 +1,12 @@
+// src/pages/MapPage.tsx
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  GeoJSON,
+  Marker,
+  useMap,
+} from "react-leaflet";
 import L, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -37,8 +44,15 @@ const buildingList: { name: string; position: LatLngExpression; buildingCode?: s
   { name: "B14 Aula Major Instytut Fizyki", position: [51.746474, 19.455167], buildingCode: "B14", floor: "Parter", roomId: "Aula major" },
 ];
 
-const DEFAULT_POSITION: LatLngExpression = [51.746032, 19.453547];
+const categoryColors: Record<Category, string> = {
+  wydziałowe:       "#8b0002",
+  pozawydziałowe:   "#006400",
+  ogólnouczelniane: "#00008b",
+  administracja:    "#8b008b",
+};
 
+
+/* ---------- Styling footprintów ---------- */
 const footprintStyle: L.PathOptions = {
   color: "#8b0002",
   weight: 2,
@@ -46,22 +60,96 @@ const footprintStyle: L.PathOptions = {
   fillOpacity: 0.15,
 };
 
-/* ---------- Przybliżenie na budynek ---------- */
+/* ---------- Ikona markera dla auli ---------- */
+const markerIcon = new L.Icon({
+  iconUrl:
+    "data:image/svg+xml;base64," +
+    btoa(`
+<svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+  <path fill="#8b0002" stroke="#fff" stroke-width="2" d="M12.5 0C5.6 0 0 5.6 0 12.5c0 12.5 12.5 28.5 12.5 28.5s12.5-16 12.5-28.5C25 5.6 19.4 0 12.5 0z"/>
+  <circle cx="12.5" cy="12.5" r="5" fill="#fff"/>
+</svg>
+`),
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+/* ---------- Hook do złapania instancji mapy ---------- */
+function MapEffect({
+  onMapReady,
+}: {
+  onMapReady: (map: L.Map) => void;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    onMapReady(map);
+  }, [map, onMapReady]);
+  return null;
+}
+
+/* ---------- Przybliżenie markerem ---------- */
 const PanTo: React.FC<{ position: LatLngExpression }> = ({ position }) => {
   const map = useMap();
-  map.flyTo(position, 18, { duration: 1 });
+  useEffect(() => {
+    map.flyTo(position, 18, { duration: 1 });
+  }, [map, position]);
   return null;
 };
 
-/* ---------- Komponent główny ---------- */
+/* ---------- Kategorie filtrów ---------- */
+const buildingCategoryMap: Record<string, string> = {
+  B9: "wydziałowe" as const,
+  B14: "wydziałowe" as const,
+  B19: "wydziałowe" as const,
+  B28: "pozawydziałowe" as const,
+  B24: "pozawydziałowe" as const,
+  B22: "pozawydziałowe" as const,
+  C4: "pozawydziałowe" as const,
+  C17: "ogólnouczelniane" as const,
+  C5: "ogólnouczelniane" as const,
+  C11: "ogólnouczelniane" as const,
+  C12: "ogólnouczelniane" as const,
+  C13: "ogólnouczelniane" as const,
+  C14: "ogólnouczelniane" as const,
+  C15: "ogólnouczelniane" as const,
+  E1: "ogólnouczelniane" as const,
+  F1: "ogólnouczelniane" as const,
+  B11: "administracja" as const,
+} as const;
+const allCategories = [
+  "wydziałowe",
+  "pozawydziałowe",
+  "ogólnouczelniane",
+  "administracja",
+] as const;
+type Category = typeof allCategories[number];
+
+const isValidCategory = (cat: string | undefined): cat is Category => {
+  return cat !== undefined && allCategories.includes(cat as Category);
+};
+
+const DEFAULT_POSITION: LatLngExpression = [51.746032, 19.453547];
+
+/* ---------- Główny komponent ---------- */
 const MapPage: React.FC = () => {
-  const [footprints, setFootprints] = useState<GeoJSON.FeatureCollection | null>(null);
+  const [footprints, setFootprints] =
+    useState<GeoJSON.FeatureCollection | null>(null);
+  const [activeCategories, setActiveCategories] = useState<Category[]>(
+    [...allCategories]
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [selectedPos, setSelectedPos] = useState<LatLngExpression | null>(null);
-  const [selectedBuilding, setSelectedBuilding] = useState<BuildingFeature | null>(null);
+  const [selectedPos, setSelectedPos] =
+    useState<LatLngExpression | null>(null);
+  const [selectedBuilding, setSelectedBuilding] =
+    useState<BuildingFeature | null>(null);
   const [layersMap, setLayersMap] = useState<Record<string, L.Polygon>>({});
+  const [markerPosition, setMarkerPosition] =
+    useState<LatLngExpression | null>(null);
+  const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
 
+  /* fetch geojson */
   useEffect(() => {
     fetch("/data/buildings.geojson")
       .then((res) => res.json())
@@ -69,26 +157,37 @@ const MapPage: React.FC = () => {
       .catch(console.error);
   }, []);
 
+  /* toggle filtrowania */
+  const toggleCategory = (cat: Category) => {
+    setActiveCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  };
+
+  /* wyszukiwarka */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
+    const v = e.target.value;
+    setSearchTerm(v);
     setSuggestions(
-      value
+      v
         ? buildingList
             .map((b) => b.name)
-            .filter((n) => n.toLowerCase().includes(value.toLowerCase()))
+            .filter((n) => n.toLowerCase().includes(v.toLowerCase()))
         : []
     );
   };
 
+  /* wybór z listy */
   const handleSelect = (name: string) => {
-  setSuggestions([]);
-  const item = buildingList.find((b) => b.name === name);
+    setSuggestions([]);
+    const item = buildingList.find((b) => b.name === name);
+    if (!item) return;
 
-  if (item) {
     setSelectedPos(item.position);
 
     if (item.buildingCode && item.floor && item.roomId) {
+      // aula → marker + modal
+      setMarkerPosition(item.position);
       setSelectedBuilding({
         properties: {
           name: item.buildingCode,
@@ -97,45 +196,54 @@ const MapPage: React.FC = () => {
         roomId: item.roomId,
         defaultFloor: item.floor,
       } as any);
+    } else if (mapInstance) {
+      // zwykły budynek → popup i flyTo
+      setMarkerPosition(null);
+      const layer = layersMap[name];
+      if (!layer) return;
+
+      const feature = layer.feature as BuildingFeature;
+      const { label, description, website, hasPlan, name: code } =
+        feature.properties;
+
+      const btnId = `plan-btn-${code}`;
+      const html = `
+        <div style="max-width:240px">
+          <strong>${label}</strong><br/>
+          <p style="margin:6px 0">${description ?? ""}</p>
+          ${website ? `<a href="${website}" target="_blank">Przejdź do strony</a><br/>` : ""}
+          ${hasPlan ? `<button id="${btnId}" class="map-popup-button">Plan budynku</button>` : ""}
+        </div>
+      `;
+
+      layer.once("popupopen", () => {
+        setTimeout(() => {
+          const btn = document.getElementById(btnId);
+          if (btn) btn.onclick = () => setSelectedBuilding(feature);
+        }, 50);
+      });
+      layer.bindPopup(html).openPopup();
+
+      const bounds = (layer as L.Polygon).getBounds();
+      mapInstance.flyTo(bounds.getCenter(), 18, { duration: 1 });
     }
 
-    const layer = layersMap[name];
-    if (layer) {
-      const map = layer._map;
-      if (map) {
-        const feature = layer.feature as BuildingFeature;
-        const { label, description, website, hasPlan, name: code } = feature.properties;
+    setSearchTerm("");
+  };
 
-        const btnId = `plan-btn-${code}`;
-        const html = `
-          <div style="max-width:240px">
-            <strong>${label}</strong><br/>
-            <p style="margin:6px 0">${description ?? ""}</p>
-            ${website ? `<a href="${website}" target="_blank">Przejdź do strony</a><br/>` : ""}
-            ${hasPlan ? `<button id="${btnId}" class="map-popup-button">Plan budynku</button>` : ""}
-          </div>
-        `;
-
-        layer.once("popupopen", () => {
-          setTimeout(() => {
-            const btn = document.getElementById(btnId);
-            if (btn) btn.onclick = () => setSelectedBuilding(feature);
-          }, 50);
-        });
-
-        layer.bindPopup(html).openPopup();
-      }
-    }
-  }
-
-  // ✨ Ostatecznie wyczyść pole wyszukiwarki
-  setSearchTerm("");
-};
+  /* zamknięcie modala */
+  const handleCloseModal = () => {
+    setSelectedBuilding(null);
+    setMarkerPosition(null);
+  };
 
   return (
     <MainLayout>
-      <div className="map-page-wrapper" style={{ display: "flex", gap: 20 }}>
-        <MapFilterPanel />
+      <div className="map-page-wrapper">
+        <MapFilterPanel
+          activeCategories={activeCategories}
+          toggleCategory={toggleCategory}
+        />
 
         <div className="map-container-wrapper">
           <div className="search-container">
@@ -144,13 +252,13 @@ const MapPage: React.FC = () => {
               placeholder="Szukaj budynku…"
               value={searchTerm}
               onChange={handleChange}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && suggestions.length === 1) {
-                  handleSelect(suggestions[0]);
-                }
-              }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && suggestions.length === 1
+                  ? handleSelect(suggestions[0])
+                  : null
+              }
             />
-            {!!suggestions.length && (
+            {suggestions.length > 0 && (
               <ul className="suggestions-list">
                 {suggestions.map((s, i) => (
                   <li key={i} onClick={() => handleSelect(s)}>
@@ -161,30 +269,60 @@ const MapPage: React.FC = () => {
             )}
           </div>
 
-          <MapContainer className="leaflet-map" center={DEFAULT_POSITION} zoom={17} scrollWheelZoom>
+          <MapContainer
+            className="leaflet-map"
+            center={DEFAULT_POSITION}
+            zoom={17}
+            scrollWheelZoom
+          >
+            <MapEffect onMapReady={(m) => setMapInstance(m)} />
+
             <TileLayer
-              //@ts-ignore
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              // @ts-ignore
+              attribution='&copy; OpenStreetMap'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
             {footprints && (
               <GeoJSON
+                key={activeCategories.join("|")}
                 data={footprints as any}
-                style={footprintStyle}
+                style={(feature: any) => {
+                  const code = feature.properties.name as string;
+                  const cat  = buildingCategoryMap[code] as Category|undefined;
+                  const fill = cat ? categoryColors[cat] : footprintStyle.fillColor;
+                  return {
+                    ...footprintStyle,
+                    fillColor: fill,
+                    color:     fill,      // obrys w tym samym kolorze
+                  };
+                }}
+                filter={(feature: any) => {
+                  const code = feature.properties.name as string;
+                  const cat = buildingCategoryMap[code];
+                  return isValidCategory(cat) && activeCategories.includes(cat);
+                }}
                 onEachFeature={(feature: BuildingFeature, layer: L.Layer) => {
                   const poly = layer as L.Polygon;
-                  const { label, description, website, hasPlan, name } = feature.properties;
+                  const { label, description, website, hasPlan, name } =
+                    feature.properties;
 
-                  poly.bindTooltip(label, { direction: "top", sticky: true });
-                  poly.on("mouseover", () => poly.setStyle({ fillOpacity: 0.3 }));
-                  poly.on("mouseout", () => poly.setStyle({ fillOpacity: 0.15 }));
+                  poly.bindTooltip(label, {
+                    direction: "top",
+                    sticky: true,
+                  });
+                  poly.on("mouseover", () =>
+                    poly.setStyle({ fillOpacity: 0.3 })
+                  );
+                  poly.on("mouseout", () =>
+                    poly.setStyle({ fillOpacity: 0.15 })
+                  );
 
                   setLayersMap((prev) => ({ ...prev, [label]: poly }));
 
                   poly.on("click", () => {
-                    const center = poly.getBounds().getCenter();
-                    setSelectedPos([center.lat, center.lng]);
+                    const ctr = poly.getBounds().getCenter();
+                    setSelectedPos([ctr.lat, ctr.lng]);
 
                     const btnId = `plan-btn-${name}`;
                     const html = `
@@ -195,20 +333,22 @@ const MapPage: React.FC = () => {
                         ${hasPlan ? `<button id="${btnId}" class="map-popup-button">Plan budynku</button>` : ""}
                       </div>
                     `;
-
                     poly.once("popupopen", () => {
                       setTimeout(() => {
                         const btn = document.getElementById(btnId);
-                        if (btn) btn.onclick = () => setSelectedBuilding(feature);
+                        if (btn) btn.onclick = () =>
+                          setSelectedBuilding(feature);
                       }, 50);
                     });
-
                     poly.bindPopup(html).openPopup();
                   });
                 }}
               />
             )}
 
+            {markerPosition && (
+              <Marker position={markerPosition} icon={markerIcon} />
+            )}
             {selectedPos && <PanTo position={selectedPos} />}
           </MapContainer>
         </div>
@@ -217,7 +357,7 @@ const MapPage: React.FC = () => {
       {selectedBuilding && (
         <BuildingFloorModal
           isOpen
-          onClose={() => setSelectedBuilding(null)}
+          onClose={handleCloseModal}
           buildingCode={selectedBuilding.properties.name}
           buildingName={selectedBuilding.properties.label}
           defaultFloor={(selectedBuilding as any).defaultFloor ?? "Parter"}
