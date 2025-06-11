@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import "./BuildingFloorModal.css";
 
 import ParterSvg from "./floors/b9_f0Svg";
@@ -22,6 +23,8 @@ interface BuildingFloorModalProps {
 interface Room {
   id: string;
   name: string;
+  type: string;
+  floor: string;
 }
 
 const floorsOrder = ["Parter", "Piętro 1", "Piętro 2", "Piętro 3", "Piętro 4"];
@@ -53,6 +56,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
   const [selectedFloor, setSelectedFloor] = useState(defaultFloor);
   const [selectedRoom, setSelectedRoom] = useState<Room|null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const { t } = useTranslation();
 
   // Resetuj wybrany pokój gdy modal się otwiera
   useEffect(() => {
@@ -95,7 +99,6 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
       }
     }
 
-    // Dodaj interakcje do wszystkich pokoi
     rooms.forEach(el => {
       el.style.cursor = "pointer";
       
@@ -103,6 +106,8 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
         setSelectedRoom({
           id: el.id,
           name: el.getAttribute("data-name") || el.id,
+          type: el.getAttribute("data-type") || "Pokój",
+          floor: selectedFloor, 
         });
       };
       
@@ -172,7 +177,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
                     setSelectedRoom(null);
                   }}
                 >
-                  {floor}
+                  {t(`floor.${floor}`)}
                 </button>
               ))}
             </div>
@@ -192,7 +197,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
 
           <div className="modal-footer">
             <button className="close-button" onClick={onClose}>
-              Zamknij
+              {t("modal.close")}
             </button>
           </div>
         </div>
@@ -203,19 +208,16 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
         <div className="modal-overlay" onClick={() => setSelectedRoom(null)}>
           <div className="room-details-modal" onClick={(e) => e.stopPropagation()}>
             <div className="building-floor-modal-title">
-              Szczegóły sali
+              {t("modal.details.title")}
             </div>
-            <div style={{ marginBottom: "20px" }}>
-              <p style={{ margin: "8px 0" }}>
-                <strong>ID:</strong> {selectedRoom.id}
-              </p>
-              <p style={{ margin: "8px 0" }}>
-                <strong>Nazwa:</strong> {selectedRoom.name}
-              </p>
+            <div style={{ marginBottom: "1rem" }}>
+            <p><strong>{t("modal.details.name")}</strong> {selectedRoom.name}</p>
+            <p><strong>{t("modal.details.type")}</strong> {selectedRoom.type}</p>
+            <p><strong>{t("modal.details.floor")}</strong> {selectedRoom.floor}</p>
             </div>
             <div className="modal-footer">
               <button className="close-button" onClick={() => setSelectedRoom(null)}>
-                Zamknij
+                {t("modal.close")}
               </button>
             </div>
           </div>

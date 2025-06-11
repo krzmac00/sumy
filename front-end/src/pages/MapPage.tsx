@@ -1,5 +1,5 @@
 // src/pages/MapPage.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -37,11 +37,16 @@ const buildingList: { name: string; position: LatLngExpression; buildingCode?: s
   { name: "F1 V Dom Studencki", position: [51.7789650157646, 19.494415789858092] },
   { name: "B9 Aula F2", position: [51.747263, 19.453623], buildingCode: "B9", floor: "Parter", roomId: "F2" },
   { name: "B9 Aula F3", position: [51.747229, 19.453357], buildingCode: "B9", floor: "Parter", roomId: "F3" },
+  { name: "B9 Aula F4", position: [51.747156, 19.453225], buildingCode: "B9", floor: "Parter", roomId: "F4" },
+  { name: "B9 Aula F5", position: [51.747140, 19.453094], buildingCode: "B9", floor: "Parter", roomId: "F5" },
+  { name: "B9 Aula F6", position: [51.747128, 19.452984], buildingCode: "B9", floor: "Parter", roomId: "F6" },
   { name: "B9 Aula F7", position: [51.747211, 19.453157], buildingCode: "B9", floor: "Piętro 3", roomId: "F7" },
   { name: "B9 Aula F9", position: [51.747126, 19.453178], buildingCode: "B9", floor: "Piętro 3", roomId: "F9" },
   { name: "B9 Aula F10", position: [51.747149, 19.452928], buildingCode: "B9", floor: "Piętro 3", roomId: "F10" },
-  { name: "B19 Sala kinowa CTI", position: [51.747007, 19.455864], buildingCode: "B19", floor: "Parter", roomId: "Sala kinowa" },
-  { name: "B14 Aula Major Instytut Fizyki", position: [51.746474, 19.455167], buildingCode: "B14", floor: "Parter", roomId: "Aula major" },
+  { name: "B19 Sala kinowa CTI", position: [51.747007, 19.455864], buildingCode: "B19", floor: "Parter", roomId: "S1" },
+  { name: "B14 Aula Major Instytut Fizyki", position: [51.746474, 19.455167], buildingCode: "B14", floor: "Parter", roomId: "A1" },
+  { name: "B14 Aula Minor Instytut Fizyki", position: [51.746546, 19.455530], buildingCode: "B14", floor: "Parter", roomId: "A3" },
+  { name: "B14 Arena Magica Instytut Fizyki", position: [51.746847, 19.455548], buildingCode: "B14", floor: "Parter", roomId: "A2" },
 ];
 
 const categoryColors: Record<Category, string> = {
@@ -148,6 +153,21 @@ const MapPage: React.FC = () => {
   const [markerPosition, setMarkerPosition] =
     useState<LatLngExpression | null>(null);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+  const suggestionsRef = useRef<HTMLUListElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+  if (highlightedIndex < 0) return;
+    const listEl = suggestionsRef.current;
+    if (!listEl) return;
+
+    const item = listEl.children[highlightedIndex] as HTMLElement;
+    if (item) {
+      // blok 'nearest' gwarantuje, że cała li będzie widoczna
+      item.scrollIntoView({ block: "nearest" });
+    }
+  }, [highlightedIndex]);
 
   /* fetch geojson */
   useEffect(() => {
@@ -156,6 +176,23 @@ const MapPage: React.FC = () => {
       .then(setFootprints)
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(e.target as Node)
+      ) {
+        setSuggestions([]);
+        setHighlightedIndex(-1);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
 
   /* toggle filtrowania */
   const toggleCategory = (cat: Category) => {
@@ -175,6 +212,7 @@ const MapPage: React.FC = () => {
             .filter((n) => n.toLowerCase().includes(v.toLowerCase()))
         : []
     );
+    setHighlightedIndex(-1);
   };
 
   /* wybór z listy */
@@ -246,22 +284,56 @@ const MapPage: React.FC = () => {
         />
 
         <div className="map-container-wrapper">
-          <div className="search-container">
+          <div className="search-container" ref={searchRef}>
             <input
               className="search-input"
               placeholder="Szukaj budynku…"
               value={searchTerm}
               onChange={handleChange}
-              onKeyDown={(e) =>
-                e.key === "Enter" && suggestions.length === 1
-                  ? handleSelect(suggestions[0])
-                  : null
-              }
+              onKeyDown={(e) => {
+                if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  setHighlightedIndex(prev =>
+                    suggestions.length === 0
+                      ? -1
+                      : prev < suggestions.length - 1
+                        ? prev + 1
+                        : 0
+                  );
+                } else if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  setHighlightedIndex(prev =>
+                    suggestions.length === 0
+                      ? -1
+                      : prev > 0
+                        ? prev - 1
+                        : suggestions.length - 1
+                  );
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                  const idx = highlightedIndex;
+                  if (idx >= 0) {
+                    handleSelect(suggestions[idx]);
+                  } else if (suggestions.length === 1) {
+                    handleSelect(suggestions[0]);
+                  }
+                } else if (e.key === "Escape") {
+                    e.preventDefault();
+                    setSuggestions([]);
+                    setHighlightedIndex(-1);
+                }
+              }}
             />
             {suggestions.length > 0 && (
-              <ul className="suggestions-list">
+              <ul className="suggestions-list" ref={suggestionsRef}>
                 {suggestions.map((s, i) => (
-                  <li key={i} onClick={() => handleSelect(s)}>
+                  <li
+                      key={i}
+                      className={i === highlightedIndex ? "highlighted" : ""}
+                      onMouseEnter={() => setHighlightedIndex(i)}
+                      onMouseLeave={() => setHighlightedIndex(-1)}
+                      onClick={() => handleSelect(s)}
+                    >
                     {s}
                   </li>
                 ))}

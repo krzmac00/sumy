@@ -2,7 +2,6 @@ import React from "react";
 import "./MapFilterPanel.css";
 import { useTranslation } from "react-i18next";
 
-// Te same kategorie co w MapPage
 const allCategories = [
   "wydziałowe",
   "pozawydziałowe",
@@ -19,7 +18,6 @@ interface Props {
 const MapFilterPanel: React.FC<Props> = ({ activeCategories, toggleCategory }) => {
   const { t } = useTranslation();
 
-  // Funkcja tłumacząca klucz kategorii na etykietę
   const labelFor = (cat: Category) => {
     switch (cat) {
       case "wydziałowe":        return t("map.filter.faculty");        // „Wydziałowe” / „Faculty buildings”

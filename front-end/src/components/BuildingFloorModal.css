@@ -4,21 +4,20 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0); /* Usunięte przyciemnienie tła */
+  background-color: rgba(0, 0, 0, 0);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  pointer-events: none;
 }
 
-/* Modal przesunięty na prawo */
 .modal-overlay-right {
   justify-content: flex-end;
   align-items: stretch;
   padding: 0;
 }
 
-/* Główny kontener modala */
 .building-floor-modal {
   background-color: #ffffff;
   border-radius: 12px;
@@ -106,9 +105,9 @@
   overflow: hidden;
   margin-bottom: 20px;
   background-color: #fff;
-  display: flex; /* Dodane */
-  justify-content: center; /* Dodane - centrowanie poziome */
-  align-items: center; /* Dodane - centrowanie pionowe */
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
 }
 
 .floor-plan-container {
@@ -116,10 +115,10 @@
   padding: 16px;
   border-radius: 8px;
   text-align: center;
-  display: flex; /* Zmienione z justify-content i align-items */
+  display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%; /* Dodane */
+  width: 100%;
 }
 
 .floor-plan-container.b9-small {
@@ -128,11 +127,11 @@
 }
 
 .floor-plan-svg {
-  width: auto; /* Zmienione z 100% na auto */
+  width: auto;
   height: auto;
   display: block;
   max-height: 60vh;
-  max-width: 100%; /* Dodane ograniczenie szerokości */
+  max-width: 100%; 
   background-color: #fff;
 }
 
@@ -187,7 +186,6 @@
   }
 }
 
-/* Trwałe podświetlenie po animacji */
 .room-highlighted {
   fill: #8b0002b6 !important;
   fill-opacity: 0.4 !important;
@@ -217,7 +215,6 @@
   background-color: #e0e0e0;
 }
 
-/* Style dla modala szczegółów pokoju */
 .room-details-modal {
   background-color: #ffffff;
   border-radius: 12px;
@@ -228,7 +225,6 @@
   position: relative;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
   .modal-overlay {
     padding: 10px;
@@ -251,4 +247,9 @@
     padding: 6px 12px;
     font-size: 14px;
   }
+}
+
+.modal-overlay .building-floor-modal,
+.modal-overlay .room-details-modal {
+  pointer-events: auto;
 }

@@ -104,6 +104,7 @@ const iFizykiSvg = React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>
     <polygon
       id="A1"
       data-name="Aula Major"
+      data-type="Aula"
       points="588.365,817.125 741,817.125 741,940.781 588.365,940.781"
       className="room"
     />
@@ -111,6 +112,7 @@ const iFizykiSvg = React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>
     <polygon
       id="A2"
       data-name="Arena Magica"
+      data-type="Aula"
       points="977.807,58.7865 1125.28,58.7865 1125.28,261.563 977.807,261.563"
       className="room"
     />
@@ -118,6 +120,7 @@ const iFizykiSvg = React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>
     <polygon
       id="A3"
       data-name="Aula Minor"
+      data-type="Aula"
       points="925.76,815.708 1024.76,815.708 1024.76,943.328 925.76,943.328"
       className="room"
     />

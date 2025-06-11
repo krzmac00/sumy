@@ -1,4 +1,3 @@
-// src/components/ParterSvg.tsx
 import React from 'react';
 
 interface ParterSvgProps extends React.SVGProps<SVGSVGElement> {}
@@ -102,33 +101,38 @@ const ParterSvg: React.FC<ParterSvgProps> = props => (
 
     <polygon
       id="F2"
-      data-name="Aula F2"
+      data-name="F2"
+      data-type="Aula"
       points="511.302,346.901 646.422,346.901 646.422,431.515 511.302,431.515"
       className="room"
     />
     <polygon
       id="F3"
-      data-name="Aula F3"
+      data-name="F3"
+      data-type="Aula"
       points="372.323,346.375 508.776,346.375 508.776,431.995 372.323,431.995"
       className="room"
     />
     <polygon
       id="F4"
-      data-name="Aula F4"
+      data-name="F4"
+      data-type="Aula"
       points="287.12,460.505 371.13,460.505 371.13,520.083 287.12,520.083"
       fill="#FFF9E2"
       className="room"
     />
     <polygon
       id="F5"
-      data-name="Aula F5"
+      data-name="F5"
+      data-type="Aula"
       points="187.135,460.505 258.109,460.505 258.109,520.083 187.135,520.083"
       fill="#FFF9E2"
       className="room"
     />
     <polygon
       id="F6"
-      data-name="Aula F6"
+      data-name="F6"
+      data-type="Aula"
       points="122.062,460.505 187.224,460.505 187.224,520.083 122.062,520.083"
       fill="#FFF9E2"
       className="room"

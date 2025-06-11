@@ -100,28 +100,32 @@ const Pietro3Svg: React.FC<Pietro3SvgProps> = props => (
 
     <polygon
       id="F10"
-      data-name="Aula F10"
+      data-name="F10"
+      data-type="Aula"
       points="86.2031,413.859 230.844,413.859 230.844,586.755 86.2031,586.755"
       className="room"
     />
 
     <polygon
       id="F9"
-      data-name="Aula F9"
+      data-name="F9"
+      data-type="Aula"
       points="297.833,528.323 396.906,528.323 396.906,586.896 297.833,586.896"
       className="room"
     />
 
     <polygon
       id="F7"
-      data-name="Aula F7"
+      data-name="F7"
+      data-type="Aula"
       points="297.833,413.859 396.937,413.859 396.937,501.047 297.833,501.047"
       className="room"
     />
 
     <polygon
       id="F8"
-      data-name="Aula F8"
+      data-name="F8"
+      data-type="Aula"
       points="396.807,412.297 485.354,412.297 485.354,499.479 396.807,499.479"
       className="room"
     />

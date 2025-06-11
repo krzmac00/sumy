@@ -266,20 +266,30 @@ const resources = {
       "calendar.repeat.weekly": "Weekly",
       "calendar.repeat.monthly": "Monthly",
 
-      //MapFilterPanel
-      "map.filter.mapFilters": "Map filters",
-      "map.filter.buildingType": "Builingd type:",
-      "map.filter.generalAcademic": "General academic building",
-      "map.filter.faculty": "Faculty",
-      "map.filter.nonFaculty": "Non-faculty",
-      "map.filter.administration": "Administraion",
-      "map.filter.porter": "Porter's lodge",
-      "map.filter.roomType": "Room type:",
-      "map.filter.choice": "--select--",
-      "map.filter.auditorium": "Aula",
-      "map.filter.class": "Class",
-      "map.filter.laboratory": "Laboratory",
-      "map.filter.applyFilters": "Apply filters",
+      // Map Filter Panel
+      "map.filter.mapFilters":        "Map Filters",
+      "map.filter.buildingType":      "Building type",
+      "map.filter.faculty":           "Faculty buildings",
+      "map.filter.nonFaculty":        "Non-faculty buildings",
+      "map.filter.generalAcademic":   "General academic buildings",
+      "map.filter.administration":    "Administration",
+
+      // Search bar
+      "map.search.placeholder":       "Search building…",
+
+      // Building Floor Modal
+      "modal.close":                  "Close",
+      "modal.details.title":          "Room details",
+      "modal.details.name":           "Name:",
+      "modal.details.type":           "Room type:",
+      "modal.details.floor":          "Floor:",
+
+      // Floors
+      "floor.ground":                 "Ground floor",
+      "floor.1":                      "1st floor",
+      "floor.2":                      "2nd floor",
+      "floor.3":                      "3rd floor",
+      "floor.4":                      "4th floor",
 
       //UserProfile
       "profile.userProfile": "User profile",

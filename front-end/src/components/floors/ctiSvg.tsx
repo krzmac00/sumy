@@ -63,6 +63,7 @@ const ctiSvg = React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
     <polygon
     id="S1"
     data-name="Sala kinowa"
+    data-type="Aula"
     points="386.734,104.198 731.135,104.198 731.135,428.729 386.734,428.729"
     className="room"
     />
