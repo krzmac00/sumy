@@ -10,29 +10,33 @@ import { RepeatType } from "@/enums/RepeatType";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./Calendar.css";
+import { CustomCalendarEvent } from "@/types/event";
+import { useScheduleContext } from "@/contexts/ScheduleContext";
 
 Modal.setAppElement("#root");
+
+const CATEGORY_COLORS: Record<CategoryKey, string> = {
+    timetable_lecture: "#3c9cfc",
+    timetable_laboratory: "#8bc1cf",
+    timetable_tutorials: "#e9bf04",
+    [CategoryKey.Important]: "",
+    [CategoryKey.Exam]: "",
+    [CategoryKey.Private]: "",
+    [CategoryKey.Club]: "",
+    [CategoryKey.StudentCouncil]: "",
+    [CategoryKey.TULEvents]: ""
+};
 
 interface CalendarModalProps {
   isOpen: boolean;
   defaultStart: Date;
   defaultEnd: Date;
   categories: CategoryKey[];
-  onSave: (data: {
-    title: string;
-    category: CategoryKey;
-    repeatType: RepeatType;
-    start: Date;
-    end: Date;
-    schedule_plan: number | null,
-    is_template: boolean | null,
-    room: string | null,
-    teacher: string | null
-  }) => void;
+  onSave: (data: Omit<CustomCalendarEvent, "id">) => void;
   onCancel: () => void;
 }
 
-export const CalendarModal: React.FC<CalendarModalProps> = ({
+export const TimetableModal: React.FC<CalendarModalProps> = ({
   isOpen,
   defaultStart,
   defaultEnd,
@@ -41,6 +45,7 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
   onCancel,
 }) => {
   const { t, i18n } = useTranslation();
+  const { selectedSchedule } = useScheduleContext();
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<CategoryKey>(categories[0]);
@@ -50,16 +55,7 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
   const [room, setRoom] = useState("");
   const [teacher, setTeacher] = useState("");
 
-  const isCategoryFromTimeTable = (categoryKey: CategoryKey) => {
-    return categoryKey === CategoryKey.TimetableLecture ||
-      categoryKey === CategoryKey.TimetableLaboratory ||
-      categoryKey === CategoryKey.TimetableTutorials;
-  }
-
-  const isSaveButtonDisabled =
-    isCategoryFromTimeTable(category)
-      ? !title || !room || !teacher
-      : !title;
+  const isSaveButtonDisabled = !title || !room || !teacher;
 
   useEffect(() => {
     setStart(defaultStart);
@@ -96,26 +92,33 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
   };
 
   const handleSave = () => {
-    if (!title) { 
-      return;
-    }
-
+    if (!title || !room || !teacher || !selectedSchedule) return;
     if (end <= start) {
       alert(t("calendar.invalidRange", "End date must be after start date"));
       return;
     }
 
-    onSave({
+    const newEvent: Omit<CustomCalendarEvent, "id"> = {
       title,
-      category,
-      repeatType,
+      description: "",
       start,
       end,
-      schedule_plan: null,
+      category,
+      color: CATEGORY_COLORS[category] || "#808080",
+      repeatType,
+      schedule_plan: selectedSchedule.id,
       is_template: null,
-      room: isCategoryFromTimeTable(category) ? room : null,
-      teacher: isCategoryFromTimeTable(category) ? teacher : null,
-    });
+      room,
+      teacher,
+    };
+
+    const storageKey = `timetable_events_${selectedSchedule.id}`;
+    const stored = localStorage.getItem(storageKey);
+    const existing = stored ? JSON.parse(stored) : [];
+    const updated = [...existing, { ...newEvent, id: Math.floor(Math.random() * 100000) }];
+    localStorage.setItem(storageKey, JSON.stringify(updated));
+
+    onSave(newEvent);
   };
 
   return (
@@ -179,24 +182,20 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
           ))}
         </select>
 
-        {isCategoryFromTimeTable(category) && (
-          <>
-            <input
-              type="text"
-              placeholder={t("calendar.enterRoom", "Enter room")}
-              value={room}
-              onChange={(e) => setRoom(e.target.value)}
-              style={inputStyle}
-            />
-            <input
-              type="text"
-              placeholder={t("calendar.enterTeacher", "Enter teacher")}
-              value={teacher}
-              onChange={(e) => setTeacher(e.target.value)}
-              style={inputStyle}
-            />
-          </>
-        )}
+        <input
+          type="text"
+          placeholder={t("calendar.enterRoom", "Enter room")}
+          value={room}
+          onChange={(e) => setRoom(e.target.value)}
+          style={inputStyle}
+        />
+        <input
+          type="text"
+          placeholder={t("calendar.enterTeacher", "Enter teacher")}
+          value={teacher}
+          onChange={(e) => setTeacher(e.target.value)}
+          style={inputStyle}
+        />
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <label>{t("calendar.startDate", "Start date")}</label>
@@ -253,5 +252,4 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
   );
 };
 
-
-export default CalendarModal;
+export default TimetableModal;

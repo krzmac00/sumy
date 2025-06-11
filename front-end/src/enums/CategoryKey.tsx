@@ -1,5 +1,7 @@
 export enum CategoryKey {
-  Timetable = "timetable",
+  TimetableLecture = "timetable_lecture",
+  TimetableLaboratory = "timetable_laboratory",
+  TimetableTutorials = "timetable_tutorials",
   Important = "important",
   Exam = "exam",
   Private = "private",

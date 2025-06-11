@@ -91,7 +91,7 @@ class Event(models.Model):
     )
     color = models.CharField(max_length=7, editable=False)
     repeat_type = models.CharField(
-        max_length=10,
+        max_length=30,
         choices=REPEAT_TYPES,
         default='none'
     )
@@ -101,7 +101,6 @@ class Event(models.Model):
         null=True,
         blank=True
     )
-    is_template = models.BooleanField(default=False),
     room = models.CharField(max_length=50, null=True)
     teacher = models.CharField(max_length=100, null=True)
 
