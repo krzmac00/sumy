@@ -237,7 +237,7 @@ class UserProfileView(APIView):
                 user = request.user
 
             profile = user.profile
-            serializer = UserProfileSerializer(profile)
+            serializer = UserSerializer(user, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
