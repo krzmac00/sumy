@@ -110,3 +110,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['bio']
+
+class UserSearchSerializer(serializers.ModelSerializer):
+    index_number = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'index_number']
+
+    def get_index_number(self, obj):
+        # wyciągamy pierwsze 6 cyfr z emaila
+        return obj.email.split('@')[0]
