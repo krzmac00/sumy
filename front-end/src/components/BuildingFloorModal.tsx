@@ -58,7 +58,6 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const { t } = useTranslation();
 
-  // Resetuj wybrany pokój gdy modal się otwiera
   useEffect(() => {
     if (isOpen) {
       setSelectedFloor(defaultFloor);
@@ -66,28 +65,40 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
     }
   }, [isOpen, defaultFloor]);
 
-  // Wybieramy mapę svg-ów dla aktualnego budynku
   const svgMapForThisBuilding = buildingFloorSvgs[buildingCode] || {};
   const SelectedSvg = svgMapForThisBuilding[selectedFloor];
 
-  // Dostępne piętra dla danego budynku
   const availableFloors = floorsOrder.filter(floor => svgMapForThisBuilding[floor]);
 
-  // Hook do obsługi klików na polygony
+  // Funkcja do tłumaczenia nazw pięter
+  const getFloorTranslation = (floor: string) => {
+    switch (floor) {
+      case "Parter":
+        return t("floor.groundFloor");
+      case "Piętro 1":
+        return t("floor.firstFloor");
+      case "Piętro 2":
+        return t("floor.secondFloor");
+      case "Piętro 3":
+        return t("floor.thirdFloor");
+      case "Piętro 4":
+        return t("floor.fourthFloor");
+      default:
+        return floor;
+    }
+  };
+
   useEffect(() => {
     const svgEl = svgRef.current;
     if (!svgEl) return;
 
     const rooms = Array.from(svgEl.querySelectorAll<SVGElement>("polygon.room[id]"));
 
-    // Podświetl wybrany pokój z animacją
     if (highlightedRoomId) {
       const highlighted = svgEl.querySelector<SVGElement>(`polygon.room#${highlightedRoomId}`);
       if (highlighted) {
-        // Dodaj klasę CSS dla animacji pulsacji
         highlighted.classList.add("room-highlight-animation");
         
-        // Po animacji zostaw trwałe podświetlenie
         setTimeout(() => {
           highlighted.classList.remove("room-highlight-animation");
           highlighted.classList.add("room-highlighted");
@@ -95,7 +106,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
           highlighted.setAttribute("stroke-width", "3");
           highlighted.setAttribute("fill", "#8b0002");
           highlighted.setAttribute("fill-opacity", "0.4");
-        }, 2000); // 2 sekundy animacji
+        }, 2000);
       }
     }
 
@@ -103,11 +114,15 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
       el.style.cursor = "pointer";
       
       const onClick = () => {
+        const rawType = el.getAttribute("data-type") || "";
+        const displayType = rawType.toLowerCase().includes("aula")
+          ? t("room.type.auditorium")
+          : rawType;
         setSelectedRoom({
           id: el.id,
           name: el.getAttribute("data-name") || el.id,
-          type: el.getAttribute("data-type") || "Pokój",
-          floor: selectedFloor, 
+          type: displayType,
+          floor: selectedFloor,
         });
       };
       
@@ -128,16 +143,14 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
       el.addEventListener("mouseout", onMouseOut);
     });
 
-    // Cleanup
     return () => {
       rooms.forEach(el => {
         const newEl = el.cloneNode(true) as SVGElement;
         el.parentNode?.replaceChild(newEl, el);
       });
     };
-  }, [selectedFloor, buildingCode, highlightedRoomId]);
+  }, [selectedFloor, buildingCode, highlightedRoomId, t]);
 
-  // Obsługa klawisza Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -159,7 +172,6 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
 
   return (
     <>
-      {/* Główny modal z planem budynku - bez onClick na overlay */}
       <div className="modal-overlay modal-overlay-right">
         <div className="building-floor-modal building-floor-modal-right" onClick={(e) => e.stopPropagation()}>
           <div className="building-floor-modal-title">
@@ -177,7 +189,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
                     setSelectedRoom(null);
                   }}
                 >
-                  {t(`floor.${floor}`)}
+                  {getFloorTranslation(floor)}
                 </button>
               ))}
             </div>
@@ -189,7 +201,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
                 <SelectedSvg ref={svgRef} className="floor-plan-svg" />
               ) : (
                 <p style={{ padding: "40px", color: "#666", textAlign: "center" }}>
-                  Brak planu dla tego piętra.
+                  {t("floor.noPlan")}
                 </p>
               )}
             </div>
@@ -203,17 +215,16 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
         </div>
       </div>
 
-      {/* Modal szczegółów pokoju */}
       {selectedRoom && (
         <div className="modal-overlay" onClick={() => setSelectedRoom(null)}>
           <div className="room-details-modal" onClick={(e) => e.stopPropagation()}>
             <div className="building-floor-modal-title">
-              {t("modal.details.title")}
+              {t("modal.roomDetails.title")}
             </div>
             <div style={{ marginBottom: "1rem" }}>
-            <p><strong>{t("modal.details.name")}</strong> {selectedRoom.name}</p>
-            <p><strong>{t("modal.details.type")}</strong> {selectedRoom.type}</p>
-            <p><strong>{t("modal.details.floor")}</strong> {selectedRoom.floor}</p>
+              <p><strong>{t("modal.roomDetails.name")}:</strong> {selectedRoom.name}</p>
+              <p><strong>{t("modal.roomDetails.type")}:</strong> {selectedRoom.type}</p>
+              <p><strong>{t("modal.roomDetails.floor")}:</strong> {getFloorTranslation(selectedRoom.floor)}</p>
             </div>
             <div className="modal-footer">
               <button className="close-button" onClick={() => setSelectedRoom(null)}>

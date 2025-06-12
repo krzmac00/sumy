@@ -1,5 +1,5 @@
-// src/pages/MapPage.tsx
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import {
   MapContainer,
   TileLayer,
@@ -56,8 +56,6 @@ const categoryColors: Record<Category, string> = {
   administracja:    "#8b008b",
 };
 
-
-/* ---------- Styling footprintów ---------- */
 const footprintStyle: L.PathOptions = {
   color: "#8b0002",
   weight: 2,
@@ -65,7 +63,7 @@ const footprintStyle: L.PathOptions = {
   fillOpacity: 0.15,
 };
 
-/* ---------- Ikona markera dla auli ---------- */
+/* marker dla auli */
 const markerIcon = new L.Icon({
   iconUrl:
     "data:image/svg+xml;base64," +
@@ -80,7 +78,6 @@ const markerIcon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
-/* ---------- Hook do złapania instancji mapy ---------- */
 function MapEffect({
   onMapReady,
 }: {
@@ -93,7 +90,6 @@ function MapEffect({
   return null;
 }
 
-/* ---------- Przybliżenie markerem ---------- */
 const PanTo: React.FC<{ position: LatLngExpression }> = ({ position }) => {
   const map = useMap();
   useEffect(() => {
@@ -102,7 +98,6 @@ const PanTo: React.FC<{ position: LatLngExpression }> = ({ position }) => {
   return null;
 };
 
-/* ---------- Kategorie filtrów ---------- */
 const buildingCategoryMap: Record<string, string> = {
   B9: "wydziałowe" as const,
   B14: "wydziałowe" as const,
@@ -134,9 +129,87 @@ const isValidCategory = (cat: string | undefined): cat is Category => {
   return cat !== undefined && allCategories.includes(cat as Category);
 };
 
+const buildingDescriptions: Record<string, { pl: string; en: string }> = {
+  // wydziałowe
+  B9:  {
+    pl: "Wydział Fizyki Technicznej, Informatyki i Matematyki Stosowanej",
+    en: "Faculty of Technical Physics, Computer Science and Applied Mathematics",
+  },
+  B14: {
+    pl: "Instytut Fizyki",
+    en: "Institute of Physics",
+  },
+  B19: {
+    pl: "Centrum Technologii Informatycznych CTI",
+    en: "Center for Information Technology (CTI)",
+  },
+
+  // pozawydziałowe
+  B28: {
+    pl: "Zatoka Sportu",
+    en: "Sports Bay",
+  },
+  B24: {
+    pl: "Centrum Językowe",
+    en: "Language Center",
+  },
+  B22: {
+    pl: "Biblioteka Główna",
+    en: "Main Library",
+  },
+  C4: {
+    pl: "Centrum Sportu",
+    en: "Sports Center",
+  },
+
+  // ogólnouczelniane – domy studenckie + SDS
+  C17: {
+    pl: "VI Dom Studencki",
+    en: "Student Dormitory VI",
+  },
+  C5: {
+    pl: "VII Dom Studencki",
+    en: "Student Dormitory VII",
+  },
+  C11: {
+    pl: "IV Dom Studencki",
+    en: "Student Dormitory IV",
+  },
+  C12: {
+    pl: "III Dom Studencki",
+    en: "Student Dormitory III",
+  },
+  C13: {
+    pl: "II Dom Studencki",
+    en: "Student Dormitory II",
+  },
+  C14: {
+    pl: "I Dom Studencki",
+    en: "Student Dormitory I",
+  },
+  C15: {
+    pl: "SDS",
+    en: "Student Development Center",
+  },
+  E1: {
+    pl: "IX Dom Studencki",
+    en: "Student Dormitory IX",
+  },
+  F1: {
+    pl: "V Dom Studencki",
+    en: "Student Dormitory V",
+  },
+
+  // administracja
+  B11: {
+    pl: "Dziekanat WFTiMS",
+    en: "Dean’s Office of FT-CS-AM",
+  },
+};
+
+
 const DEFAULT_POSITION: LatLngExpression = [51.746032, 19.453547];
 
-/* ---------- Główny komponent ---------- */
 const MapPage: React.FC = () => {
   const [footprints, setFootprints] =
     useState<GeoJSON.FeatureCollection | null>(null);
@@ -156,20 +229,19 @@ const MapPage: React.FC = () => {
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const suggestionsRef = useRef<HTMLUListElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
-  if (highlightedIndex < 0) return;
+    if (highlightedIndex < 0) return;
     const listEl = suggestionsRef.current;
     if (!listEl) return;
 
     const item = listEl.children[highlightedIndex] as HTMLElement;
     if (item) {
-      // blok 'nearest' gwarantuje, że cała li będzie widoczna
       item.scrollIntoView({ block: "nearest" });
     }
   }, [highlightedIndex]);
 
-  /* fetch geojson */
   useEffect(() => {
     fetch("/data/buildings.geojson")
       .then((res) => res.json())
@@ -193,15 +265,12 @@ const MapPage: React.FC = () => {
     };
   }, []);
 
-
-  /* toggle filtrowania */
   const toggleCategory = (cat: Category) => {
     setActiveCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
     );
   };
 
-  /* wyszukiwarka */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
     setSearchTerm(v);
@@ -215,7 +284,6 @@ const MapPage: React.FC = () => {
     setHighlightedIndex(-1);
   };
 
-  /* wybór z listy */
   const handleSelect = (name: string) => {
     setSuggestions([]);
     const item = buildingList.find((b) => b.name === name);
@@ -224,7 +292,6 @@ const MapPage: React.FC = () => {
     setSelectedPos(item.position);
 
     if (item.buildingCode && item.floor && item.roomId) {
-      // aula → marker + modal
       setMarkerPosition(item.position);
       setSelectedBuilding({
         properties: {
@@ -235,22 +302,26 @@ const MapPage: React.FC = () => {
         defaultFloor: item.floor,
       } as any);
     } else if (mapInstance) {
-      // zwykły budynek → popup i flyTo
       setMarkerPosition(null);
       const layer = layersMap[name];
       if (!layer) return;
 
       const feature = layer.feature as BuildingFeature;
-      const { label, description, website, hasPlan, name: code } =
-        feature.properties;
+      const { label, website, hasPlan, name: code } = feature.properties;
+      const { t, i18n } = useTranslation();
+
+      const description =
+        buildingDescriptions[code]?.[i18n.language as "pl" | "en"]
+        ?? feature.properties.description
+        ?? "";
 
       const btnId = `plan-btn-${code}`;
       const html = `
         <div style="max-width:240px">
           <strong>${label}</strong><br/>
-          <p style="margin:6px 0">${description ?? ""}</p>
-          ${website ? `<a href="${website}" target="_blank">Przejdź do strony</a><br/>` : ""}
-          ${hasPlan ? `<button id="${btnId}" class="map-popup-button">Plan budynku</button>` : ""}
+          <p style="margin:6px 0">${description}</p>
+          ${website ? `<a href="${website}" target="_blank">${t("map.popup.goToWebsite")}</a><br/>` : ""}
+          ${hasPlan ? `<button id="${btnId}" class="map-popup-button">${t("map.popup.buildingPlan")}</button>` : ""}
         </div>
       `;
 
@@ -269,7 +340,6 @@ const MapPage: React.FC = () => {
     setSearchTerm("");
   };
 
-  /* zamknięcie modala */
   const handleCloseModal = () => {
     setSelectedBuilding(null);
     setMarkerPosition(null);
@@ -287,7 +357,7 @@ const MapPage: React.FC = () => {
           <div className="search-container" ref={searchRef}>
             <input
               className="search-input"
-              placeholder="Szukaj budynku…"
+              placeholder={t("map.search.placeholder")}
               value={searchTerm}
               onChange={handleChange}
               onKeyDown={(e) => {
@@ -357,7 +427,7 @@ const MapPage: React.FC = () => {
 
             {footprints && (
               <GeoJSON
-                key={activeCategories.join("|")}
+                key={`${i18n.resolvedLanguage}|${activeCategories.join("|")}`}
                 data={footprints as any}
                 style={(feature: any) => {
                   const code = feature.properties.name as string;
@@ -366,7 +436,7 @@ const MapPage: React.FC = () => {
                   return {
                     ...footprintStyle,
                     fillColor: fill,
-                    color:     fill,      // obrys w tym samym kolorze
+                    color:     fill,
                   };
                 }}
                 filter={(feature: any) => {
@@ -401,8 +471,8 @@ const MapPage: React.FC = () => {
                       <div style="max-width:240px">
                         <strong>${label}</strong><br/>
                         <p style="margin:6px 0">${description ?? ""}</p>
-                        ${website ? `<a href="${website}" target="_blank">Przejdź do strony</a><br/>` : ""}
-                        ${hasPlan ? `<button id="${btnId}" class="map-popup-button">Plan budynku</button>` : ""}
+                        ${website ? `<a href="${website}" target="_blank">${t("map.popup.goToWebsite")}</a><br/>` : ""}
+                        ${hasPlan ? `<button id="${btnId}" class="map-popup-button">${t("map.popup.buildingPlan")}</button>` : ""}
                       </div>
                     `;
                     poly.once("popupopen", () => {

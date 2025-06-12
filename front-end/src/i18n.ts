@@ -279,17 +279,20 @@ const resources = {
 
       // Building Floor Modal
       "modal.close":                  "Close",
-      "modal.details.title":          "Room details",
-      "modal.details.name":           "Name:",
-      "modal.details.type":           "Room type:",
-      "modal.details.floor":          "Floor:",
+      "map.popup.goToWebsite":    "Go to website",
+      "map.popup.buildingPlan":   "Building plan",
 
-      // Floors
-      "floor.ground":                 "Ground floor",
-      "floor.1":                      "1st floor",
-      "floor.2":                      "2nd floor",
-      "floor.3":                      "3rd floor",
-      "floor.4":                      "4th floor",
+      "modal.roomDetails.title":  "Room details",
+      "modal.roomDetails.name":   "Name",
+      "modal.roomDetails.type":   "Room type",
+      "modal.roomDetails.floor":  "Floor",
+      "room.type.auditorium": "Auditorium",
+
+      "floor.groundFloor":        "Ground floor",
+      "floor.firstFloor":         "1st floor",
+      "floor.secondFloor":        "2nd floor",
+      "floor.thirdFloor":         "3rd floor",
+      "floor.fourthFloor":        "4th floor",
 
       //UserProfile
       "profile.userProfile": "User profile",
@@ -587,13 +590,24 @@ const resources = {
       "map.filter.faculty": "Wydziałowy",
       "map.filter.nonFaculty": "Pozawydziałowy",
       "map.filter.administration": "Administracja",
-      "map.filter.porter": "Portiernia",
-      "map.filter.roomType": "Typ pomieszczenia:",
-      "map.filter.choice": "--wybierz--",
-      "map.filter.auditorium": "Aula",
-      "map.filter.class": "Sala",
-      "map.filter.laboratory": "Laboratorium",
-      "map.filter.applyFilters": "Zastosuj filtry",
+
+      "map.search.placeholder":   "Szukaj budynku…",
+
+      "map.popup.goToWebsite":    "Przejdź do strony",
+      "map.popup.buildingPlan":   "Plan budynku",
+
+      "modal.roomDetails.title":  "Szczegóły sali",
+      "modal.roomDetails.name":   "Nazwa",
+      "modal.roomDetails.type":   "Typ sali",
+      "modal.roomDetails.floor":  "Piętro",
+
+      "room.type.auditorium": "Aula",
+
+      "floor.groundFloor":        "Parter",
+      "floor.firstFloor":         "Piętro 1",
+      "floor.secondFloor":        "Piętro 2",
+      "floor.thirdFloor":         "Piętro 3",
+      "floor.fourthFloor":        "Piętro 4",
 
       //UserProfile
       "profile.userProfile": "Profil użytkownika",
