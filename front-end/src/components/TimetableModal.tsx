@@ -7,31 +7,31 @@ import { pl } from "date-fns/locale/pl";
 
 import { CategoryKey } from "@/enums/CategoryKey";
 import { RepeatType } from "@/enums/RepeatType";
+import { CustomCalendarEvent } from "@/types/event";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./Calendar.css";
-import { CustomCalendarEvent } from "@/types/event";
-import { useScheduleContext } from "@/contexts/ScheduleContext";
 
 Modal.setAppElement("#root");
 
 const CATEGORY_COLORS: Record<CategoryKey, string> = {
-    timetable_lecture: "#3c9cfc",
-    timetable_laboratory: "#8bc1cf",
-    timetable_tutorials: "#e9bf04",
-    [CategoryKey.Important]: "",
-    [CategoryKey.Exam]: "",
-    [CategoryKey.Private]: "",
-    [CategoryKey.Club]: "",
-    [CategoryKey.StudentCouncil]: "",
-    [CategoryKey.TULEvents]: ""
+  timetable_lecture: "#3c9cfc",
+  timetable_laboratory: "#8bc1cf",
+  timetable_tutorials: "#e9bf04",
+  [CategoryKey.Important]: "",
+  [CategoryKey.Exam]: "",
+  [CategoryKey.Private]: "",
+  [CategoryKey.Club]: "",
+  [CategoryKey.StudentCouncil]: "",
+  [CategoryKey.TULEvents]: "",
 };
 
 interface CalendarModalProps {
   isOpen: boolean;
   defaultStart: Date;
   defaultEnd: Date;
-  categories: CategoryKey[];
+  categories: CategoryKey[]; // Should be only the 3 allowed categories
+  scheduleId: number;
   onSave: (data: Omit<CustomCalendarEvent, "id">) => void;
   onCancel: () => void;
 }
@@ -41,11 +41,11 @@ export const TimetableModal: React.FC<CalendarModalProps> = ({
   defaultStart,
   defaultEnd,
   categories,
+  scheduleId,
   onSave,
   onCancel,
 }) => {
   const { t, i18n } = useTranslation();
-  const { selectedSchedule } = useScheduleContext();
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<CategoryKey>(categories[0]);
@@ -62,37 +62,11 @@ export const TimetableModal: React.FC<CalendarModalProps> = ({
     setEnd(defaultEnd);
   }, [defaultStart, defaultEnd]);
 
-  const inputStyle: React.CSSProperties = {
-    padding: "8px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-    fontSize: "1rem",
-    width: "100%",
-  };
-
-  const selectStyle = inputStyle;
-
-  const buttonStyle: React.CSSProperties = {
-    padding: "8px 12px",
-    borderRadius: "4px",
-    cursor: "pointer",
-  };
-
-  const cancelButtonStyle: React.CSSProperties = {
-    ...buttonStyle,
-    border: "1px solid #ccc",
-    background: "#f4f4f4",
-  };
-
-  const saveButtonBaseStyle: React.CSSProperties = {
-    ...buttonStyle,
-    border: "none",
-    background: "#2563eb",
-    color: "#fff",
-  };
-
   const handleSave = () => {
-    if (!title || !room || !teacher || !selectedSchedule) return;
+    if (!title || !room || !teacher) {
+      return
+    };
+    
     if (end <= start) {
       alert(t("calendar.invalidRange", "End date must be after start date"));
       return;
@@ -106,19 +80,27 @@ export const TimetableModal: React.FC<CalendarModalProps> = ({
       category,
       color: CATEGORY_COLORS[category] || "#808080",
       repeatType,
-      schedule_plan: selectedSchedule.id,
+      schedule_plan: scheduleId,
       is_template: null,
       room,
       teacher,
     };
 
-    const storageKey = `timetable_events_${selectedSchedule.id}`;
-    const stored = localStorage.getItem(storageKey);
-    const existing = stored ? JSON.parse(stored) : [];
-    const updated = [...existing, { ...newEvent, id: Math.floor(Math.random() * 100000) }];
-    localStorage.setItem(storageKey, JSON.stringify(updated));
-
     onSave(newEvent);
+  };
+
+  const inputStyle: React.CSSProperties = {
+    padding: "8px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+    fontSize: "1rem",
+    width: "100%",
+  };
+
+  const buttonStyle: React.CSSProperties = {
+    padding: "8px 12px",
+    borderRadius: "4px",
+    cursor: "pointer",
   };
 
   return (
@@ -161,7 +143,7 @@ export const TimetableModal: React.FC<CalendarModalProps> = ({
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value as CategoryKey)}
-          style={selectStyle}
+          style={inputStyle}
         >
           {categories.map((cat) => (
             <option key={cat} value={cat}>
@@ -173,7 +155,7 @@ export const TimetableModal: React.FC<CalendarModalProps> = ({
         <select
           value={repeatType}
           onChange={(e) => setRepeatType(e.target.value as RepeatType)}
-          style={selectStyle}
+          style={inputStyle}
         >
           {Object.values(RepeatType).map((type) => (
             <option key={type} value={type}>
@@ -233,14 +215,17 @@ export const TimetableModal: React.FC<CalendarModalProps> = ({
       </div>
 
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", paddingTop: "8px" }}>
-        <button onClick={onCancel} style={cancelButtonStyle}>
+        <button onClick={onCancel} style={{ ...buttonStyle, border: "1px solid #ccc", background: "#f4f4f4" }}>
           {t("calendar.cancel", "Cancel")}
         </button>
         <button
           onClick={handleSave}
           disabled={isSaveButtonDisabled}
           style={{
-            ...saveButtonBaseStyle,
+            ...buttonStyle,
+            border: "none",
+            background: "#2563eb",
+            color: "#fff",
             cursor: isSaveButtonDisabled ? "not-allowed" : "pointer",
             opacity: isSaveButtonDisabled ? 0.6 : 1,
           }}

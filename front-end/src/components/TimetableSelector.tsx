@@ -1,27 +1,22 @@
-import { useEffect } from "react";
-import { useScheduleContext } from "@/contexts/ScheduleContext";
 import { useTranslation } from "react-i18next";
+import { SchedulePlan } from "@/types/SchedulePlan";
 
-const TimetableSelector: React.FC = () => {
+interface TimetableSelectorProps {
+  schedules: SchedulePlan[];
+  selected: number | null;
+  onSelect: (id: number | null) => void;
+}
+
+export const TimetableSelector: React.FC<TimetableSelectorProps> = ({ schedules, selected, onSelect }) => {
   const { t } = useTranslation();
-  const { schedules, setSchedules, selectedSchedule, setSelectedSchedule } = useScheduleContext();
-
-  useEffect(() => {
-    const stored = localStorage.getItem("timetable_schedules");
-    if (stored) {
-      setSchedules(JSON.parse(stored));
-    }
-  }, []);
 
   return (
-    <div style={{ padding: 10 }}>
-      <label>{t("calendar.selectSchedule", "Select Timetable")}</label>
+    <div style={{ padding: 16 }}>
       <select
-        value={selectedSchedule?.id ?? ""}
+        value={selected ?? ""}
         onChange={(e) => {
-          const id = parseInt(e.target.value);
-          const found = schedules.find((s) => s.id === id) || null;
-          setSelectedSchedule(found);
+          const val = e.target.value;
+          onSelect(val ? parseInt(val) : null);
         }}
       >
         <option value="">{t("calendar.choose", "Choose a schedule")}</option>

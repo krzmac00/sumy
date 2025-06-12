@@ -19,9 +19,11 @@ import { useTranslation } from "react-i18next";
 import { CategoryKey } from "@/enums/CategoryKey";
 import { RepeatType } from "@/enums/RepeatType";
 import { CustomCalendarEvent } from "@/types/event";
-import { eventAPI } from "@/services/api";
+import { eventAPI, scheduleAPI } from "@/services/api";
 import "./Calendar.css";
 import CalendarModal from "./CalendarModal";
+import TimetableSelector from "./TimetableSelector";
+import { SchedulePlan } from "@/types/SchedulePlan";
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar as any);
 
@@ -40,6 +42,9 @@ export const Calendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingSlot, setPendingSlot] = useState<{ start: Date; end: Date } | null>(null);
 
+  const [schedules, setSchedules] = useState<SchedulePlan[]>([]);
+  const [selectedSchedule, setSelectedSchedule] = useState<SchedulePlan | null>(null);
+
   const isCategoryFromTimeTable = (categoryKey: CategoryKey) => {
     return categoryKey === CategoryKey.TimetableLecture ||
       categoryKey === CategoryKey.TimetableLaboratory ||
@@ -47,38 +52,52 @@ export const Calendar: React.FC = () => {
   }
 
   useEffect(() => {
-    eventAPI
-      .getAll()
-      .then((rawEvents: any[]) => {
+    scheduleAPI.getAll().then(setSchedules).catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    const endOfView = new Date(date);
+    endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+
+    const fetchGlobalAndScheduleEvents = async () => {
+      try {
+        const [rawEvents, scheduleEvents] = await Promise.all([
+          eventAPI.getAll(),
+          selectedSchedule ? scheduleAPI.getEvents(selectedSchedule.id) : Promise.resolve([]),
+        ]);
+
+        const normalize = (event: any): CustomCalendarEvent => ({
+          id: event.id,
+          title: event.title,
+          description: event.description,
+          start: new Date(event.start),
+          end: new Date(event.end),
+          category: event.category,
+          color: event.color,
+          repeatType: event.repeat_type || event.repeatType || RepeatType.None,
+          schedule_plan: event.schedule_plan,
+          is_template: event.is_template,
+          room: event.room,
+          teacher: event.teacher,
+        });
+
+        const allRawEvents = [...rawEvents, ...scheduleEvents];
         const normalizedEvents: CustomCalendarEvent[] = [];
-        const endOfView = new Date(date);
-        endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
 
-        rawEvents.forEach((event) => {
-          const base: CustomCalendarEvent = {
-            id: event.id,
-            title: event.title,
-            description: event.description,
-            start: new Date(event.start),
-            end: new Date(event.end),
-            category: event.category,
-            color: event.color,
-            repeatType: event.repeat_type as RepeatType,
-            schedule_plan: event.schedule_plan,
-            is_template: event.is_template,
-            room: event.room,
-            teacher: event.teacher
-          };
-
+        allRawEvents.forEach((event) => {
+          const base = normalize(event);
           normalizedEvents.push(base);
-
           normalizedEvents.push(...expandEvent(base, endOfView));
         });
 
         setEvents(normalizedEvents);
-      })
-      .catch((err: any) => console.error("Failed to load events:", err));
-  }, [date, view]);
+      } catch (err) {
+        console.error("Failed to load events:", err);
+      }
+    };
+
+    fetchGlobalAndScheduleEvents();
+  }, [date, view, selectedSchedule]);
 
   const expandEvent = (event: CustomCalendarEvent, endOfView: Date): CustomCalendarEvent[] => {
     if (!event.start || !event.end) return [];
@@ -363,6 +382,13 @@ export const Calendar: React.FC = () => {
 
   function EventRenderer({ event }: EventProps<CalendarEvent>) {
     const customEvent = event as CustomCalendarEvent;
+
+    const isTimetableCategory = isCategoryFromTimeTable(customEvent.category);
+
+    const shortLabel = isTimetableCategory
+      ? t(`calendar.categoryShort.${customEvent.category}`, "")
+      : "";
+
     const repeatTypeLabel =
       customEvent.repeatType !== RepeatType.None
         ? ` (${t(`calendar.repeat.${customEvent.repeatType}`, customEvent.repeatType)})`
@@ -370,18 +396,21 @@ export const Calendar: React.FC = () => {
 
     return (
       <span>
-        <strong>{customEvent.title}</strong>
-        {!isCategoryFromTimeTable(customEvent.category) && (
+        <strong>
+          {customEvent.title}
+          {shortLabel && ` (${shortLabel})`}
+        </strong>
+
+        {!isTimetableCategory && (
           <div style={{ fontSize: "0.85em", opacity: 0.8 }}>
             {t(`calendar.category.${customEvent.category}`, customEvent.category)}
           </div>
         )}
-        {isCategoryFromTimeTable(customEvent.category) && (
-          <div></div>
+
+        {repeatTypeLabel && (
+          <div style={{ fontSize: "0.85em", opacity: 0.8 }}>{repeatTypeLabel}</div>
         )}
-        <div style={{ fontSize: "0.85em", opacity: 0.8 }}>
-          {repeatTypeLabel}
-        </div>
+
         {customEvent.room && (
           <div style={{ fontSize: "0.85em", opacity: 0.8 }}>
             {t("calendar.room", "Room")}: {customEvent.room}
@@ -398,6 +427,20 @@ export const Calendar: React.FC = () => {
 
   return (
     <>
+      <div style={{ display: "flex", gap: "16px", padding: "8px", alignItems: "flex-start" }}>
+          <TimetableSelector
+            schedules={schedules}
+            selected={selectedSchedule?.id ?? null}
+            onSelect={(id) => {
+              if (id === null) {
+                setSelectedSchedule(null);
+              } else {
+                const found = schedules.find((s) => s.id === id) || null;
+                setSelectedSchedule(found);
+              }
+            }}
+          />
+      </div>
       <DragAndDropCalendar
         localizer={localizer}
         culture={culture}

@@ -16,7 +16,6 @@ import MapPage from './pages/MapPage';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import TimetablePage from './pages/TimetablePage';
-import { ScheduleProvider } from './contexts/ScheduleContext';
 
 const AuthLayout: React.FC = () => {
   const { t } = useTranslation();
@@ -118,11 +117,9 @@ const AppRoutes: React.FC = () => {
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <ScheduleProvider>
         <Router>
           <AppRoutes />
         </Router>
-      </ScheduleProvider>
     </AuthProvider>
   );
 };

@@ -1,6 +1,7 @@
 import { CustomCalendarEvent } from '@/types/event';
 import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData, VoteData, VoteResponse } from '../types/forum';
 import axios from 'axios';
+import { SchedulePlan } from '@/types/SchedulePlan';
 
 /**
  * Base API URL
@@ -434,3 +435,111 @@ export const eventAPI = {
     }
   },
 };
+
+const STORAGE_KEY = "schedules";
+
+let schedules: (SchedulePlan & { events: CustomCalendarEvent[] })[] = loadFromStorage();
+
+if (schedules.length === 0) {
+  schedules = [];
+  saveToStorage(schedules);
+}
+
+let nextId = schedules.length > 0 ? Math.max(...schedules.map((s) => s.id)) + 1 : 1;
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export const scheduleAPI = {
+  getAll: async (): Promise<SchedulePlan[]> => {
+    await wait(200);
+    return schedules.map(({ events, ...rest }) => rest);
+  },
+
+  create: async (
+    payload: Pick<SchedulePlan, "name" | "description" | "code"> & {
+      events?: CustomCalendarEvent[];
+    }
+  ): Promise<SchedulePlan> => {
+    await wait(300);
+    const newPlan = {
+      id: nextId++,
+      ...payload,
+      events: payload.events ?? [],
+    };
+    schedules.push(newPlan);
+    saveToStorage(schedules);
+    return {
+      id: newPlan.id,
+      name: newPlan.name,
+      description: newPlan.description,
+      code: newPlan.code,
+    };
+  },
+
+  getEvents: async (scheduleId: number): Promise<CustomCalendarEvent[]> => {
+    await wait(150);
+    const found = schedules.find((s) => s.id === scheduleId);
+    return found ? [...found.events] : [];
+  },
+
+  addEvent: async (scheduleId: number, event: CustomCalendarEvent): Promise<void> => {
+    await wait(150);
+    const found = schedules.find((s) => s.id === scheduleId);
+    if (found) {
+      found.events.push({ ...event, id: Date.now() });
+      saveToStorage(schedules);
+    } else {
+      throw new Error("Schedule not found");
+    }
+  },
+
+  update: async (id: number, data: Partial<SchedulePlan>): Promise<void> => {
+    const schedule = schedules.find((s) => s.id === id);
+    if (schedule) {
+      Object.assign(schedule, data);
+      saveToStorage(schedules);
+    }
+  },
+
+  updateEvent: async (scheduleId: number, updatedEvent: CustomCalendarEvent): Promise<void> => {
+    await wait(150);
+    const schedule = schedules.find((s) => s.id === scheduleId);
+    if (!schedule) {
+      throw new Error("Schedule not found");
+    }
+
+    const idStr = updatedEvent.id.toString().split("-")[0];
+    schedule.events = schedule.events.filter((e) => !e.id.toString().startsWith(idStr));
+    schedule.events.push({ ...updatedEvent });
+    saveToStorage(schedules);
+  },
+
+  delete: async (id: number): Promise<void> => {
+    const index = schedules.findIndex((s) => s.id === id);
+    if (index !== -1) {
+      schedules.splice(index, 1);
+      saveToStorage(schedules);
+    }
+  },
+
+  clear: () => {
+    localStorage.removeItem(STORAGE_KEY);
+    window.location.reload();
+  },
+};
+
+function loadFromStorage(): (SchedulePlan & { events: CustomCalendarEvent[] })[] {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+function saveToStorage(data: (SchedulePlan & { events: CustomCalendarEvent[] })[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}

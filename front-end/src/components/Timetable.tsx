@@ -3,10 +3,10 @@ import {
   Calendar as BigCalendar,
   Views,
   dateFnsLocalizer,
-  Event as CalendarEvent,
   View,
   ToolbarProps,
   EventProps,
+  Event as CalendarEvent,
 } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -19,9 +19,13 @@ import { useTranslation } from "react-i18next";
 import { CategoryKey } from "@/enums/CategoryKey";
 import { RepeatType } from "@/enums/RepeatType";
 import { CustomCalendarEvent } from "@/types/event";
+import { SchedulePlan } from "@/types/SchedulePlan";
+import { scheduleAPI } from "@/services/api";
+
 import "./Calendar.css";
 import TimetableModal from "./TimetableModal";
 import TimetableCreator from "./TimetableCreator";
+import TimetableSelector from "./TimetableSelector";
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar as any);
 
@@ -31,40 +35,51 @@ export const Timetable: React.FC = () => {
   const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
   const culture = i18n.language.substring(0, 2);
 
-  const allCategories = Object.values(CategoryKey).slice(0, 3) as CategoryKey[];
-  const [selectedCategories, setSelectedCategories] = useState<CategoryKey[]>(allCategories);
+  const timetableCategories = Object.values(CategoryKey).slice(0, 3) as CategoryKey[];
+  const [selectedCategories, setSelectedCategories] = useState<CategoryKey[]>(timetableCategories);
   const [view, setView] = useState<View>(Views.MONTH);
   const [date, setDate] = useState<Date>(new Date());
-  const [baseEvents, setBaseEvents] = useState<CustomCalendarEvent[]>([]);
+
+  const [schedules, setSchedules] = useState<SchedulePlan[]>([]);
+  const [selectedSchedule, setSelectedSchedule] = useState<SchedulePlan | null>(null);
   const [events, setEvents] = useState<CustomCalendarEvent[]>([]);
+  const [localScheduleEvents, setLocalScheduleEvents] = useState<CustomCalendarEvent[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingSlot, setPendingSlot] = useState<{ start: Date; end: Date } | null>(null);
 
+  useEffect(() => {
+    scheduleAPI.getAll().then(setSchedules).catch(console.error);
+  }, []);
+
   const refreshEvents = () => {
-    const stored = localStorage.getItem("timetable_events");
-    const saved = stored ? JSON.parse(stored) : [];
+    if (!selectedSchedule) { 
+      return;
+    }
 
-    const baseEvents: CustomCalendarEvent[] = saved.map((e: any) => ({
-      ...e,
-      start: new Date(e.start),
-      end: new Date(e.end),
-    }));
+    scheduleAPI.getEvents(selectedSchedule.id).then((fetchedEvents: any[]) => {
+      const baseEvents: CustomCalendarEvent[] = fetchedEvents.map((e) => ({
+        ...e,
+        start: new Date(e.start),
+        end: new Date(e.end),
+      }));
 
-    const endOfView = new Date(date);
-    endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
-    const expanded = baseEvents.flatMap((e) => [e, ...expandEvent(e, endOfView)]);
-    setBaseEvents(baseEvents);
-    setEvents(expanded);
+      const endOfView = new Date(date);
+      endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+
+      const expanded = baseEvents.flatMap((e) => [e, ...expandEvent(e, endOfView)]);
+      setEvents(expanded);
+    });
   };
 
   useEffect(() => {
-    refreshEvents();
-  }, [date, view]);
+    if (selectedSchedule) {
+      refreshEvents();
+    }
+  }, [date, view, selectedSchedule]);
 
   const expandEvent = (event: CustomCalendarEvent, endOfView: Date): CustomCalendarEvent[] => {
-    if (!event.start || !event.end) return [];
-    const duration = event.end.getTime() - event.start.getTime();
     const events: CustomCalendarEvent[] = [];
+    const duration = event.end.getTime() - event.start.getTime();
 
     if (event.repeatType === RepeatType.Weekly) {
       let current = new Date(event.start);
@@ -89,15 +104,22 @@ export const Timetable: React.FC = () => {
       while (true) {
         current.setMonth(current.getMonth() + 1);
         current.setDate(1);
+
         let weekdayCount = 0;
         while (current.getMonth() === baseStart.getMonth()) {
           if (current.getDay() === dayOfWeek) {
             weekdayCount++;
-            if (weekdayCount === nth) break;
+            if (weekdayCount === nth) {
+              break;
+            }
           }
           current.setDate(current.getDate() + 1);
         }
-        if (current > endOfView) break;
+
+        if (current > endOfView) {
+          break;
+        }
+
         events.push({
           ...event,
           id: `${event.id}-monthly-${current.toISOString()}`,
@@ -110,87 +132,105 @@ export const Timetable: React.FC = () => {
     return events;
   };
 
+  const handleModalSave = async (data: Omit<CustomCalendarEvent, "id">) => {
+    const newEvent: CustomCalendarEvent = {
+      ...data,
+      id: Date.now(),
+    };
+
+    const endOfView = new Date(date);
+    endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+    const expanded = [newEvent, ...expandEvent(newEvent, endOfView)];
+
+    if (!selectedSchedule) {
+      setLocalScheduleEvents((prev) => [...prev, ...expanded]);
+    } else {
+      try {
+        await scheduleAPI.addEvent(selectedSchedule.id, newEvent);
+        setEvents((prev) => [...prev, ...expanded]);
+      } catch (err) {
+        console.error("Failed to add event:", err);
+      }
+    }
+
+    setPendingSlot(null);
+    setModalOpen(false);
+  };
+
   const toggleCategory = (cat: CategoryKey) => {
     setSelectedCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
     );
   };
 
-  const filtered = events.filter((e) => e.category && selectedCategories.includes(e.category));
-
   const handleSelectSlot = ({ start }: { start: Date }) => {
-    const startDate = new Date(start);
-    startDate.setHours(8, 0, 0, 0);
-    const endDate = new Date(start);
-    endDate.setHours(9, 0, 0, 0);
-    setPendingSlot({ start: startDate, end: endDate });
+    const s = new Date(start);
+    s.setHours(8, 0, 0, 0);
+    const e = new Date(s);
+    e.setHours(9, 0, 0, 0);
+    setPendingSlot({ start: s, end: e });
     setModalOpen(true);
-  };
-
-  const handleModalCancel = () => {
-    setModalOpen(false);
-    setPendingSlot(null);
-  };
-
-  const handleModalSave = (data: Omit<CustomCalendarEvent, "id">) => {
-    const newId = Math.floor(Math.random() * 100000);
-    const baseEvent: CustomCalendarEvent = { id: newId, ...data };
-    const updatedBaseEvents = [...baseEvents, baseEvent];
-    localStorage.setItem("timetable_events", JSON.stringify(updatedBaseEvents));
-    setBaseEvents(updatedBaseEvents);
-    refreshEvents();
-    handleModalCancel();
   };
 
   const handleEventDrop = ({ event, start }: any) => {
     const ev = event as CustomCalendarEvent;
-    const baseId = typeof ev.id === "string" && ev.id.includes("-")
-      ? parseInt(ev.id.split("-")[0])
-      : (typeof ev.id === "number" ? ev.id : NaN);
-    if (!Number.isFinite(baseId)) return;
+    const duration = ev.end.getTime() - ev.start.getTime();
+    const updated = { ...ev, start: new Date(start), end: new Date(start.getTime() + duration) };
 
-    const originalBase = baseEvents.find(e => e.id === baseId);
-    if (!originalBase || !originalBase.start || !originalBase.end) return;
+    const endOfView = new Date(date);
+    endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
 
-    const deltaMs = new Date(start).getTime() - new Date(ev.start!).getTime();
-    const updatedBase = {
-      ...originalBase,
-      start: new Date(originalBase.start.getTime() + deltaMs),
-      end: new Date(originalBase.end.getTime() + deltaMs),
+    const updateEvents = (prev: CustomCalendarEvent[]) => {
+      const idStr = ev.id.toString().split("-")[0];
+      return [...prev.filter((e) => !e.id.toString().startsWith(idStr)), updated, ...expandEvent(updated, endOfView)];
     };
 
-    const updatedBaseEvents = baseEvents.map(e => e.id === baseId ? updatedBase : e);
-    localStorage.setItem("timetable_events", JSON.stringify(updatedBaseEvents));
-    refreshEvents();
+    if (!selectedSchedule) {
+      setLocalScheduleEvents((prev) => updateEvents(prev));
+    } else {
+      scheduleAPI.updateEvent(selectedSchedule.id, updated).then(() => {
+        setEvents((prev) => updateEvents(prev));
+      });
+    }
   };
 
   const handleEventResize = ({ event, start, end }: any) => {
     const ev = event as CustomCalendarEvent;
-    const baseId = typeof ev.id === "string" && ev.id.includes("-")
-      ? parseInt(ev.id.split("-")[0])
-      : (typeof ev.id === "number" ? ev.id : NaN);
-    if (!Number.isFinite(baseId)) return;
+    const updated = { ...ev, start: new Date(start), end: new Date(end) };
 
-    const updatedBase = { ...baseEvents.find(e => e.id === baseId)!, start: new Date(start), end: new Date(end) };
-    const updatedBaseEvents = baseEvents.map(e => e.id === baseId ? updatedBase : e);
-    localStorage.setItem("timetable_events", JSON.stringify(updatedBaseEvents));
-    refreshEvents();
+    const endOfView = new Date(date);
+    endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+
+    const updateEvents = (prev: CustomCalendarEvent[]) => {
+      const idStr = ev.id.toString().split("-")[0];
+      return [...prev.filter((e) => !e.id.toString().startsWith(idStr)), updated, ...expandEvent(updated, endOfView)];
+    };
+
+    if (!selectedSchedule) {
+      setLocalScheduleEvents((prev) => updateEvents(prev));
+    } else {
+      setEvents((prev) => updateEvents(prev));
+    }
   };
 
   const handleSelectEvent = (event: CalendarEvent) => {
     const ev = event as CustomCalendarEvent;
-    const baseId = typeof ev.id === "string" ? parseInt(ev.id.split("-")[0]) : ev.id;
-    if (window.confirm(t("calendar.deleteClass", { title: ev.title }) || "Delete event?")) {
-      const updatedBaseEvents = baseEvents.filter(e => e.id !== baseId);
-      localStorage.setItem("timetable_events", JSON.stringify(updatedBaseEvents));
-      refreshEvents();
+    const baseId = ev.id.toString().split("-")[0];
+    if (!window.confirm(t("calendar.deleteClass", { title: ev.title }))) {
+      return
+    };
+
+    const removeEvents = (prev: CustomCalendarEvent[]) =>
+      prev.filter((e) => !e.id.toString().startsWith(baseId));
+
+    if (!selectedSchedule) {
+      setLocalScheduleEvents((prev) => removeEvents(prev));
+    } else {
+      setEvents((prev) => removeEvents(prev));
     }
   };
 
-  const handleNavigate = (d: Date) => setDate(d);
-  const handleView = (v: View) => setView(v);
-
-  function CustomCalendarToolbar(toolbar: ToolbarProps) {
+  function CustomToolbar(toolbar: ToolbarProps) {
     const prev = () => toolbar.onNavigate("PREV");
     const next = () => toolbar.onNavigate("NEXT");
     const views = Array.isArray(toolbar.views)
@@ -213,12 +253,17 @@ export const Timetable: React.FC = () => {
           </div>
           <span className="rbc-toolbar-label">{toolbar.label}</span>
           <div className="rbc-btn-group">
-            <button className="rbc-btn" onClick={prev}>{t("calendar.previous", "Back")}</button>
-            <button className="rbc-btn" onClick={next}>{t("calendar.next", "Next")}</button>
+            <button className="rbc-btn" onClick={prev}>
+              {t("calendar.previous", "Back")}
+            </button>
+            <button className="rbc-btn" onClick={next}>
+              {t("calendar.next", "Next")}
+            </button>
           </div>
         </div>
+
         <div className="rbc-toolbar rbc-category-toolbar">
-          {allCategories.map((cat) => (
+          {timetableCategories.map((cat) => (
             <button
               key={cat}
               className={`rbc-btn ${selectedCategories.includes(cat) ? "rbc-active" : ""}`}
@@ -233,16 +278,15 @@ export const Timetable: React.FC = () => {
   }
 
   function EventRenderer({ event }: EventProps<CalendarEvent>) {
+    const { t } = useTranslation();
     const customEvent = event as CustomCalendarEvent;
-    const repeatTypeLabel =
-      customEvent.repeatType !== RepeatType.None
-        ? ` (${t(`calendar.repeat.${customEvent.repeatType}`, customEvent.repeatType)})`
-        : "";
+    const categoryShort = t(`calendar.categoryShort.${customEvent.category}`, "").toUpperCase();
 
     return (
       <span>
-        <strong>{customEvent.title}</strong>
-        <div style={{ fontSize: "0.85em", opacity: 0.8 }}>{repeatTypeLabel}</div>
+        <strong>
+          {customEvent.title} {categoryShort ? `(${categoryShort})` : ""}
+        </strong>
         {customEvent.room && (
           <div style={{ fontSize: "0.85em", opacity: 0.8 }}>
             {t("calendar.room", "Room")}: {customEvent.room}
@@ -257,13 +301,57 @@ export const Timetable: React.FC = () => {
     );
   }
 
-  const handleScheduleCreated = () => {
-    refreshEvents();
-  };
+  const activeEvents = selectedSchedule ? events : localScheduleEvents;
+  const filtered = activeEvents.filter((e) => selectedCategories.includes(e.category));
 
   return (
     <>
-      <TimetableCreator />
+      <div style={{ display: "flex", gap: "16px", padding: "8px", alignItems: "flex-start" }}>
+        <div style={{ flex: "1 1 50%" }}>
+          <TimetableSelector
+            schedules={schedules}
+            selected={selectedSchedule?.id ?? null}
+            onSelect={(id) => {
+              if (id === null) {
+                setSelectedSchedule(null);
+              } else {
+                const found = schedules.find((s) => s.id === id) || null;
+                setSelectedSchedule(found);
+              }
+            }}
+          />
+        </div>
+
+        <div style={{ flex: "1 1 50%" }}>
+          <TimetableCreator
+            selectedSchedule={selectedSchedule}
+            onCreated={async (newSchedule) => {
+              await Promise.all(
+                localScheduleEvents.map((e) =>
+                  scheduleAPI.addEvent(newSchedule.id, { ...e, id: -1 })
+                )
+              );
+
+              setSchedules((prev) => [...prev, newSchedule]);
+              setLocalScheduleEvents([]);
+              setSelectedSchedule(newSchedule);
+            }}
+            onUpdated={(updatedSchedule) => {
+              setSchedules((prev) =>
+                prev.map((s) => (s.id === updatedSchedule.id ? updatedSchedule : s))
+              );
+              setSelectedSchedule(updatedSchedule);
+            }}
+            onDeleted={(id) => {
+              setSchedules((prev) => prev.filter((s) => s.id !== id));
+              if (selectedSchedule?.id === id) {
+                setSelectedSchedule(null);
+                setEvents([]);
+              }
+            }}
+          />
+        </div>
+      </div>
 
       <DragAndDropCalendar
         localizer={localizer}
@@ -271,23 +359,23 @@ export const Timetable: React.FC = () => {
         events={filtered}
         view={view}
         date={date}
-        min={new Date(1, 1, 1, 8, 0, 0)}
-        max={new Date(1, 1, 1, 22, 0, 0)}
-        onNavigate={handleNavigate}
-        onView={handleView}
+        onNavigate={setDate}
+        onView={setView}
         selectable
         resizable
-        onEventDrop={handleEventDrop}
-        onEventResize={handleEventResize}
-        onSelectSlot={handleSelectSlot}
-        onSelectEvent={handleSelectEvent}
-        components={{
-          toolbar: CustomCalendarToolbar,
-          event: EventRenderer,
-        }}
-        views={[Views.MONTH, Views.WEEK]}
         step={15}
         timeslots={2}
+        min={new Date(1, 1, 1, 8)}
+        max={new Date(1, 1, 1, 22)}
+        views={[Views.MONTH, Views.WEEK]}
+        onSelectSlot={handleSelectSlot}
+        onSelectEvent={handleSelectEvent}
+        onEventDrop={handleEventDrop}
+        onEventResize={handleEventResize}
+        components={{
+          toolbar: CustomToolbar,
+          event: EventRenderer,
+        }}
         eventPropGetter={(evt) => ({
           style: { backgroundColor: (evt as CustomCalendarEvent).color },
         })}
@@ -299,8 +387,12 @@ export const Timetable: React.FC = () => {
           isOpen={modalOpen}
           defaultStart={pendingSlot.start}
           defaultEnd={pendingSlot.end}
-          categories={allCategories}
-          onCancel={handleModalCancel}
+          categories={timetableCategories}
+          scheduleId={selectedSchedule ? selectedSchedule.id : -1}
+          onCancel={() => {
+            setModalOpen(false);
+            setPendingSlot(null);
+          }}
           onSave={handleModalSave}
         />
       )}
