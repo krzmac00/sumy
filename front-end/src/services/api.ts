@@ -328,7 +328,6 @@ export const eventAPI = {
       end: new Date(event.end_date),
       repeatType: event.repeat_type,
       schedule_plan: event.schedule_plan ?? null,
-      is_template: event.is_template ?? false,
       room: event.room ?? null,
       teacher: event.teacher ?? null,
     }));
@@ -349,7 +348,6 @@ export const eventAPI = {
       end: new Date(event.end_date),
       repeatType: event.repeat_type,
       schedule_plan: event.schedule_plan ?? null,
-      is_template: event.is_template ?? false,
       room: event.room ?? null,
       teacher: event.teacher ?? null,
     };
@@ -368,7 +366,6 @@ export const eventAPI = {
         end_date: data.end,
         repeat_type: data.repeatType,
         schedule_plan: data.schedule_plan ?? null,
-        is_template: data.is_template ?? false,
         room: data.room ?? null,
         teacher: data.teacher ?? null,
       }),
@@ -383,7 +380,6 @@ export const eventAPI = {
       end: new Date(event.end_date),
       repeatType: event.repeat_type,
       schedule_plan: event.schedule_plan ?? null,
-      is_template: event.is_template ?? false,
       room: event.room ?? null,
       teacher: event.teacher ?? null,
     };
@@ -402,7 +398,6 @@ export const eventAPI = {
         end_date: data.end,
         repeat_type: data.repeatType,
         schedule_plan: data.schedule_plan ?? null,
-        is_template: data.is_template ?? false,
         room: data.room ?? null,
         teacher: data.teacher ?? null,
       }),
@@ -417,7 +412,6 @@ export const eventAPI = {
       end: new Date(event.end_date),
       repeatType: event.repeat_type,
       schedule_plan: event.schedule_plan ?? null,
-      is_template: event.is_template ?? false,
       room: event.room ?? null,
       teacher: event.teacher ?? null,
     };

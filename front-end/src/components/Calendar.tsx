@@ -76,7 +76,6 @@ export const Calendar: React.FC = () => {
           color: event.color,
           repeatType: event.repeat_type || event.repeatType || RepeatType.None,
           schedule_plan: event.schedule_plan,
-          is_template: event.is_template,
           room: event.room,
           teacher: event.teacher,
         });
@@ -185,7 +184,6 @@ export const Calendar: React.FC = () => {
     start: Date;
     end: Date;
     schedule_plan: number | null;
-    is_template: boolean | null;
     room: string | null;
     teacher: string | null;
   }) => {
@@ -196,7 +194,6 @@ export const Calendar: React.FC = () => {
       start,
       end,
       schedule_plan,
-      is_template,
       room,
       teacher,
     } = data;
@@ -209,7 +206,6 @@ export const Calendar: React.FC = () => {
       category,
       repeatType,
       schedule_plan,
-      is_template,
       room,
       teacher,
       color: ""
@@ -305,6 +301,10 @@ export const Calendar: React.FC = () => {
     const numericId = typeof ev.id === "number" ? ev.id : parseInt((ev.id as string).split("-")[0]);
 
     if (!Number.isFinite(numericId)) return;
+
+    if (ev.schedule_plan !== null) {
+      return;
+    }
 
     if (window.confirm(t("calendar.deleteClass", { title: ev.title }))) {
       eventAPI

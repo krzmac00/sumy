@@ -25,7 +25,6 @@ interface CalendarModalProps {
     start: Date;
     end: Date;
     schedule_plan: number | null,
-    is_template: boolean | null,
     room: string | null,
     teacher: string | null
   }) => void;
@@ -112,7 +111,6 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
       start,
       end,
       schedule_plan: null,
-      is_template: null,
       room: isCategoryFromTimeTable(category) ? room : null,
       teacher: isCategoryFromTimeTable(category) ? teacher : null,
     });

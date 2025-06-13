@@ -81,7 +81,6 @@ export const TimetableModal: React.FC<CalendarModalProps> = ({
       color: CATEGORY_COLORS[category] || "#808080",
       repeatType,
       schedule_plan: scheduleId,
-      is_template: null,
       room,
       teacher,
     };

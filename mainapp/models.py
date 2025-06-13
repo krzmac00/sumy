@@ -4,6 +4,10 @@ from django.utils import timezone
 from .constants import *
 import secrets
 from django.db import migrations
+from datetime import timedelta
+from django.utils.timezone import now
+import datetime
+
 
 class SchedulePlan(models.Model):
     DAYS_OF_WEEK_CHOICES = [
@@ -43,20 +47,23 @@ class SchedulePlan(models.Model):
     def __str__(self):
         return f"{self.name} (by {self.administrator})"
 
-class ScheduleEvent(models.Model):
-    plan = models.ForeignKey(SchedulePlan, on_delete=models.CASCADE, related_name='events')
-    title = models.CharField(max_length=200)
-    day_of_week = models.PositiveSmallIntegerField(choices=SchedulePlan.DAYS_OF_WEEK_CHOICES)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    room = models.CharField(max_length=50)
-    teacher = models.CharField(max_length=100)
+# class ScheduleEvent(models.Model):
+#     plan = models.ForeignKey(SchedulePlan, on_delete=models.CASCADE, related_name='events')
+#     title = models.CharField(max_length=200)
+#     day_of_week = models.PositiveSmallIntegerField(choices=SchedulePlan.DAYS_OF_WEEK_CHOICES)
+#     start_time = models.TimeField()
+#     end_time = models.TimeField()
+#     room = models.CharField(max_length=50)
+#     teacher = models.CharField(max_length=100)
 
-    class Meta:
-        ordering = ['day_of_week', 'start_time']
+#     class Meta:
+#         ordering = ['day_of_week', 'start_time']
+
+def get_default_end_date():
+    return now() + timedelta(days=7)
 
 class AppliedPlan(models.Model):
-    user = models.ForeignKey(  # Poprawione pole
+    user = models.ForeignKey( 
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='applied_plans'
@@ -67,12 +74,12 @@ class AppliedPlan(models.Model):
         related_name='applications'
     )
     start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(default=get_default_end_date)
     applied_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ('user', 'plan')  # Poprawione unique_together
+        unique_together = ('user', 'plan') 
 
 class Event(models.Model):
     user = models.ForeignKey(

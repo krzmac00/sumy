@@ -100,11 +100,15 @@
             <h3>{{ plan.name }}</h3>
             <p>Autor: {{ plan.administrator.get_full_name|default:plan.administrator.username }}</p>
             
-            <form class="plan-form" action="{% url 'scheduleplan-apply' pk=plan.id %}" method="post">
+            <form class="plan-form" action="/plans/{{plan.id}}/apply/" method="post">
                 {% csrf_token %}
                 <label>
                     Data rozpoczęcia:
                     <input type="date" name="start_date" required 
+                           min="{{ current_date|date:'Y-m-d' }}">
+                    <br/>
+                    Data zakończenia:
+                    <input type="date" name="end_date" required 
                            min="{{ current_date|date:'Y-m-d' }}">
                 </label>
                 <button type="submit">Dodaj do kalendarza</button>

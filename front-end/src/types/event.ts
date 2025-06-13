@@ -12,7 +12,6 @@ export interface CustomCalendarEvent extends CalendarEvent {
   start: Date;
   end: Date;
   schedule_plan: number | null;
-  is_template: boolean | null;
   room: string | null;
   teacher: string | null;
 }
