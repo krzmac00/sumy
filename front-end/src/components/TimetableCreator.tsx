@@ -18,19 +18,16 @@ const TimetableCreator: React.FC<TimetableCreatorProps> = ({
 }) => {
   const { t } = useTranslation();
   const [title, setTitle] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const isCreating = selectedSchedule === null;
 
   useEffect(() => {
-    setTitle("");
+    setTitle(selectedSchedule?.name ?? "");
   }, [selectedSchedule]);
 
   const handleCreate = async () => {
     if (!title.trim()) return;
 
     try {
-      setLoading(true);
       const newSchedule = await scheduleAPI.create({
         name: title.trim(),
         description: "",
@@ -41,8 +38,6 @@ const TimetableCreator: React.FC<TimetableCreatorProps> = ({
       onCreated?.(newSchedule);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Schedule creation failed");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -50,14 +45,11 @@ const TimetableCreator: React.FC<TimetableCreatorProps> = ({
     if (!title.trim() || !selectedSchedule) return;
 
     try {
-      setLoading(true);
       await scheduleAPI.update(selectedSchedule.id, { name: title.trim() });
       alert(t("calendar.scheduleUpdated", "Schedule updated."));
       onUpdated?.({ ...selectedSchedule, name: title.trim() });
     } catch (err) {
       alert(err instanceof Error ? err.message : "Schedule update failed");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -75,14 +67,11 @@ const TimetableCreator: React.FC<TimetableCreatorProps> = ({
     }
 
     try {
-      setLoading(true);
       await scheduleAPI.delete(selectedSchedule.id);
       alert(t("calendar.scheduleDeleted", "Schedule deleted."));
       onDeleted?.(selectedSchedule.id);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Schedule deletion failed");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -112,43 +101,40 @@ const TimetableCreator: React.FC<TimetableCreatorProps> = ({
         <div style={{ display: "flex", gap: "8px" }}>
           <button
             onClick={handleCreate}
-            disabled={!title.trim() || loading}
+            disabled={!title.trim()}
             style={{
               padding: "8px 14px",
               borderRadius: "6px",
               border: "none",
-              backgroundColor: title.trim() && !loading ? "#2563eb" : "#ccc",
+              backgroundColor: title.trim() ? "#2563eb" : "#ccc",
               color: "white",
               fontWeight: 600,
-              cursor: title.trim() && !loading ? "pointer" : "not-allowed",
+              cursor: title.trim() ? "pointer" : "not-allowed",
             }}
           >
-            {loading
-              ? t("calendar.creating", "Creating…")
-              : t("calendar.create", "Create")}
+            {t("calendar.create", "Create")}
           </button>
         </div>
       ) : (
         <div style={{ display: "flex", gap: "8px" }}>
           <button
             onClick={handleUpdate}
-            disabled={!selectedSchedule || loading}
+            disabled={!selectedSchedule}
             style={{
               padding: "8px 14px",
               borderRadius: "6px",
               border: "none",
-              backgroundColor: selectedSchedule && !loading ? "#10b981" : "#ccc",
+              backgroundColor: selectedSchedule ? "#10b981" : "#ccc",
               color: "white",
               fontWeight: 600,
-              cursor: selectedSchedule && !loading ? "pointer" : "not-allowed",
+              cursor: selectedSchedule ? "pointer" : "not-allowed",
             }}
           >
-            {loading ? t("calendar.updating", "Updating…") : t("calendar.update", "Update")}
+            {t("calendar.update", "Update")}
           </button>
 
           <button
             onClick={handleDelete}
-            disabled={loading}
             style={{
               padding: "8px 14px",
               borderRadius: "6px",
@@ -156,7 +142,7 @@ const TimetableCreator: React.FC<TimetableCreatorProps> = ({
               backgroundColor: "#ef4444",
               color: "white",
               fontWeight: 600,
-              cursor: loading ? "not-allowed" : "pointer",
+              cursor: "pointer",
             }}
           >
             {t("calendar.delete", "Delete")}
