@@ -131,10 +131,16 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
           <input
             type="text"
             className="search-input"
-            placeholder={t('nav.searchPlaceholder') || 'Szukaj...'}
+            placeholder={t('nav.search') || 'Szukaj...'}
             value={query}
             onChange={e => setQuery(e.target.value)}
             onFocus={() => query && setShowDropdown(true)}
+            onKeyDown={e => {
+            if (e.key === 'Enter' && suggestions.length > 0) {
+              e.preventDefault();
+              onSelect(suggestions[0]);
+            }
+          }}
           />
           {isSearching && <div className="loader-spinner" />}
           {showDropdown && suggestions.length > 0 && (

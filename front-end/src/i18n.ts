@@ -68,6 +68,7 @@ const resources = {
       "nav.map": "Map",
       "nav.calendar": "Calendar",
       "nav.timetable": "Timetable",
+      "nav.search": "Search user...",
       
       // User menu
       "user.profile": "Profile",
@@ -387,6 +388,7 @@ const resources = {
       "nav.map": "Mapa",
       "nav.calendar": "Kalendarz",
       "nav.timetable": "Plan zajęć",
+      "nav.search": "Szukaj użytkownika...",
       
       // User menu
       "user.profile": "Profil",
