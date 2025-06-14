@@ -59,34 +59,41 @@ export const Calendar: React.FC = () => {
     const endOfView = new Date(date);
     endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
 
-    const fetchGlobalAndScheduleEvents = async () => {
+    const fetchEvents = async () => {
       try {
-        const [rawEvents, scheduleEvents] = await Promise.all([
-          eventAPI.getAll(),
-          selectedSchedule ? scheduleAPI.getEvents(selectedSchedule.id) : Promise.resolve([]),
-        ]);
+        let rawUserEvents: any[] = [];
+        let scheduleEvents: any[] = [];
+
+        if (selectedSchedule) {
+          rawUserEvents = (await eventAPI.getAll()).filter(e => !e.schedule_plan);
+          scheduleEvents = await scheduleAPI.getEvents(selectedSchedule.id);
+        } else {
+          rawUserEvents = (await eventAPI.getAll()).filter(e => !e.schedule_plan);
+        }
+
+        const endOfView = new Date(date);
+        endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
 
         const normalize = (event: any): CustomCalendarEvent => ({
           id: event.id,
           title: event.title,
-          description: event.description,
+          description: event.description ?? "",
           start: new Date(event.start),
           end: new Date(event.end),
           category: event.category,
           color: event.color,
           repeatType: event.repeat_type || event.repeatType || RepeatType.None,
-          schedule_plan: event.schedule_plan,
-          room: event.room,
-          teacher: event.teacher,
+          schedule_plan: event.schedule_plan ?? null,
+          room: event.room ?? null,
+          teacher: event.teacher ?? null,
         });
 
-        const allRawEvents = [...rawEvents, ...scheduleEvents];
-        const normalizedEvents: CustomCalendarEvent[] = [];
+        const allRawEvents = [...rawUserEvents, ...scheduleEvents];
 
+        const normalizedEvents: CustomCalendarEvent[] = [];
         allRawEvents.forEach((event) => {
           const base = normalize(event);
-          normalizedEvents.push(base);
-          normalizedEvents.push(...expandEvent(base, endOfView));
+          normalizedEvents.push(base, ...expandEvent(base, endOfView));
         });
 
         setEvents(normalizedEvents);
@@ -95,7 +102,7 @@ export const Calendar: React.FC = () => {
       }
     };
 
-    fetchGlobalAndScheduleEvents();
+    fetchEvents();
   }, [date, view, selectedSchedule]);
 
   const expandEvent = (event: CustomCalendarEvent, endOfView: Date): CustomCalendarEvent[] => {
@@ -228,6 +235,10 @@ export const Calendar: React.FC = () => {
   const handleEventDrop = ({ event, start }: any) => {
     const ev = event as CustomCalendarEvent;
 
+    if (ev.schedule_plan !== null) {
+      return;
+    }
+
     const baseId = typeof ev.id === "string" && ev.id.includes("-")
       ? parseInt(ev.id.split("-")[0])
       : (typeof ev.id === "number" ? ev.id : NaN);
@@ -271,6 +282,11 @@ export const Calendar: React.FC = () => {
 
   const handleEventResize = ({ event, start, end }: any) => {
     const ev = event as CustomCalendarEvent;
+
+    if (ev.schedule_plan !== null) {
+      return;
+    }
+
     if (typeof ev.id !== "number") return;
 
     const updated = { ...ev, start: new Date(start), end: new Date(end) };
@@ -464,9 +480,17 @@ export const Calendar: React.FC = () => {
         views={[Views.MONTH, Views.WEEK]}
         step={15}
         timeslots={2}
-        eventPropGetter={(evt) => ({
-          style: { backgroundColor: (evt as CustomCalendarEvent).color },
-        })}
+        eventPropGetter={(evt) => {
+          const event = evt as CustomCalendarEvent;
+          const isLocked = event.schedule_plan !== null;
+
+          return {
+            style: {
+              backgroundColor: event.color,
+              cursor: isLocked ? "not-allowed" : "cursor",
+            },
+          };
+        }}
         style={{ height: 650 }}
       />
 
