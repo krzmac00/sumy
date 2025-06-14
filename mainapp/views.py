@@ -39,11 +39,7 @@ class SchedulePlanViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if self.request.user.is_staff:
-            return SchedulePlan.objects.all()
-        return super().get_queryset().filter(
-            Q(participants=self.request.user) | Q(administrator=self.request.user)
-        )
+        return SchedulePlan.objects.all()
 
     # @action(detail=True, methods=['post'], serializer_class=ApplyPlanSerializer)
     # def apply(self, request, pk=None):
@@ -158,14 +154,19 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Event.objects.all()
 
-        if self.request.user.is_authenticated:
-            queryset = queryset.filter(user=self.request.user)
-
         schedule_plan_id = self.request.query_params.get('schedule_plan')
+
         if schedule_plan_id:
             queryset = queryset.filter(schedule_plan=schedule_plan_id)
+        else:
+            queryset = queryset.filter(schedule_plan__isnull=True, user=self.request.user)
 
         return queryset
+    
+    def get_object(self):
+        obj = Event.objects.get(pk=self.kwargs['pk'])
+
+        return obj
 
     @action(detail=False, methods=['POST'])
     @transaction.atomic

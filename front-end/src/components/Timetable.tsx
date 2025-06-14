@@ -52,21 +52,12 @@ export const Timetable: React.FC = () => {
   }, []);
 
   const refreshEvents = () => {
-    if (!selectedSchedule) { 
-      return;
-    }
+    if (!selectedSchedule) return;
 
     scheduleAPI.getEvents(selectedSchedule.id).then((fetchedEvents: any[]) => {
-      const baseEvents: CustomCalendarEvent[] = fetchedEvents.map((e) => ({
-        ...e,
-        start: new Date(e.start),
-        end: new Date(e.end),
-      }));
-
       const endOfView = new Date(date);
       endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
-
-      const expanded = baseEvents.flatMap((e) => [e, ...expandEvent(e, endOfView)]);
+      const expanded = fetchedEvents.flatMap((e) => [e, ...expandEvent(e, endOfView)]);
       setEvents(expanded);
     });
   };
@@ -77,7 +68,7 @@ export const Timetable: React.FC = () => {
     }
   }, [date, view, selectedSchedule]);
 
-  const expandEvent = (event: CustomCalendarEvent, endOfView: Date): CustomCalendarEvent[] => {
+const expandEvent = (event: CustomCalendarEvent, endOfView: Date): CustomCalendarEvent[] => {
     const events: CustomCalendarEvent[] = [];
     const duration = event.end.getTime() - event.start.getTime();
 
@@ -86,12 +77,7 @@ export const Timetable: React.FC = () => {
       while (true) {
         current = new Date(current.getTime() + 7 * 24 * 60 * 60 * 1000);
         if (current > endOfView) break;
-        events.push({
-          ...event,
-          id: `${event.id}-weekly-${current.toISOString()}`,
-          start: new Date(current),
-          end: new Date(current.getTime() + duration),
-        });
+        events.push({ ...event, start: new Date(current), end: new Date(current.getTime() + duration) });
       }
     }
 
@@ -109,23 +95,13 @@ export const Timetable: React.FC = () => {
         while (current.getMonth() === baseStart.getMonth()) {
           if (current.getDay() === dayOfWeek) {
             weekdayCount++;
-            if (weekdayCount === nth) {
-              break;
-            }
+            if (weekdayCount === nth) break;
           }
           current.setDate(current.getDate() + 1);
         }
 
-        if (current > endOfView) {
-          break;
-        }
-
-        events.push({
-          ...event,
-          id: `${event.id}-monthly-${current.toISOString()}`,
-          start: new Date(current),
-          end: new Date(current.getTime() + duration),
-        });
+        if (current > endOfView) break;
+        events.push({ ...event, start: new Date(current), end: new Date(current.getTime() + duration) });
       }
     }
 
@@ -133,24 +109,20 @@ export const Timetable: React.FC = () => {
   };
 
   const handleModalSave = async (data: Omit<CustomCalendarEvent, "id">) => {
-    const newEvent: CustomCalendarEvent = {
-      ...data,
-      id: Date.now(),
-    };
-
-    const endOfView = new Date(date);
-    endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
-    const expanded = [newEvent, ...expandEvent(newEvent, endOfView)];
-
     if (!selectedSchedule) {
-      setLocalScheduleEvents((prev) => [...prev, ...expanded]);
-    } else {
-      try {
-        await scheduleAPI.addEvent(selectedSchedule.id, newEvent);
-        setEvents((prev) => [...prev, ...expanded]);
-      } catch (err) {
-        console.error("Failed to add event:", err);
-      }
+      alert("Please select a schedule before adding events.");
+      return;
+    }
+
+    try {
+      const savedEvent = await scheduleAPI.addEvent(selectedSchedule.id, data);
+      const endOfView = new Date(date);
+      endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
+      const expanded = [savedEvent, ...expandEvent(savedEvent, endOfView)];
+
+      setEvents((prev) => [...prev, ...expanded]);
+    } catch (err) {
+      console.error("Failed to add event:", err);
     }
 
     setPendingSlot(null);
@@ -174,59 +146,48 @@ export const Timetable: React.FC = () => {
 
   const handleEventDrop = ({ event, start }: any) => {
     const ev = event as CustomCalendarEvent;
+    const backendId = typeof ev.id === "number" ? ev.id : parseInt(ev.id.toString());
     const duration = ev.end.getTime() - ev.start.getTime();
-    const updated = { ...ev, start: new Date(start), end: new Date(start.getTime() + duration) };
+    const updated = { ...ev, start: new Date(start), end: new Date(start.getTime() + duration), id: backendId };
 
     const endOfView = new Date(date);
     endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
 
-    const updateEvents = (prev: CustomCalendarEvent[]) => {
-      const idStr = ev.id.toString().split("-")[0];
-      return [...prev.filter((e) => !e.id.toString().startsWith(idStr)), updated, ...expandEvent(updated, endOfView)];
-    };
-
-    if (!selectedSchedule) {
-      setLocalScheduleEvents((prev) => updateEvents(prev));
-    } else {
-      scheduleAPI.updateEvent(selectedSchedule.id, updated).then(() => {
-        setEvents((prev) => updateEvents(prev));
-      });
-    }
+    scheduleAPI.updateEvent(selectedSchedule!.id, updated).then(() => {
+      setEvents((prev) => [
+        ...prev.filter((e) => e.id !== backendId),
+        updated,
+        ...expandEvent(updated, endOfView),
+      ]);
+    });
   };
 
   const handleEventResize = ({ event, start, end }: any) => {
     const ev = event as CustomCalendarEvent;
-    const updated = { ...ev, start: new Date(start), end: new Date(end) };
+    const backendId = typeof ev.id === "number" ? ev.id : parseInt(ev.id.toString());
+    const updated = { ...ev, start: new Date(start), end: new Date(end), id: backendId };
 
     const endOfView = new Date(date);
     endOfView.setDate(endOfView.getDate() + (view === Views.MONTH ? 35 : 7));
 
-    const updateEvents = (prev: CustomCalendarEvent[]) => {
-      const idStr = ev.id.toString().split("-")[0];
-      return [...prev.filter((e) => !e.id.toString().startsWith(idStr)), updated, ...expandEvent(updated, endOfView)];
-    };
-
-    if (!selectedSchedule) {
-      setLocalScheduleEvents((prev) => updateEvents(prev));
-    } else {
-      setEvents((prev) => updateEvents(prev));
-    }
+    setEvents((prev) => [
+      ...prev.filter((e) => e.id !== backendId),
+      updated,
+      ...expandEvent(updated, endOfView),
+    ]);
   };
 
   const handleSelectEvent = (event: CalendarEvent) => {
     const ev = event as CustomCalendarEvent;
-    const baseId = ev.id.toString().split("-")[0];
-    if (!window.confirm(t("calendar.deleteClass", { title: ev.title }))) {
-      return
-    };
+    const backendId = typeof ev.id === "number" ? ev.id : parseInt(ev.id.toString());
+    if (!Number.isFinite(backendId)) return;
 
-    const removeEvents = (prev: CustomCalendarEvent[]) =>
-      prev.filter((e) => !e.id.toString().startsWith(baseId));
+    if (!selectedSchedule) return;
 
-    if (!selectedSchedule) {
-      setLocalScheduleEvents((prev) => removeEvents(prev));
-    } else {
-      setEvents((prev) => removeEvents(prev));
+    if (window.confirm(t("calendar.deleteClass", { title: ev.title }))) {
+      scheduleAPI.deleteEvent(backendId).then(() => {
+        setEvents((prev) => prev.filter((e) => e.id !== backendId));
+      }).catch((err) => console.error("Failed to delete event:", err));
     }
   };
 
