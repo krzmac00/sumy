@@ -16,37 +16,48 @@ import BuildingFloorModal from "../components/BuildingFloorModal";
 import type { BuildingFeature } from "../types/BuildingFeature";
 import "./MapPage.css";
 
-/* ---------- Budynki do wyszukiwarki ---------- */
-const buildingList: { name: string; position: LatLngExpression; buildingCode?: string; floor?: string; roomId?: string }[] = [
-  { name: "B9 Lodex", position: [51.747192, 19.453947] },
-  { name: "B14 Instytut Fizyki", position: [51.746575, 19.455451] },
-  { name: "B19 Centrum Technologii Informatycznych CTI", position: [51.746992, 19.455847] },
-  { name: "B24 Centrum językowe CJ", position: [51.7455, 19.452] },
-  { name: "B11 Dziekanat WFTIMS", position: [51.74738674592893, 19.45601321037561] },
-  { name: "B28 Zatoka Sportu", position: [51.746391, 19.451582] },
-  { name: "B22 Biblioteka Główna", position: [51.745585, 19.454121] },
-  { name: "C4 Centrum Sportu", position: [51.745460, 19.449326] },
-  { name: "C17 VI Dom Studencki", position: [51.745653, 19.449830] },
-  { name: "C5 VII Dom Studencki", position: [51.74613357537689, 19.450050014589447] },
-  { name: "C11 IV Dom Studencki", position: [51.74668385901008, 19.45013716680703] },
-  { name: "C12 III Dom Studencki", position: [51.747499375006775, 19.450123634046818] },
-  { name: "C13 II Dom Studencki", position: [51.748209992302506, 19.44980180660171] },
-  { name: "C14 I Dom Studencki", position: [51.748721070688966, 19.449567238768278] },
-  { name: "C15 SDS", position: [51.749120433928596, 19.449427400249085] },
-  { name: "E1 IX Dom Studencki", position: [51.74695479499577, 19.45977903555612] },
-  { name: "F1 V Dom Studencki", position: [51.7789650157646, 19.494415789858092] },
-  { name: "B9 Aula F2", position: [51.747263, 19.453623], buildingCode: "B9", floor: "Parter", roomId: "F2" },
-  { name: "B9 Aula F3", position: [51.747229, 19.453357], buildingCode: "B9", floor: "Parter", roomId: "F3" },
-  { name: "B9 Aula F4", position: [51.747156, 19.453225], buildingCode: "B9", floor: "Parter", roomId: "F4" },
-  { name: "B9 Aula F5", position: [51.747140, 19.453094], buildingCode: "B9", floor: "Parter", roomId: "F5" },
-  { name: "B9 Aula F6", position: [51.747128, 19.452984], buildingCode: "B9", floor: "Parter", roomId: "F6" },
-  { name: "B9 Aula F7", position: [51.747211, 19.453157], buildingCode: "B9", floor: "Piętro 3", roomId: "F7" },
-  { name: "B9 Aula F9", position: [51.747126, 19.453178], buildingCode: "B9", floor: "Piętro 3", roomId: "F9" },
-  { name: "B9 Aula F10", position: [51.747149, 19.452928], buildingCode: "B9", floor: "Piętro 3", roomId: "F10" },
-  { name: "B19 Sala kinowa CTI", position: [51.747007, 19.455864], buildingCode: "B19", floor: "Parter", roomId: "S1" },
-  { name: "B14 Aula Major Instytut Fizyki", position: [51.746474, 19.455167], buildingCode: "B14", floor: "Parter", roomId: "A1" },
-  { name: "B14 Aula Minor Instytut Fizyki", position: [51.746546, 19.455530], buildingCode: "B14", floor: "Parter", roomId: "A3" },
-  { name: "B14 Arena Magica Instytut Fizyki", position: [51.746847, 19.455548], buildingCode: "B14", floor: "Parter", roomId: "A2" },
+type ListItem = {
+  code: string;
+  name: string;
+  position: LatLngExpression;
+  floor?: string;
+  roomId?: string;
+};
+
+const buildingList: ListItem[] = [
+  { code: "B9", name: "B9 Lodex",  position: [51.747192, 19.453947] },
+  { code: "B14", name: "B14 Instytut Fizyki", position: [51.746575, 19.455451] },
+  { code: "B19", name: "B19 Centrum Technologii Informatycznych CTI", position: [51.746992, 19.455847] },
+  { code: "B24", name: "B24 Centrum językowe", position: [51.7455,   19.452]   },
+  { code: "B11", name: "B11 Dziekanat WFTIMS", position: [51.747387, 19.456013] },
+  { code: "B28", name: "B28 Zatoka Sportu", position: [51.746391, 19.451582] },
+  { code: "B22", name: "B22 Biblioteka Główna", position: [51.745585, 19.454121] },
+  { code: "C4", name: "C4 Centrum Sportu", position: [51.745460, 19.449326] },
+  { code: "C17", name: "C17 VI Dom Studencki", position: [51.745653, 19.449830] },
+  { code: "C5", name: "C5 VII Dom Studencki",  position: [51.746134, 19.450050] },
+  { code: "C11", name: "C11 IV Dom Studencki", position: [51.746684, 19.450137] },
+  { code: "C12", name: "C12 III Dom Studencki", position: [51.747499, 19.450124] },
+  { code: "C13", name: "C13 II Dom Studencki", position: [51.748210, 19.449802] },
+  { code: "C14", name: "C14 I Dom Studencki", position: [51.748721, 19.449567] },
+  { code: "C15", name: "C15 SDS", position: [51.749120, 19.449427] },
+  { code: "E1", name: "E1 IX Dom Studencki", position: [51.746955, 19.459779] },
+  { code: "F1", name: "F1 V Dom Studencki", position: [51.778965, 19.494416] },
+
+  { code: "B9", name: "B9 Aula F2", position: [51.747263, 19.453623], floor: "Parter", roomId: "F2" },
+  { code: "B9", name: "B9 Aula F3", position: [51.747229, 19.453357], floor: "Parter", roomId: "F3" },
+  { code: "B9", name: "B9 Aula F4", position: [51.747156, 19.453225], floor: "Parter", roomId: "F4" },
+  { code: "B9", name: "B9 Aula F5", position: [51.747140, 19.453094], floor: "Parter", roomId: "F5" },
+  { code: "B9", name: "B9 Aula F6", position: [51.747128, 19.452984], floor: "Parter", roomId: "F6" },
+  { code: "B9", name: "B9 Aula F7", position: [51.747211, 19.453157], floor: "Piętro 3", roomId: "F7" },
+  { code: "B9", name: "B9 Aula F8", position: [51.747263, 19.453356], floor: "Piętro 3", roomId: "F8" },
+  { code: "B9", name: "B9 Aula F9", position: [51.747126, 19.453178], floor: "Piętro 3", roomId: "F9" },
+  { code: "B9", name: "B9 Aula F10", position: [51.747149, 19.452928], floor: "Piętro 3", roomId: "F10" },
+
+  { code: "B19", name: "B19 Sala kinowa", position: [51.747007, 19.455864], floor: "Parter", roomId: "S1" },
+
+  { code: "B14", name: "B14 Aula Major", position: [51.746474, 19.455167], floor: "Parter", roomId: "A1" },
+  { code: "B14", name: "B14 Aula Minor", position: [51.746546, 19.455530], floor: "Parter", roomId: "A3" },
+  { code: "B14", name: "B14 Arena Magica", position: [51.746847, 19.455548], floor: "Parter", roomId: "A2" },
 ];
 
 const categoryColors: Record<Category, string> = {
@@ -129,85 +140,6 @@ const isValidCategory = (cat: string | undefined): cat is Category => {
   return cat !== undefined && allCategories.includes(cat as Category);
 };
 
-const buildingDescriptions: Record<string, { pl: string; en: string }> = {
-  // wydziałowe
-  B9:  {
-    pl: "Wydział Fizyki Technicznej, Informatyki i Matematyki Stosowanej",
-    en: "Faculty of Technical Physics, Computer Science and Applied Mathematics",
-  },
-  B14: {
-    pl: "Instytut Fizyki",
-    en: "Institute of Physics",
-  },
-  B19: {
-    pl: "Centrum Technologii Informatycznych CTI",
-    en: "Center for Information Technology (CTI)",
-  },
-
-  // pozawydziałowe
-  B28: {
-    pl: "Zatoka Sportu",
-    en: "Sports Bay",
-  },
-  B24: {
-    pl: "Centrum Językowe",
-    en: "Language Center",
-  },
-  B22: {
-    pl: "Biblioteka Główna",
-    en: "Main Library",
-  },
-  C4: {
-    pl: "Centrum Sportu",
-    en: "Sports Center",
-  },
-
-  // ogólnouczelniane – domy studenckie + SDS
-  C17: {
-    pl: "VI Dom Studencki",
-    en: "Student Dormitory VI",
-  },
-  C5: {
-    pl: "VII Dom Studencki",
-    en: "Student Dormitory VII",
-  },
-  C11: {
-    pl: "IV Dom Studencki",
-    en: "Student Dormitory IV",
-  },
-  C12: {
-    pl: "III Dom Studencki",
-    en: "Student Dormitory III",
-  },
-  C13: {
-    pl: "II Dom Studencki",
-    en: "Student Dormitory II",
-  },
-  C14: {
-    pl: "I Dom Studencki",
-    en: "Student Dormitory I",
-  },
-  C15: {
-    pl: "SDS",
-    en: "Student Development Center",
-  },
-  E1: {
-    pl: "IX Dom Studencki",
-    en: "Student Dormitory IX",
-  },
-  F1: {
-    pl: "V Dom Studencki",
-    en: "Student Dormitory V",
-  },
-
-  // administracja
-  B11: {
-    pl: "Dziekanat WFTiMS",
-    en: "Dean’s Office of FT-CS-AM",
-  },
-};
-
-
 const DEFAULT_POSITION: LatLngExpression = [51.746032, 19.453547];
 
 const MapPage: React.FC = () => {
@@ -274,71 +206,125 @@ const MapPage: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
     setSearchTerm(v);
-    setSuggestions(
-      v
-        ? buildingList
-            .map((b) => b.name)
-            .filter((n) => n.toLowerCase().includes(v.toLowerCase()))
-        : []
-    );
+    
+    if (!v) {
+      setSuggestions([]);
+      setHighlightedIndex(-1);
+      return;
+    }
+
+    const translatedSuggestions = buildingList
+      .map(item => {
+        let translatedName: string;
+        
+        if (item.floor && item.roomId) {
+          const buildingLabel = t(`buildings.${item.code}.label`);
+          const roomName = t(`rooms.${item.roomId}`);
+          translatedName = `${buildingLabel} ${roomName}`;
+        } else {
+          translatedName = t(`buildings.${item.code}.label`);
+        }
+        
+        return {
+          originalItem: item,
+          translatedName: translatedName,
+          originalName: item.name
+        };
+      })
+      .filter(({ translatedName }) => 
+        translatedName.toLowerCase().includes(v.toLowerCase())
+      )
+      .map(({ translatedName }) => translatedName);
+
+    setSuggestions(translatedSuggestions);
     setHighlightedIndex(-1);
   };
 
-  const handleSelect = (name: string) => {
+  const handleSelect = (suggestionName: string) => {
     setSuggestions([]);
-    const item = buildingList.find((b) => b.name === name);
-    if (!item) return;
+    setHighlightedIndex(-1);
+    setSearchTerm("");
 
-    setSelectedPos(item.position);
+    const matchingItem = buildingList.find(item => {
+      let translatedName: string;
+      
+      if (item.floor && item.roomId) {
+        const buildingLabel = t(`buildings.${item.code}.label`);
+        const roomName = t(`rooms.${item.roomId}`);
+        translatedName = `${buildingLabel} ${roomName}`;
+      } else {
+        translatedName = t(`buildings.${item.code}.label`);
+      }
+      
+      return translatedName === suggestionName;
+    });
 
-    if (item.buildingCode && item.floor && item.roomId) {
-      setMarkerPosition(item.position);
+    if (!matchingItem) return;
+
+    setSelectedPos(matchingItem.position);
+
+    if (matchingItem.floor && matchingItem.roomId) {
+      setMarkerPosition(matchingItem.position);
       setSelectedBuilding({
         properties: {
-          name: item.buildingCode,
-          label: name,
+          name: matchingItem.code,
+          label: t(`buildings.${matchingItem.code}.label`)
         },
-        roomId: item.roomId,
-        defaultFloor: item.floor,
+        roomId: matchingItem.roomId,
+        defaultFloor: matchingItem.floor,
       } as any);
     } else if (mapInstance) {
       setMarkerPosition(null);
-      const layer = layersMap[name];
+
+      const layer = layersMap[matchingItem.code];
       if (!layer) return;
 
       const feature = layer.feature as BuildingFeature;
-      const { label, website, hasPlan, name: code } = feature.properties;
-      const { t, i18n } = useTranslation();
+      const code    = matchingItem.code;
+      const label   = t(`buildings.${code}.label`);
+      const desc    = t(`buildings.${code}.description`);
+      const website = feature.properties.website;
+      const hasPlan = feature.properties.hasPlan;
+      const btnId   = `plan-btn-${code}`;
 
-      const description =
-        buildingDescriptions[code]?.[i18n.language as "pl" | "en"]
-        ?? feature.properties.description
-        ?? "";
-
-      const btnId = `plan-btn-${code}`;
       const html = `
         <div style="max-width:240px">
           <strong>${label}</strong><br/>
-          <p style="margin:6px 0">${description}</p>
-          ${website ? `<a href="${website}" target="_blank">${t("map.popup.goToWebsite")}</a><br/>` : ""}
-          ${hasPlan ? `<button id="${btnId}" class="map-popup-button">${t("map.popup.buildingPlan")}</button>` : ""}
+          <p style="margin:6px 0">${desc}</p>
+          ${
+            website
+              ? `<a href="${website}" target="_blank">${t("map.popup.goToWebsite")}</a><br/>`
+              : ""
+          }
+          ${
+            hasPlan
+              ? `<button id="${btnId}" class="map-popup-button">${t("map.popup.buildingPlan")}</button>`
+              : ""
+          }
         </div>
       `;
 
       layer.once("popupopen", () => {
         setTimeout(() => {
           const btn = document.getElementById(btnId);
-          if (btn) btn.onclick = () => setSelectedBuilding(feature);
+          if (btn) btn.onclick = () => {
+            setSelectedBuilding({
+              properties: { name: code, label },
+            } as any);
+          }
         }, 50);
       });
+
       layer.bindPopup(html).openPopup();
-
-      const bounds = (layer as L.Polygon).getBounds();
-      mapInstance.flyTo(bounds.getCenter(), 18, { duration: 1 });
+      mapInstance.flyTo((layer as L.Polygon).getBounds().getCenter(), 18, { duration: 1 });
     }
-
-    setSearchTerm("");
   };
+
+
+  useEffect(() => {
+    setSuggestions([]);
+    setHighlightedIndex(-1);
+  }, [i18n.resolvedLanguage]);
 
   const handleCloseModal = () => {
     setSelectedBuilding(null);
@@ -446,10 +432,13 @@ const MapPage: React.FC = () => {
                 }}
                 onEachFeature={(feature: BuildingFeature, layer: L.Layer) => {
                   const poly = layer as L.Polygon;
-                  const { label, description, website, hasPlan, name } =
+                  const { label, website, hasPlan } =
                     feature.properties;
 
-                  poly.bindTooltip(label, {
+                  const code = feature.properties.name as string;
+                  const localizedLabel = t(`buildings.${code}.label`);
+
+                  poly.bindTooltip(localizedLabel, {
                     direction: "top",
                     sticky: true,
                   });
@@ -466,24 +455,33 @@ const MapPage: React.FC = () => {
                     const ctr = poly.getBounds().getCenter();
                     setSelectedPos([ctr.lat, ctr.lng]);
 
-                    const btnId = `plan-btn-${name}`;
-                    const html = `
+                  const code = feature.properties.name;
+                  const label = t(`buildings.${code}.label`);
+                  const desc  = t(`buildings.${code}.description`);
+                  const btnId = `plan-btn-${code}`;
+                  
+                  const html = `
                       <div style="max-width:240px">
                         <strong>${label}</strong><br/>
-                        <p style="margin:6px 0">${description ?? ""}</p>
-                        ${website ? `<a href="${website}" target="_blank">${t("map.popup.goToWebsite")}</a><br/>` : ""}
-                        ${hasPlan ? `<button id="${btnId}" class="map-popup-button">${t("map.popup.buildingPlan")}</button>` : ""}
+                        <p style="margin:6px 0">${desc}</p>
+                        ${website
+                          ? `<a href="${website}" target="_blank">${t("map.popup.goToWebsite")}</a><br/>`
+                          : ""}
+                        ${hasPlan
+                          ? `<button id="${btnId}" class="map-popup-button">${t("map.popup.buildingPlan")}</button>`
+                          : ""}
                       </div>
                     `;
+
                     poly.once("popupopen", () => {
                       setTimeout(() => {
                         const btn = document.getElementById(btnId);
-                        if (btn) btn.onclick = () =>
-                          setSelectedBuilding(feature);
+                        if (btn) btn.onclick = () => setSelectedBuilding(feature);
                       }, 50);
                     });
                     poly.bindPopup(html).openPopup();
                   });
+
                 }}
               />
             )}
@@ -501,7 +499,7 @@ const MapPage: React.FC = () => {
           isOpen
           onClose={handleCloseModal}
           buildingCode={selectedBuilding.properties.name}
-          buildingName={selectedBuilding.properties.label}
+          buildingName={t(`buildings.${selectedBuilding.properties.name}.label`)}
           defaultFloor={(selectedBuilding as any).defaultFloor ?? "Parter"}
           highlightedRoomId={(selectedBuilding as any).roomId}
         />

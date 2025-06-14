@@ -295,6 +295,94 @@ const resources = {
       "floor.thirdFloor":         "3rd floor",
       "floor.fourthFloor":        "4th floor",
 
+      "modal.floorPlanTitle":         "Floor plan of {{building}}",
+
+      "buildings": {
+        "B9":  {
+          "label":       "B9 Lodex",
+          "description": "Faculty of Technical Physics, Computer Science and Applied Mathematics"
+        },
+        "B14": {
+          "label":       "B14 Institute of Physics",
+          "description": "Institute of Physics"
+        },
+        "B19": {
+          "label":       "B19 CTI",
+          "description": "Information Technology Centre"
+        },
+        "B24": {
+          "label":       "B24 Language Centre",
+          "description": "Language Centre of Lodz University of Technology"
+        },
+        "B28": {
+          "label":       "B28 Sports Bay",
+          "description": "Academic Sports and Educational Centre of Lodz University of Technology"
+        },
+        "B22": {
+          "label":       "B22 Main Library",
+          "description": "Main Library of Lodz University of Technology"
+        },
+        "C4": {
+          "label":       "C4 Sports Centre",
+          "description": "Sports Centre of Lodz University of Technologu"
+        },
+        "C17": {
+          "label":       "SD VI",
+          "description": "Student Dormitory VI"
+        },
+        "C5": {
+          "label":       "SD VII",
+          "description": "Student Dormitory VII"
+        },
+        "C11": {
+          "label":       "SD IV",
+          "description": "Student Dormitory IV"
+        },
+        "C12": {
+          "label":       "SD III",
+          "description": "Student Dormitory III"
+        },
+        "C13": {
+          "label":       "SD II",
+          "description": "Student Dormitory II"
+        },
+        "C14": {
+          "label":       "SD I",
+          "description": "Student Dormitory I"
+        },
+        "C15": {
+          "label":       "SDS",
+          "description": "Student Government Headquarters"
+        },
+        "E1": {
+          "label":       "SD IX",
+          "description": "Student Dormitory IX"
+        },
+        "F1": {
+          "label":       "SD V",
+          "description": "Student Dormitory V"
+        },
+        "B11": {
+          "label":       "Dean’s Office",
+          "description": "Dean’s Office of FT-CS-AM"
+        }
+      },
+
+      "rooms": {
+        "F2":  "Auditorium F2",
+        "F3":  "Auditorium F3",
+        "F4":  "Auditorium F4",
+        "F5":  "Auditorium F5",
+        "F6":  "Auditorium F6",
+        "F7":  "Auditorium F7",
+        "F9":  "Auditorium F9",
+        "F10": "Auditorium F10",
+        "S1":  "Cinema Room",
+        "A1":  "Aula Major",
+        "A3":  "Aula Minor",
+        "A2":  "Arena Magica"
+      },
+
       //UserProfile
       "profile.userProfile": "User profile",
       "profile.firstName": "First name:",
@@ -610,6 +698,94 @@ const resources = {
       "floor.secondFloor":        "Piętro 2",
       "floor.thirdFloor":         "Piętro 3",
       "floor.fourthFloor":        "Piętro 4",
+
+      "modal.floorPlanTitle":         "Plan budynku {{building}}",
+
+      "buildings": {
+        "B9":  {
+          "label":       "B9 Lodex",
+          "description": "Wydział Fizyki Technicznej, Informatyki i Matematyki Stosowanej"
+        },
+        "B14": {
+          "label":       "B14 Instytut Fizyki",
+          "description": "Instytut Fizyki"
+        },
+        "B19": {
+          "label":       "B19 Centrum Technologii Informatycznych CTI",
+          "description": "Centrum Technologii Informatycznych CTI"
+        },
+        "B24": {
+          "label":       "B24 Centrum Językowe",
+          "description": "Centrum Językowe Politechniki Łódzkiej"
+        },
+        "B28": {
+          "label":       "B28 Zatoka Sportu",
+          "description": "Akademickie Centrum Sportowo-Dydaktyczne Politechniki Łódzkiej"
+        },
+        "B22": {
+          "label":       "B22 Biblioteka Główna",
+          "description": "Biblioteka Główna Politechniki Łódzkiej"
+        },
+        "C4": {
+          "label":       "C4 Centrum Sportu",
+          "description": "Centrum Sportu Politechniki Łódzkiej"
+        },
+        "C17": {
+          "label":       "VI DS",
+          "description": "VI Dom Studencki"
+        },
+        "C5": {
+          "label":       "VII DS",
+          "description": "VII Dom Studencki"
+        },
+        "C11": {
+          "label":       "IV DS",
+          "description": "IV Dom Studencki"
+        },
+        "C12": {
+          "label":       "III DS",
+          "description": "III Dom Studencki"
+        },
+        "C13": {
+          "label":       "II DS",
+          "description": "II Dom Studencki"
+        },
+        "C14": {
+          "label":       "I DS",
+          "description": "I Dom Studencki"
+        },
+        "C15": {
+          "label":       "SDS",
+          "description": "Siedziba Samorządu Studenckiego"
+        },
+        "E1": {
+          "label":       "IX DS",
+          "description": "IX Dom Studencki"
+        },
+        "F1": {
+          "label":       "V DS",
+          "description": "V Dom Studencki"
+        },
+        "B11": {
+          "label":       "Dziekanat WFTiMS",
+          "description": "Dziekanat WFTiMS"
+        }
+      },
+
+      "rooms": {
+        "F2":  "Aula F2",
+        "F3":  "Aula F3",
+        "F4":  "Aula F4",
+        "F5":  "Aula F5",
+        "F6":  "Aula F6",
+        "F7":  "Aula F7",
+        "F9":  "Aula F9",
+        "F10": "Aula F10",
+        "S1":  "Sala kinowa",
+        "A1":  "Aula Major",
+        "A3":  "Aula Minor",
+        "A2":  "Arena Magica"
+      },
 
       //UserProfile
       "profile.userProfile": "Profil użytkownika",

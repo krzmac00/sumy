@@ -70,7 +70,6 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
 
   const availableFloors = floorsOrder.filter(floor => svgMapForThisBuilding[floor]);
 
-  // Funkcja do tłumaczenia nazw pięter
   const getFloorTranslation = (floor: string) => {
     switch (floor) {
       case "Parter":
@@ -175,7 +174,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
       <div className="modal-overlay modal-overlay-right">
         <div className="building-floor-modal building-floor-modal-right" onClick={(e) => e.stopPropagation()}>
           <div className="building-floor-modal-title">
-            {buildingName}
+            {t("modal.floorPlanTitle", { building: buildingName })}
           </div>
 
           {availableFloors.length > 1 && (
@@ -222,7 +221,7 @@ const BuildingFloorModal: React.FC<BuildingFloorModalProps> = ({
               {t("modal.roomDetails.title")}
             </div>
             <div style={{ marginBottom: "1rem" }}>
-              <p><strong>{t("modal.roomDetails.name")}:</strong> {selectedRoom.name}</p>
+              <p><strong>{t("modal.roomDetails.name")}:</strong> {t(`rooms.${selectedRoom.id}`)}</p>
               <p><strong>{t("modal.roomDetails.type")}:</strong> {selectedRoom.type}</p>
               <p><strong>{t("modal.roomDetails.floor")}:</strong> {getFloorTranslation(selectedRoom.floor)}</p>
             </div>
