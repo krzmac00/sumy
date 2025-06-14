@@ -45,6 +45,7 @@
   }
   
   .brand {
+    margin-left: 41px;
     display: flex;
     align-items: center;
   }
@@ -81,10 +82,12 @@
   .nav-item a {
     text-decoration: none;
     color: #333;
-    font-weight: 500;
     padding: 8px 0;
     display: inline-block;
     position: relative;
+    font-family: "Michroma", sans-serif;
+    font-weight: 600;
+    font-style: normal;
   }
   
   .nav-item a:after {
@@ -95,7 +98,7 @@
     height: 2px;
     bottom: 0;
     left: 0;
-    background-color: #4a90e2;
+    background-color: #99090c;
     transform-origin: bottom right;
     transition: transform 0.3s ease-out;
   }
@@ -121,6 +124,7 @@
     border-radius: 4px;
     padding: 6px 12px;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
   }
   

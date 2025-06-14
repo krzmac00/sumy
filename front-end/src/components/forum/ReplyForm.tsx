@@ -177,7 +177,7 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
           </button>
           <button 
             type="submit" 
-            className="submit-button"
+            className="submit-button-reply"
             disabled={isSubmitting}
           >
             {isSubmitting 

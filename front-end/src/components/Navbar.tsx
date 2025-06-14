@@ -55,12 +55,12 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        {/*<button className="sidebar-toggle" onClick={toggleSidebar}>
+        {/* <button className="sidebar-toggle" onClick={toggleSidebar}>
           <span></span>
           <span></span>
           <span></span>
-        </button>
-        */}
+        </button> */}
+       
         
         <div className="brand">
           <img src={pcLogo} alt="Policonnect Logo" className="logo" />
@@ -70,7 +70,9 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
       
       <div className="navbar-center">
         <ul className="nav-tabs">
-          <li className="nav-item"><a href="/forum">{t('nav.home')}</a></li>
+          <li className="nav-item"><a href="/home">{t('nav.home')}</a></li>
+          <li className="nav-item"><a href="/forum">Tablica</a></li>
+          <li className="nav-item"><a href="/noticeboard">{t('nav.noticeboard')}</a></li>
           <li className="nav-item"><a href="/map">{t('nav.map')}</a></li>
           <li className="nav-item"><a href="/calendar">{t('nav.calendar')}</a></li>
         </ul>

@@ -20,7 +20,9 @@
   min-width: 0;
   padding: 20px;
   transition: margin-left 0.3s ease;
-  background-color: white;
+  background-color: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 .main-content.sidebar-open {

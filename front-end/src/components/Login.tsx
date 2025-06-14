@@ -105,7 +105,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
       
       <button 
         type="submit" 
-        className="submit-button"
+        className="submit-button-auth"
         disabled={isLoading}
       >
         {isLoading ? t('login.loading') : t('login.button')}

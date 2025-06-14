@@ -209,7 +209,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
       
       <button 
         type="submit" 
-        className="submit-button"
+        className="submit-button-auth"
         disabled={isLoading}
       >
         {isLoading ? t('register.registering') : t('register.button')}

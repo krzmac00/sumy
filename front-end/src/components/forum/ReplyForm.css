@@ -80,7 +80,7 @@
 }
 
 .cancel-button,
-.submit-button {
+.submit-button-reply {
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 1rem;
@@ -97,17 +97,17 @@
   background-color: #e9ecef;
 }
 
-.submit-button {
+.submit-button-reply {
   background-color: #8b0002;
   border: none;
   color: white;
 }
 
-.submit-button:hover {
+.submit-button-reply:hover {
   background-color: #7a0001;
 }
 
-.submit-button:disabled,
+.submit-button-reply:disabled,
 .cancel-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
