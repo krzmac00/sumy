@@ -15,6 +15,7 @@ import './App.css';
 import MapPage from './pages/MapPage';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import TimetablePage from './pages/TimetablePage';
 
 const AuthLayout: React.FC = () => {
   const { t } = useTranslation();
@@ -101,6 +102,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/forum/create-thread" element={<ProtectedRoute element={<ThreadCreatePage />} />} />
 
       <Route path="/calendar" element={<ProtectedRoute element={<Calendar />} />} />
+      <Route path="/timetable" element={<ProtectedRoute element={<TimetablePage />} />} />
       <Route path="/map" element={<ProtectedRoute element={<MapPage />} />} />
       <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
       <Route path="/profile/edit" element={<ProtectedRoute element={<EditProfile />} />} />
@@ -115,9 +117,9 @@ const AppRoutes: React.FC = () => {
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
+        <Router>
+          <AppRoutes />
+        </Router>
     </AuthProvider>
   );
 };

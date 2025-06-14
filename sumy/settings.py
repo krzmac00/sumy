@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     "django.contrib.gis",
 ]
 
+AUTH_USER_MODEL = 'auth.User'
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
