@@ -45,73 +45,78 @@ class SchedulePlanViewSet(viewsets.ModelViewSet):
             Q(participants=self.request.user) | Q(administrator=self.request.user)
         )
 
-    @action(detail=True, methods=['post'], serializer_class=ApplyPlanSerializer)
-    def apply(self, request, pk=None):
+    # @action(detail=True, methods=['post'], serializer_class=ApplyPlanSerializer)
+    # def apply(self, request, pk=None):
 
-        plan = self.get_object()
-        serializer = ApplyPlanSerializer(data=request.data)
-        #serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+    #     plan = self.get_object()
+    #     serializer = ApplyPlanSerializer(data=request.data)
+    #     #serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
         
-        if AppliedPlan.objects.filter(user=request.user, plan=plan).exists():
-            return Response(
-                {'detail': 'Plan is already applied'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+    #     if AppliedPlan.objects.filter(user=request.user, plan=plan).exists():
+    #         return Response(
+    #             {'detail': 'Plan is already applied'},
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
 
-        applied_plan = AppliedPlan.objects.create(
-            user=request.user,
-            plan=plan,
-            **serializer.validated_data
-        )
+    #     applied_plan = AppliedPlan.objects.create(
+    #         user=request.user,
+    #         plan=plan,
+    #         **serializer.validated_data
+    #     )
 
-        start_date = serializer.validated_data['start_date']
-        events = []
+    #     start_date = serializer.validated_data['start_date']
+    #     events = []
         
-        for schedule_event in plan.events.all():
-            days_ahead = (schedule_event.day_of_week - start_date.weekday() + 7) % 7
-            event_date = start_date + timedelta(days=days_ahead)
+    #     for schedule_event in plan.events.all():
+    #         days_ahead = (schedule_event.day_of_week - start_date.weekday() + 7) % 7
+    #         event_date = start_date + timedelta(days=days_ahead)
             
-            events.append(Event(
-                user=request.user,
-                title=schedule_event.title,
-                start_date=timezone.make_aware(
-                    timezone.datetime.combine(event_date, schedule_event.start_time)
-                ),
-                end_date=timezone.make_aware(
-                    timezone.datetime.combine(event_date, schedule_event.end_time)
-                ),
-                category='timetable',
-                schedule_plan=plan,
-                room=schedule_event.room,
-                teacher=schedule_event.teacher
-            ))
+    #         events.append(Event(
+    #             user=request.user,
+    #             title=schedule_event.title,
+    #             start_date=timezone.make_aware(
+    #                 timezone.datetime.combine(event_date, schedule_event.start_time)
+    #             ),
+    #             end_date=timezone.make_aware(
+    #                 timezone.datetime.combine(event_date, schedule_event.end_time)
+    #             ),
+    #             category='timetable',
+    #             schedule_plan=plan,
+    #             room=schedule_event.room,
+    #             teacher=schedule_event.teacher
+    #         ))
 
-        Event.objects.bulk_create(events)
+    #     Event.objects.bulk_create(events)
         
-        return Response(
-            {'status': 'Plan applied successfully'},
-            status=status.HTTP_201_CREATED
-        )
+    #     return Response(
+    #         {'status': 'Plan applied successfully'},
+    #         status=status.HTTP_201_CREATED
+    #     )
 
-    @action(detail=False, methods=['post'], url_path='add-by-code')
-    def add_plan_by_code(self, request):
-        code = request.data.get('code')
-        plan = get_object_or_404(SchedulePlan, code=code)
+    # @action(detail=False, methods=['post'], url_path='add-by-code')
+    # def add_plan_by_code(self, request):
+    #     code = request.data.get('code')
+    #     plan = get_object_or_404(SchedulePlan, code=code)
         
-        if AppliedPlan.objects.filter(user=request.user, plan=plan).exists():
-            return Response(
-                {'detail': 'Plan już został dodany'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+    #     if AppliedPlan.objects.filter(user=request.user, plan=plan).exists():
+    #         return Response(
+    #             {'detail': 'Plan już został dodany'},
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
 
-        AppliedPlan.objects.create(user=request.user, plan=plan)
-        return Response({'status': 'Plan dodany pomyślnie'})
+    #     AppliedPlan.objects.create(user=request.user, plan=plan)
+    #     return Response({'status': 'Plan dodany pomyślnie'})
 
     def perform_create(self, serializer):
-        if not self.request.user.is_staff:
-            raise PermissionDenied("Only administrators can create plans")
+    #    if not self.request.user.is_staff:
+    #        raise PermissionDenied("Only administrators can create plans")
         serializer.save(administrator=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Event.objects.filter(schedule_plan=instance).delete()
+        return super().destroy(request, *args, **kwargs)
         
 
 class PublicSchedulePlanViewSet(viewsets.ReadOnlyModelViewSet):
@@ -149,6 +154,18 @@ class EventViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             return Event.objects.filter(user=self.request.user)
         return Event.objects.none()
+    
+    def get_queryset(self):
+        queryset = Event.objects.all()
+
+        if self.request.user.is_authenticated:
+            queryset = queryset.filter(user=self.request.user)
+
+        schedule_plan_id = self.request.query_params.get('schedule_plan')
+        if schedule_plan_id:
+            queryset = queryset.filter(schedule_plan=schedule_plan_id)
+
+        return queryset
 
     @action(detail=False, methods=['POST'])
     @transaction.atomic

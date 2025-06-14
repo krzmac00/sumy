@@ -326,11 +326,11 @@ export const Timetable: React.FC = () => {
           <TimetableCreator
             selectedSchedule={selectedSchedule}
             onCreated={async (newSchedule) => {
-              await Promise.all(
-                localScheduleEvents.map((e) =>
-                  scheduleAPI.addEvent(newSchedule.id, { ...e, id: -1 })
-                )
-              );
+            await Promise.all(
+              localScheduleEvents.map((e) =>
+                scheduleAPI.addEvent(newSchedule.id, e)
+              )
+            );
 
               setSchedules((prev) => [...prev, newSchedule]);
               setLocalScheduleEvents([]);

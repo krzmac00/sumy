@@ -430,110 +430,140 @@ export const eventAPI = {
   },
 };
 
-const STORAGE_KEY = "schedules";
-
-let schedules: (SchedulePlan & { events: CustomCalendarEvent[] })[] = loadFromStorage();
-
-if (schedules.length === 0) {
-  schedules = [];
-  saveToStorage(schedules);
-}
-
-let nextId = schedules.length > 0 ? Math.max(...schedules.map((s) => s.id)) + 1 : 1;
-
-function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+function authHeaders() {
+  const token = localStorage.getItem('auth_token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 export const scheduleAPI = {
+  /**
+   * Get all schedules
+   */
   getAll: async (): Promise<SchedulePlan[]> => {
-    await wait(200);
-    return schedules.map(({ events, ...rest }) => rest);
+    const response = await axios.get(`${API_BASE}/schedule-plans/`, {
+      headers: authHeaders(),
+    });
+
+    const data = response.data;
+
+    if (!Array.isArray(data.results)) {
+      console.warn("Expected paginated results in getAll, got:", data);
+      return [];
+    }
+
+    return data.results;
   },
 
+  /**
+   * Create a schedule plan
+   */
   create: async (
-    payload: Pick<SchedulePlan, "name" | "description" | "code"> & {
-      events?: CustomCalendarEvent[];
-    }
+    payload: Pick<SchedulePlan, 'name' | 'description' | 'code'>
   ): Promise<SchedulePlan> => {
-    await wait(300);
-    const newPlan = {
-      id: nextId++,
-      ...payload,
-      events: payload.events ?? [],
-    };
-    schedules.push(newPlan);
-    saveToStorage(schedules);
-    return {
-      id: newPlan.id,
-      name: newPlan.name,
-      description: newPlan.description,
-      code: newPlan.code,
-    };
+    console.log(payload);
+    const response = await axios.post(`${API_BASE}/schedule-plans/`, payload, {
+      headers: {
+        ...authHeaders(),
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
   },
 
+  /**
+   * Get all events for a given schedule
+   */
   getEvents: async (scheduleId: number): Promise<CustomCalendarEvent[]> => {
-    await wait(150);
-    const found = schedules.find((s) => s.id === scheduleId);
-    return found ? [...found.events] : [];
+    const response = await axios.get(`${API_BASE}/events/?schedule_plan=${scheduleId}`, {
+      headers: authHeaders(),
+    });
+    
+    const data = response.data;
+
+    if (!Array.isArray(data.results)) {
+      console.warn("Expected paginated results in getEvents, got:", data);
+      return [];
+    }
+
+    return data.results.map((event: any) => ({
+      id: event.id,
+      title: event.title,
+      description: event.description ?? '',
+      category: event.category,
+      color: event.color,
+      repeatType: event.repeat_type,
+      start: new Date(event.start_date),
+      end: new Date(event.end_date),
+      schedule_plan: event.schedule_plan ?? null,
+      room: event.room ?? null,
+      teacher: event.teacher ?? null,
+    }));
   },
 
+  /**
+   * Add a new event to a schedule
+   */
   addEvent: async (scheduleId: number, event: CustomCalendarEvent): Promise<void> => {
-    await wait(150);
-    const found = schedules.find((s) => s.id === scheduleId);
-    if (found) {
-      found.events.push({ ...event, id: Date.now() });
-      saveToStorage(schedules);
-    } else {
-      throw new Error("Schedule not found");
-    }
+    const payload = {
+      title: event.title,
+      description: event.description ?? '',
+      category: event.category,
+      start_date: event.start,
+      end_date: event.end,
+      repeat_type: event.repeatType,
+      room: event.room,
+      teacher: event.teacher,
+      schedule_plan: scheduleId,
+    };
+
+    console.log(payload);
+
+    await axios.post(`${API_BASE}/events/`, payload, {
+      headers: {
+        ...authHeaders(),
+        'Content-Type': 'application/json',
+      },
+    });
   },
 
+  /**
+   * Update a schedule plan (e.g. name/description)
+   */
   update: async (id: number, data: Partial<SchedulePlan>): Promise<void> => {
-    const schedule = schedules.find((s) => s.id === id);
-    if (schedule) {
-      Object.assign(schedule, data);
-      saveToStorage(schedules);
-    }
+    await axios.patch(`${API_BASE}/schedule-plans/${id}/`, data, {
+      headers: authHeaders(),
+    });
   },
 
-  updateEvent: async (scheduleId: number, updatedEvent: CustomCalendarEvent): Promise<void> => {
-    await wait(150);
-    const schedule = schedules.find((s) => s.id === scheduleId);
-    if (!schedule) {
-      throw new Error("Schedule not found");
-    }
+  /**
+   * Update a specific event in a schedule
+   */
+  updateEvent: async (scheduleId: number, event: CustomCalendarEvent): Promise<void> => {
+    const baseId = event.id.toString().split('-')[0];
 
-    const idStr = updatedEvent.id.toString().split("-")[0];
-    schedule.events = schedule.events.filter((e) => !e.id.toString().startsWith(idStr));
-    schedule.events.push({ ...updatedEvent });
-    saveToStorage(schedules);
+    const payload = {
+      title: event.title,
+      description: event.description ?? '',
+      category: event.category,
+      start_date: event.start,
+      end_date: event.end,
+      repeat_type: event.repeatType,
+      room: event.room,
+      teacher: event.teacher,
+      schedule_plan: scheduleId,
+    };
+
+    await axios.patch(`${API_BASE}/events/${baseId}/`, payload, {
+      headers: authHeaders(),
+    });
   },
 
+  /**
+   * Delete a schedule plan (and associated events)
+   */
   delete: async (id: number): Promise<void> => {
-    const index = schedules.findIndex((s) => s.id === id);
-    if (index !== -1) {
-      schedules.splice(index, 1);
-      saveToStorage(schedules);
-    }
-  },
-
-  clear: () => {
-    localStorage.removeItem(STORAGE_KEY);
-    window.location.reload();
+    await axios.delete(`${API_BASE}/schedule-plans/${id}/`, {
+      headers: authHeaders(),
+    });
   },
 };
-
-function loadFromStorage(): (SchedulePlan & { events: CustomCalendarEvent[] })[] {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return [];
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-function saveToStorage(data: (SchedulePlan & { events: CustomCalendarEvent[] })[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}

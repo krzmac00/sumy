@@ -20,7 +20,7 @@ class SchedulePlan(models.Model):
         (6, 'Sunday'),
     ]
     name = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     administrator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

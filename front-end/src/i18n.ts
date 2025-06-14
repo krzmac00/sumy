@@ -288,10 +288,8 @@ const resources = {
       "calendar.scheduleUpdated": "Schedule updated.",
       "calendar.scheduleDeleted": "Schedule deleted.",
       "calendar.deleteScheduleConfirm": "Are you sure you want to delete this schedule?",
-      "calendar.creating": "Creating…",
       "calendar.create": "Create",
-      "calendar.update": "Update",
-      "calendar.updating": "Updating…",
+      "calendar.update": "Update title",
       "calendar.delete": "Delete",
 
       //MapFilterPanel
@@ -620,10 +618,8 @@ const resources = {
       "calendar.scheduleUpdated": "Zaktualizowano plan",
       "calendar.scheduleDeleted": "Plan został usunięty",
       "calendar.deleteScheduleConfirm": "Czy na pewno chcesz usunąć ten plan?",
-      "calendar.creating": "Tworzenie…",
       "calendar.create": "Utwórz",
-      "calendar.update": "Aktualizuj",
-      "calendar.updating": "Aktualizowanie…",
+      "calendar.update": "Aktualizuj tytuł",
       "calendar.delete": "Usuń",
 
       //MapFilterPanel

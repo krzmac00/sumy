@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    EventViewSet, home, event_list, add_event,
+    EventViewSet, SchedulePlanViewSet, home, event_list, add_event,
     PostListCreateAPIView, PostRetrieveUpdateDestroyAPIView,
     ThreadListCreateAPIView, ThreadRetrieveUpdateDestroyAPIView,
     create_thread_with_post, vote_thread, vote_post,
@@ -12,7 +12,7 @@ from mainapp import views
 # Setup DRF router for EventViewSet
 router = DefaultRouter()
 router.register(r'events', EventViewSet)
-# router.register(r'schedule-plans', SchedulePlanViewSet, basename='scheduleplan')
+router.register(r'schedule-plans', SchedulePlanViewSet, basename='scheduleplan')
 
 urlpatterns = [
     path('', include(router.urls)),

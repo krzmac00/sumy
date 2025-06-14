@@ -20,7 +20,7 @@ export const TimetableSelector: React.FC<TimetableSelectorProps> = ({ schedules,
         }}
       >
         <option value="">{t("calendar.choose", "Choose a schedule")}</option>
-        {schedules.map((s) => (
+        {Array.isArray(schedules) && schedules.map((s) => (
           <option key={s.id} value={s.id}>
             {s.name}
           </option>
