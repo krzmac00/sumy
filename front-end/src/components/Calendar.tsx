@@ -487,7 +487,7 @@ export const Calendar: React.FC = () => {
           return {
             style: {
               backgroundColor: event.color,
-              cursor: isLocked ? "not-allowed" : "cursor",
+              cursor: isLocked ? "not-allowed" : "pointer",
             },
           };
         }}
