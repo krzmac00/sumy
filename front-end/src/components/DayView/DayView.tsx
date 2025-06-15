@@ -45,16 +45,11 @@ const DayView: React.FC = () => {
         <h2>{format(currentDate, 'EEEE, d MMMM yyyy', { locale })}</h2>
       </div>
       <div className="day-view-timeline">
-        {hours.map((hour, index) => (
+        {hours.map((hour) => (
           <div key={hour} className="hour-row">
             <div className="hour-label">{formatHour(hour)}</div>
             <div className="hour-content">
               <div className="hour-line" />
-              {index < hours.length - 1 && (
-                <>
-                  <div className="half-hour-line" />
-                </>
-              )}
             </div>
           </div>
         ))}

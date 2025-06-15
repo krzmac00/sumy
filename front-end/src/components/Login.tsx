@@ -50,7 +50,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
             onLoginSuccess();
           } else {
             // Redirect to home if no success callback
-            window.location.href = '/forum';
+            window.location.href = '/home';
           }
         }, 100);
       } catch (err) {

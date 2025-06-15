@@ -50,6 +50,22 @@
   padding: 0 20px;
 }
 
+.hour-content::after {
+  content: '';
+  position: absolute;
+  top: 30px;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background-image: repeating-linear-gradient(
+    to right,
+    #ccc,
+    #ccc 10px,
+    transparent 10px,
+    transparent 16px
+  );
+}
+
 .hour-line {
   position: absolute;
   top: 0;

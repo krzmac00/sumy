@@ -2,12 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Michroma&display=swap');
 
 .noticeboard-page {
+  min-width: 940px;
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
   background-color: transparent;
   position: relative;
-  /* z-index: 1; */
   min-height: 100vh;
   display: block;
 }
