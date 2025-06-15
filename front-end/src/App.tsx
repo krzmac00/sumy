@@ -18,6 +18,7 @@ import './App.css';
 import MapPage from './pages/MapPage';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import UserProfile from './components/UserProfile';
 
 const AuthLayout: React.FC = () => {
   const { t } = useTranslation();
@@ -107,6 +108,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/map" element={<ProtectedRoute element={<MapPage />} />} />
       <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
       <Route path="/profile/edit" element={<ProtectedRoute element={<EditProfile />} />} />
+      <Route path="/profile/:userId" element={<ProtectedRoute element={<UserProfile />} />} />
       
       {/* Noticeboard Routes */}
       <Route path="/noticeboard" element={<ProtectedRoute element={<NoticeboardPage />} />} />

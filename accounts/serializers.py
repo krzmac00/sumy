@@ -110,3 +110,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['bio']
+
+class PublicUserSerializer(serializers.ModelSerializer):
+    bio = serializers.CharField(source='profile.bio', read_only=True)
+    date_joined = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
+    
+    class Meta:
+        model = User
+        fields = ['id', 'login', 'first_name', 'last_name', 'role', 'bio', 'date_joined']
+        read_only_fields = fields

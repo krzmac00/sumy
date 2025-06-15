@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Post } from '../../types/forum';
 import { postAPI, voteAPI } from '../../services/api';
@@ -149,8 +150,20 @@ const PostCard: React.FC<PostCardProps> = ({
             {repliedToPosts.map(repliedPost => (
               <div key={repliedPost.id} className="replied-to-post">
                 <span className="replied-to-author">
-                  {repliedPost.user_display_name || repliedPost.nickname}
-                  {repliedPost.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+                  {repliedPost.is_anonymous ? (
+                    <>
+                      {repliedPost.user_display_name || repliedPost.nickname}
+                      <span className="anonymous-badge">{t('forum.anonymous')}</span>
+                    </>
+                  ) : (
+                    <Link 
+                      to={`/profile/${repliedPost.user}`} 
+                      className="replied-to-author-link"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {repliedPost.user_display_name || repliedPost.nickname}
+                    </Link>
+                  )}
                 </span>
                 <span className="replied-to-preview">
                   {repliedPost.content.length > 50
@@ -177,8 +190,20 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="thread-header">
           <img src={userImagePath} alt="User" className="thread-author-image" />
           <span className="thread-author">
-            {post.user_display_name || post.nickname}
-            {post.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+            {post.is_anonymous ? (
+              <>
+                {post.user_display_name || post.nickname}
+                <span className="anonymous-badge">{t('forum.anonymous')}</span>
+              </>
+            ) : (
+              <Link 
+                to={`/profile/${post.user}`} 
+                className="thread-author-link"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {post.user_display_name || post.nickname}
+              </Link>
+            )}
           </span>
           <span className="thread-separator">•</span>
           <span className="thread-time">{formatTimeAgo(post.date, t)}</span>

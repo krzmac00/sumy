@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
-from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer
+from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer, PublicUserSerializer
 from .tokens import generate_activation_token, validate_activation_token
 from .emails import send_activation_email, send_password_verification_email
 
@@ -250,3 +250,15 @@ class UpdateUserProfileView(APIView):
             serializer.save()
             return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PublicUserProfileView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            serializer = PublicUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)

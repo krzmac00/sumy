@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Clock, MessageCircle, DollarSign, Calendar, AlertCircle } from 'lucide-react';
 import { Advertisement, CATEGORY_COLORS } from '../../types/noticeboard';
@@ -91,11 +92,17 @@ const AdvertisementCard: React.FC<AdvertisementCardProps> = ({ advertisement, on
       <div className="card-footer">
         <div className="author-info">
           <span className="author-label">{t('common.by')}</span>
-          <span className="author-name">
-            {advertisement.author.first_name && advertisement.author.last_name
-              ? `${advertisement.author.first_name} ${advertisement.author.last_name}`
-              : advertisement.author.login}
-          </span>
+          <Link 
+            to={`/profile/${advertisement.author.id}`} 
+            className="author-link"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="author-name">
+              {advertisement.author.first_name && advertisement.author.last_name
+                ? `${advertisement.author.first_name} ${advertisement.author.last_name}`
+                : advertisement.author.login}
+            </span>
+          </Link>
         </div>
         
         {advertisement.expires_at && !advertisement.is_expired && (

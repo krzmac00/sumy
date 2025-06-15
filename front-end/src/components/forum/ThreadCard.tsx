@@ -122,8 +122,20 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
           <span className="thread-separator">•</span>
           <img src={userImagePath} alt="User" className="thread-author-image" />
           <span className="thread-author">
-            {t('forum.threadList.by')} {thread.author_display_name || thread.nickname}
-            {thread.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+            {t('forum.threadList.by')} {thread.is_anonymous ? (
+              <>
+                {thread.author_display_name || thread.nickname}
+                <span className="anonymous-badge">{t('forum.anonymous')}</span>
+              </>
+            ) : (
+              <Link 
+                to={`/profile/${thread.user}`} 
+                className="thread-author-link"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {thread.author_display_name || thread.nickname}
+              </Link>
+            )}
           </span>
           <span className="thread-separator">•</span>
           <span className="thread-time">{formatTimeAgo(thread.last_activity_date, t)}</span>

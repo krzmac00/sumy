@@ -28,6 +28,7 @@ const resources = {
       "common.underConstruction": "Under Construction",
       "common.underConstruction.message": "We're working hard to bring you something amazing. Check back soon!",
       "common.underConstruction.progress": "{{progress}}% Complete",
+      "common.goBack": "Go Back",
       
       // Register page
       "register.title": "Register",
@@ -283,9 +284,11 @@ const resources = {
       "map.filter.applyFilters": "Apply filters",
 
       //UserProfile
+      "profile.firstName": "First Name",
+      "profile.lastName": "Last Name",
+      "profile.role": "Role",
+      "profile.joinDate": "Joined On",
       "profile.userProfile": "User profile",
-      "profile.firstName": "First name:",
-      "profile.lastName": "Last name:",
       "profile.indexNumber": "Index number:",
       "profile.editProfile": "Edit profile",
       "profile.blackListForum": "Forum blacklist",
@@ -420,6 +423,7 @@ const resources = {
       "common.underConstruction": "W budowie",
       "common.underConstruction.message": "Ciężko pracujemy, aby dostarczyć Ci coś niesamowitego. Wróć wkrótce!",
       "common.underConstruction.progress": "{{progress}}% Ukończono",
+      "common.goBack": "Wróć",
       
       // Register page
       "register.title": "Rejestracja",
@@ -673,9 +677,11 @@ const resources = {
       "map.filter.applyFilters": "Zastosuj filtry",
 
       //UserProfile
+      "profile.firstName": "Imię",
+      "profile.lastName": "Nazwisko",
+      "profile.role": "Rola",
+      "profile.joinDate": "Dołączył",
       "profile.userProfile": "Profil użytkownika",
-      "profile.firstName": "Imię:",
-      "profile.lastName": "Nazwisko:",
       "profile.indexNumber": "Numer indeksu:",
       "profile.editProfile": "Edytuj profil",
       "profile.blackListForum": "Czarna lista forum:",
