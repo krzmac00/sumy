@@ -79,7 +79,7 @@
   gap: 12px;
 }
 
-.cancel-button,
+.cancel-button-comment,
 .submit-button-reply {
   padding: 8px 16px;
   border-radius: 4px;
@@ -87,13 +87,13 @@
   cursor: pointer;
 }
 
-.cancel-button {
+.cancel-button-comment {
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
   color: #495057;
 }
 
-.cancel-button:hover {
+.cancel-button-comment:hover {
   background-color: #e9ecef;
 }
 
@@ -108,7 +108,7 @@
 }
 
 .submit-button-reply:disabled,
-.cancel-button:disabled {
+.cancel-butto-comment:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -157,8 +157,8 @@
     flex-direction: column;
   }
   
-  .cancel-button,
-  .submit-button {
+  .cancel-button-comment,
+  .submit-button-reply {
     width: 100%;
   }
 }

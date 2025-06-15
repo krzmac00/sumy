@@ -166,7 +166,7 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
         <div className="reply-form-actions">
           <button 
             type="button" 
-            className="cancel-button"
+            className="cancel-button-comment"
             onClick={onCancel}
             disabled={isSubmitting}
           >

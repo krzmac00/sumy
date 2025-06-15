@@ -41,6 +41,8 @@ class PostSerializer(serializers.ModelSerializer):
     vote_count = serializers.SerializerMethodField()
     user_vote = serializers.SerializerMethodField()
     can_vote = serializers.SerializerMethodField()
+    author_profile_picture = serializers.SerializerMethodField()
+    author_profile_thumbnail = serializers.SerializerMethodField()
     
     def get_user_display_name(self, obj):
         if obj.is_anonymous:
@@ -68,12 +70,33 @@ class PostSerializer(serializers.ModelSerializer):
             return False
         # User cannot vote on their own posts (even anonymous ones)
         return obj.user != request.user
+    
+    def get_author_profile_picture(self, obj):
+        if obj.is_anonymous or not obj.user:
+            return None
+        if obj.user.profile_picture:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.user.profile_picture.url)
+            return obj.user.profile_picture.url
+        return None
+    
+    def get_author_profile_thumbnail(self, obj):
+        if obj.is_anonymous or not obj.user:
+            return None
+        if obj.user.profile_thumbnail:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.user.profile_thumbnail.url)
+            return obj.user.profile_thumbnail.url
+        return None
             
     class Meta:
         model = Post
         fields = ['id', 'user', 'nickname', 'content', 'date', 'was_edited', 
                   'thread', 'replying_to', 'replies', 'is_anonymous', 'user_display_name',
-                  'vote_count', 'user_vote', 'can_vote']
+                  'vote_count', 'user_vote', 'can_vote', 'author_profile_picture', 
+                  'author_profile_thumbnail']
 
 class Thread(models.Model):
     # Primary key (auto-generated)
@@ -167,6 +190,8 @@ class ThreadSerializer(serializers.ModelSerializer):
     vote_count = serializers.SerializerMethodField()
     user_vote = serializers.SerializerMethodField()
     can_vote = serializers.SerializerMethodField()
+    author_profile_picture = serializers.SerializerMethodField()
+    author_profile_thumbnail = serializers.SerializerMethodField()
     
     def get_author_display_name(self, obj):
         if obj.is_anonymous:
@@ -199,6 +224,26 @@ class ThreadSerializer(serializers.ModelSerializer):
             return False
         # User cannot vote on their own threads (even anonymous ones)
         return obj.author != request.user
+    
+    def get_author_profile_picture(self, obj):
+        if obj.is_anonymous or not obj.author:
+            return None
+        if obj.author.profile_picture:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.author.profile_picture.url)
+            return obj.author.profile_picture.url
+        return None
+    
+    def get_author_profile_thumbnail(self, obj):
+        if obj.is_anonymous or not obj.author:
+            return None
+        if obj.author.profile_thumbnail:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.author.profile_thumbnail.url)
+            return obj.author.profile_thumbnail.url
+        return None
             
     class Meta:
         model = Thread
@@ -206,7 +251,8 @@ class ThreadSerializer(serializers.ModelSerializer):
             'id', 'category', 'title', 'content', 'nickname', 'date',
             'visible_for_teachers', 'can_be_answered', 'last_activity_date',
             'posts', 'is_anonymous', 'user', 'author_display_name',
-            'vote_count', 'user_vote', 'can_vote'
+            'vote_count', 'user_vote', 'can_vote', 'author_profile_picture',
+            'author_profile_thumbnail'
         ]
 
 def create_post(nickname, content, replying_to_ids=None, thread_id=None, user=None, is_anonymous=False):

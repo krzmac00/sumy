@@ -89,8 +89,8 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
     }
   };
 
-  // Default user image path
-  const userImagePath = "/user_default_image.png";
+  // Get user image path - use profile thumbnail if available, otherwise default
+  const userImagePath = thread.author_profile_thumbnail || "/user_default_image.png";
   
   return (
     <div className="thread-card">

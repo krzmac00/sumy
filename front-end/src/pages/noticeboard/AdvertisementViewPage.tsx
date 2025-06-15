@@ -250,7 +250,7 @@ const AdvertisementViewPage: React.FC = () => {
             <h3>{t('noticeboard.confirmDelete')}</h3>
             <p>{t('noticeboard.deleteWarning')}</p>
             <div className="dialog-actions">
-              <button className="cancel-button" onClick={() => setShowDeleteConfirm(false)}>
+              <button className="cancel-button-advertisment" onClick={() => setShowDeleteConfirm(false)}>
                 {t('common.cancel')}
               </button>
               <button className="confirm-delete-button" onClick={handleDelete}>
@@ -274,7 +274,7 @@ const AdvertisementViewPage: React.FC = () => {
               onChange={(e) => setRenewDays(parseInt(e.target.value))}
             />
             <div className="dialog-actions">
-              <button className="cancel-button" onClick={() => setShowRenewDialog(false)}>
+              <button className="cancel-button-advertisment" onClick={() => setShowRenewDialog(false)}>
                 {t('common.cancel')}
               </button>
               <button className="confirm-button" onClick={handleRenew}>

@@ -12,11 +12,30 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     blacklist = serializers.CharField(required=False)
     bio = serializers.CharField(source='profile.bio', allow_blank=True)
+    profile_picture_url = serializers.SerializerMethodField()
+    profile_thumbnail_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'login', 'email', 'first_name', 'last_name', 'role', 'blacklist', 'bio']
-        read_only_fields = ['login', 'role']
+        fields = ['id', 'login', 'email', 'first_name', 'last_name', 'role', 'blacklist', 'bio', 
+                  'profile_picture_url', 'profile_thumbnail_url']
+        read_only_fields = ['login', 'role', 'profile_picture_url', 'profile_thumbnail_url']
+    
+    def get_profile_picture_url(self, obj):
+        if obj.profile_picture:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.profile_picture.url)
+            return obj.profile_picture.url
+        return None
+    
+    def get_profile_thumbnail_url(self, obj):
+        if obj.profile_thumbnail:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.profile_thumbnail.url)
+            return obj.profile_thumbnail.url
+        return None
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
@@ -114,8 +133,27 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class PublicUserSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(source='profile.bio', read_only=True)
     date_joined = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
+    profile_picture_url = serializers.SerializerMethodField()
+    profile_thumbnail_url = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ['id', 'login', 'first_name', 'last_name', 'role', 'bio', 'date_joined']
+        fields = ['id', 'login', 'first_name', 'last_name', 'role', 'bio', 'date_joined',
+                  'profile_picture_url', 'profile_thumbnail_url']
         read_only_fields = fields
+    
+    def get_profile_picture_url(self, obj):
+        if obj.profile_picture:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.profile_picture.url)
+            return obj.profile_picture.url
+        return None
+    
+    def get_profile_thumbnail_url(self, obj):
+        if obj.profile_thumbnail:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.profile_thumbnail.url)
+            return obj.profile_thumbnail.url
+        return None

@@ -4,7 +4,24 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.contrib.postgres.fields import ArrayField
+from django.core.validators import FileExtensionValidator
 import re
+import os
+from uuid import uuid4
+
+
+def profile_picture_path(instance, filename):
+    """Generate unique path for profile pictures"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid4()}.{ext}'
+    return os.path.join('profile_pictures', str(instance.id), filename)
+
+
+def profile_thumbnail_path(instance, filename):
+    """Generate unique path for profile thumbnails"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid4()}_thumb.{ext}'
+    return os.path.join('profile_pictures', str(instance.id), 'thumbnails', filename)
 
 
 class UserManager(BaseUserManager):
@@ -78,6 +95,23 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         verbose_name='blacklist'
     )
+    
+    # Profile picture fields
+    profile_picture = models.ImageField(
+        upload_to=profile_picture_path,
+        validators=[FileExtensionValidator(['jpg', 'jpeg', 'png', 'gif', 'webp'])],
+        blank=True,
+        null=True,
+        verbose_name='profile picture'
+    )
+    profile_thumbnail = models.ImageField(
+        upload_to=profile_thumbnail_path,
+        blank=True,
+        null=True,
+        verbose_name='profile thumbnail'
+    )
+    profile_picture_uploaded_at = models.DateTimeField(blank=True, null=True)
+    profile_picture_file_size = models.PositiveIntegerField(blank=True, null=True)
 
     is_staff = models.BooleanField(
         _('staff status'),

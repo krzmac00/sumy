@@ -398,6 +398,90 @@ const resources = {
       "common.by": "by",
       "common.edited": "edited",
 
+      // News
+      "news.title": "News Feed",
+      "news.createNews": "Create News",
+      "news.noItems": "No news items found.",
+      "news.errors.loadFailed": "Failed to load news items",
+      "news.errors.loadCategoriesFailed": "Failed to load categories",
+      "news.errors.requiredFields": "Please fill in all required fields",
+      "news.errors.selectCategory": "Please select at least one category",
+      "news.errors.createFailed": "Failed to create news item",
+      
+      // News Form
+      "news.form.title": "Title",
+      "news.form.titlePlaceholder": "Enter news title",
+      "news.form.content": "Content",
+      "news.form.contentPlaceholder": "Enter news content",
+      "news.form.categories": "Categories",
+      "news.form.eventDate": "Event Date",
+      "news.form.eventLocation": "Event Location",
+      "news.form.eventLocationPlaceholder": "Enter event location",
+      "news.form.publish": "Publish News",
+      
+      // News Filters
+      "news.filters.title": "Filters",
+      "news.filters.clear": "Clear Filters",
+      "news.filters.search": "Search",
+      "news.filters.searchPlaceholder": "Search news...",
+      "news.filters.categories": "Categories",
+      "news.filters.dateRange": "Date Range",
+      "news.filters.dateFrom": "From",
+      "news.filters.dateTo": "To",
+      "news.filters.active": "Active filters",
+      "news.filters.searchActive": "Search",
+      "news.filters.categoriesActive": "{{count}} categories",
+      "news.filters.dateActive": "Date range",
+      
+      // News Categories
+      "news.categories.university-wide": "University-wide",
+      "news.categories.year-1": "1st year",
+      "news.categories.year-2": "2nd year",
+      "news.categories.year-3": "3rd year",
+      "news.categories.year-4": "4th year",
+      "news.categories.year-5": "5th year",
+      "news.categories.ftims": "FTIMS",
+      "news.categories.is": "IS",
+      "news.categories.gmk": "GMK",
+      "news.categories.ias": "IAS",
+      "news.categories.ibd": "IBD",
+      "news.categories.ioad": "IOAD",
+      "news.categories.tgsk": "TGSK",
+      "news.categories.aiaf": "AIAF",
+      "news.categories.ft": "FT",
+      "news.categories.ms": "MS",
+      "news.categories.announcement": "Announcement",
+      "news.categories.deans-hours": "Dean's hours",
+      "news.categories.session": "Session",
+      "news.categories.survey": "Survey",
+      "news.categories.parking": "Parking",
+      "news.categories.event": "Event",
+      
+      // Roles
+      "roles.student": "Student",
+      "roles.lecturer": "Lecturer",
+      "roles.admin": "Admin",
+
+      // Home page tabs
+      "home.tabs.todayEvents": "Today's Events",
+      "home.tabs.newsFeed": "News Feed",
+      "home.tabs.pinnedThreads": "Pinned Threads",
+      
+      // Profile picture
+      "profile.picture.preview": "Preview",
+      "profile.picture.current": "Current profile picture",
+      "profile.picture.upload": "Upload Picture",
+      "profile.picture.change": "Change Picture",
+      "profile.picture.delete": "Delete",
+      "profile.picture.confirmDelete": "Are you sure you want to delete your profile picture?",
+      "profile.picture.info": "Maximum file size: 5MB. Supported formats: JPEG, PNG, GIF, WebP",
+      "profile.picture.invalidType": "Invalid file type. Please select JPEG, PNG, GIF or WebP.",
+      "profile.picture.tooLarge": "File size exceeds 5MB limit.",
+      "profile.picture.uploadFailed": "Failed to upload profile picture.",
+      "profile.picture.deleteFailed": "Failed to delete profile picture.",
+      "common.uploading": "Uploading...",
+      "common.deleting": "Deleting...",
+
     }
   },
   pl: {
@@ -791,6 +875,89 @@ const resources = {
       "common.by": "przez",
       "common.edited": "edytowano",
 
+      // News
+      "news.title": "Aktualności",
+      "news.createNews": "Utwórz aktualność",
+      "news.noItems": "Nie znaleziono aktualności.",
+      "news.errors.loadFailed": "Nie udało się załadować aktualności",
+      "news.errors.loadCategoriesFailed": "Nie udało się załadować kategorii",
+      "news.errors.requiredFields": "Proszę wypełnić wszystkie wymagane pola",
+      "news.errors.selectCategory": "Proszę wybrać co najmniej jedną kategorię",
+      "news.errors.createFailed": "Nie udało się utworzyć aktualności",
+      
+      // News Form
+      "news.form.title": "Tytuł",
+      "news.form.titlePlaceholder": "Wprowadź tytuł aktualności",
+      "news.form.content": "Treść",
+      "news.form.contentPlaceholder": "Wprowadź treść aktualności",
+      "news.form.categories": "Kategorie",
+      "news.form.eventDate": "Data wydarzenia",
+      "news.form.eventLocation": "Miejsce wydarzenia",
+      "news.form.eventLocationPlaceholder": "Wprowadź miejsce wydarzenia",
+      "news.form.publish": "Opublikuj aktualność",
+      
+      // News Filters
+      "news.filters.title": "Filtry",
+      "news.filters.clear": "Wyczyść filtry",
+      "news.filters.search": "Szukaj",
+      "news.filters.searchPlaceholder": "Szukaj aktualności...",
+      "news.filters.categories": "Kategorie",
+      "news.filters.dateRange": "Zakres dat",
+      "news.filters.dateFrom": "Od",
+      "news.filters.dateTo": "Do",
+      "news.filters.active": "Aktywne filtry",
+      "news.filters.searchActive": "Szukaj",
+      "news.filters.categoriesActive": "{{count}} kategorie",
+      "news.filters.dateActive": "Zakres dat",
+      
+      // News Categories
+      "news.categories.university-wide": "Ogólnouczelniane",
+      "news.categories.year-1": "1 rok",
+      "news.categories.year-2": "2 rok",
+      "news.categories.year-3": "3 rok",
+      "news.categories.year-4": "4 rok",
+      "news.categories.year-5": "5 rok",
+      "news.categories.ftims": "FTIMS",
+      "news.categories.is": "IS",
+      "news.categories.gmk": "GMK",
+      "news.categories.ias": "IAS",
+      "news.categories.ibd": "IBD",
+      "news.categories.ioad": "IOAD",
+      "news.categories.tgsk": "TGSK",
+      "news.categories.aiaf": "AIAF",
+      "news.categories.ft": "FT",
+      "news.categories.ms": "MS",
+      "news.categories.announcement": "Komunikat",
+      "news.categories.deans-hours": "Godziny dziekańskie",
+      "news.categories.session": "Sesja",
+      "news.categories.survey": "Ankieta",
+      "news.categories.parking": "Parking",
+      "news.categories.event": "Wydarzenie",
+      
+      // Roles
+      "roles.student": "Student",
+      "roles.lecturer": "Wykładowca",
+      "roles.admin": "Administrator",
+
+      // Home page tabs
+      "home.tabs.todayEvents": "Wydarzenia dziś",
+      "home.tabs.newsFeed": "Aktualności",
+      "home.tabs.pinnedThreads": "Przypięte wątki",
+      
+      // Profile picture
+      "profile.picture.preview": "Podgląd",
+      "profile.picture.current": "Obecne zdjęcie profilowe",
+      "profile.picture.upload": "Prześlij zdjęcie",
+      "profile.picture.change": "Zmień zdjęcie",
+      "profile.picture.delete": "Usuń",
+      "profile.picture.confirmDelete": "Czy na pewno chcesz usunąć swoje zdjęcie profilowe?",
+      "profile.picture.info": "Maksymalny rozmiar pliku: 5MB. Obsługiwane formaty: JPEG, PNG, GIF, WebP",
+      "profile.picture.invalidType": "Nieprawidłowy typ pliku. Wybierz JPEG, PNG, GIF lub WebP.",
+      "profile.picture.tooLarge": "Rozmiar pliku przekracza limit 5MB.",
+      "profile.picture.uploadFailed": "Nie udało się przesłać zdjęcia profilowego.",
+      "profile.picture.deleteFailed": "Nie udało się usunąć zdjęcia profilowego.",
+      "common.uploading": "Przesyłanie...",
+      "common.deleting": "Usuwanie..."
 
     }
   }

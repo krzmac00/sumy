@@ -266,7 +266,7 @@
   justify-content: flex-end;
 }
 
-.cancel-button,
+.cancel-button-advertisment,
 .confirm-button,
 .confirm-delete-button {
   padding: 0.75rem 1.5rem;
@@ -278,13 +278,13 @@
   transition: all 0.2s;
 }
 
-.cancel-button {
+.cancel-button-advertisment {
   background-color: var(--color-background);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
 }
 
-.cancel-button:hover {
+.cancel-button-advertisment:hover {
   background-color: var(--color-surface);
 }
 

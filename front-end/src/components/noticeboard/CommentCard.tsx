@@ -121,7 +121,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
             />
             <div className="edit-actions">
               <button 
-                className="cancel-button" 
+                className="cancel-button-comment" 
                 onClick={() => {
                   setIsEditing(false);
                   setEditContent(comment.content);

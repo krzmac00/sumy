@@ -41,8 +41,8 @@ const PostCard: React.FC<PostCardProps> = ({
   // Check if current user is the post creator
   const isPostCreator = currentUser && post.user === currentUser.id;
 
-  // Default user image path
-  const userImagePath = "/user_default_image.png";
+  // Get user image path - use profile thumbnail if available, otherwise default
+  const userImagePath = post.author_profile_thumbnail || "/user_default_image.png";
 
   const handleVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
     e.preventDefault();

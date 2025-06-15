@@ -97,7 +97,17 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
         
         <div className="user-menu">
           <button onClick={toggleUserDropdown} className="user-button">
-            <span className="user-icon">👤</span>
+            <span className="user-icon">
+              {currentUser?.profile_thumbnail_url ? (
+                <img 
+                  src={currentUser.profile_thumbnail_url} 
+                  alt={`${currentUser.first_name} ${currentUser.last_name}`}
+                  className="user-avatar"
+                />
+              ) : (
+                <i className="fas fa-user-circle"></i>
+              )}
+            </span>
             <span className="username">
               {currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'User'}
             </span>
