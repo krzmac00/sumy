@@ -48,6 +48,9 @@ export const advertisementAPI = {
       if (filters.search) params.append('search', filters.search);
     }
     
+    // Add timestamp to prevent caching
+    params.append('_t', Date.now().toString());
+    
     console.log('=== API REQUEST ===');
     console.log('URL:', `/api/noticeboard/advertisements/?${params}`);
     console.log('Filters:', filters);

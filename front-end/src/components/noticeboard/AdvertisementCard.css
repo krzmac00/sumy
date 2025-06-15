@@ -1,31 +1,42 @@
-.advertisement-card {
-  background-color: var(--color-surface, #ffffff) !important;
+/* .advertisement-card {
+  background-color: var(--color-surface, #ffffff);
   border: 1px solid var(--color-border, #e0e0e0);
   border-radius: 0.75rem;
   padding: 1.5rem;
   cursor: pointer;
-  transition: all 0.2s;
-  display: flex !important;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  display: flex;
   flex-direction: column;
   gap: 1rem;
   position: relative;
-  z-index: 2;
-  /* Debug styles - remove after fixing */
-  border: 2px solid blue !important;
+  z-index: 1;
   min-height: 200px;
-  visibility: visible !important;
-  opacity: 1 !important;
-  transform: none !important;
+  width: 100%;
+  box-sizing: border-box;
+} */
+
+.advertisement-card {
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 200px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .advertisement-card:hover {
   border-color: var(--color-primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
 }
 
 .advertisement-card.expired {
-  opacity: 0.7;
+  opacity: 0.8;
   background-color: var(--color-background);
 }
 

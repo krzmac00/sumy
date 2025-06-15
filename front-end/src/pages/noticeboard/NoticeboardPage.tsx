@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plus, Filter, Search } from 'lucide-react';
+import { Plus, Filter, Search, RefreshCw } from 'lucide-react';
 import { Advertisement, AdvertisementCategory, AdvertisementFilters, CATEGORY_COLORS } from '../../types/noticeboard';
 import { advertisementAPI } from '../../services/noticeboardAPI';
 import { useAuth } from '../../contexts/AuthContext';
@@ -49,14 +49,25 @@ const NoticeboardPage: React.FC = () => {
         console.log('Advertisement keys:', Object.keys(data[0]));
       }
       
-      setAdvertisements(data);
-      console.log('State updated with advertisements:', data);
+      // Ensure we have valid data before setting state
+      if (Array.isArray(data)) {
+        setAdvertisements(data);
+        console.log('State updated with advertisements:', data);
+      } else {
+        console.error('Invalid data format received:', data);
+        setAdvertisements([]);
+      }
     } catch (err) {
       console.error('=== ERROR FETCHING ADVERTISEMENTS ===');
       console.error('Error details:', err);
-      console.error('Error type:', err?.constructor?.name);
-      console.error('Error message:', err?.message);
-      console.error('Error stack:', err?.stack);
+      
+      if (err instanceof Error) {
+        console.error('Error type:', err.constructor.name);
+        console.error('Error message:', err.message);
+        console.error('Error stack:', err.stack);
+      } else {
+        console.error('Unknown error type:', typeof err);
+      }
       
       setError(t('noticeboard.errors.fetchFailed'));
     } finally {
@@ -105,6 +116,11 @@ const NoticeboardPage: React.FC = () => {
     }
   };
 
+  const handleRefresh = () => {
+    setLoading(true);
+    fetchAdvertisements();
+  };
+
   return (
     <MainLayout>
       <div className="noticeboard-page">
@@ -137,6 +153,15 @@ const NoticeboardPage: React.FC = () => {
         >
           <Filter size={20} />
           {t('common.filters')}
+        </button>
+        
+        <button 
+          className="filter-toggle"
+          onClick={handleRefresh}
+          disabled={loading}
+        >
+          <RefreshCw size={20} className={loading ? 'spinning' : ''} />
+          {t('common.refresh')}
         </button>
       </div>
 
@@ -187,34 +212,20 @@ const NoticeboardPage: React.FC = () => {
       )}
 
       <div className="advertisements-container">
-        {console.log('=== RENDER STATE ===', {
-          loading,
-          error,
-          advertisementsLength: advertisements.length,
-          advertisements: advertisements,
-          showingLoading: loading,
-          showingError: !!error,
-          showingEmpty: !loading && !error && advertisements.length === 0,
-          showingGrid: !loading && !error && advertisements.length > 0
-        })}
-        
         {loading && (
           <div className="loading-state">
-            {console.log('Rendering loading state')}
             {t('common.loading')}
           </div>
         )}
 
         {error && (
           <div className="error-state">
-            {console.log('Rendering error state:', error)}
             {error}
           </div>
         )}
 
         {!loading && !error && advertisements.length === 0 && (
           <div className="empty-state">
-            {console.log('Rendering empty state')}
             <p>{t('noticeboard.noAdvertisements')}</p>
             {user && (
               <button className="btn-primary" onClick={handleCreateClick}>
@@ -225,10 +236,12 @@ const NoticeboardPage: React.FC = () => {
         )}
 
         {!loading && !error && advertisements.length > 0 && (
-          <div className="advertisements-grid" style={{ display: 'grid', visibility: 'visible', position: 'relative', zIndex: 100 }}>
-            {console.log('Rendering advertisements grid with', advertisements.length, 'items')}
+          <div className="advertisements-grid">
             {advertisements.map((ad, index) => {
-              console.log(`Rendering advertisement ${index}:`, ad);
+              // Ensure we have valid advertisement data
+              if (!ad || !ad.id) {
+                return null;
+              }
               return (
                 <AdvertisementCard
                   key={ad.id}

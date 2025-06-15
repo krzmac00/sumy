@@ -47,7 +47,6 @@ const AdvertisementCard: React.FC<AdvertisementCardProps> = ({ advertisement, on
     <div 
       className={`advertisement-card ${advertisement.is_expired ? 'expired' : ''}`}
       onClick={onClick}
-      style={{ backgroundColor: '#f0f0f0', minHeight: '150px' }}
     >
       <div className="card-header">
         <span 

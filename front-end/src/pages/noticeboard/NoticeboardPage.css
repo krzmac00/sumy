@@ -7,11 +7,9 @@
   margin: 0 auto;
   background-color: transparent;
   position: relative;
-  z-index: 1;
+  /* z-index: 1; */
   min-height: 100vh;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  display: block;
 }
 
 .noticeboard-header h1 {
@@ -195,12 +193,31 @@
   border-color: var(--color-primary);
 }
 
+/* .advertisements-container {
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+} */
+
+
 .advertisements-container {
   min-height: 400px;
   position: relative;
-  z-index: 10;
-  background-color: transparent;
+  display: block;
 }
+
+/* .loading-state,
+.error-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+} */
 
 .loading-state,
 .error-state,
@@ -222,21 +239,45 @@
   color: var(--color-text-secondary);
 }
 
-.advertisements-grid {
-  display: grid !important;
+/* .advertisements-grid {
+  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
   margin-top: 1rem;
-  /* Debug styles - remove after fixing */
-  border: 2px solid red;
-  min-height: 100px;
-  background-color: rgba(255, 0, 0, 0.05);
   padding: 1rem;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: relative !important;
-  z-index: 999 !important;
-  transform: none !important;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  isolation: isolate;
+  flex: 1;
+} */
+
+.advertisements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  width: 100%;
+}
+
+/* Spinning animation for refresh icon */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+.filter-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Responsive design */
