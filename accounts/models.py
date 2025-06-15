@@ -12,15 +12,15 @@ from uuid import uuid4
 
 def profile_picture_path(instance, filename):
     """Generate unique path for profile pictures"""
-    ext = filename.split('.')[-1]
-    filename = f'{uuid4()}.{ext}'
+    # Always save as .jpg since we convert to JPEG
+    filename = f'{uuid4()}.jpg'
     return os.path.join('profile_pictures', str(instance.id), filename)
 
 
 def profile_thumbnail_path(instance, filename):
     """Generate unique path for profile thumbnails"""
-    ext = filename.split('.')[-1]
-    filename = f'{uuid4()}_thumb.{ext}'
+    # Always save as .jpg since we convert to JPEG
+    filename = f'{uuid4()}_thumb.jpg'
     return os.path.join('profile_pictures', str(instance.id), 'thumbnails', filename)
 
 

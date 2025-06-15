@@ -6,6 +6,7 @@ import { formatTimeAgo } from '../../utils/dateUtils';
 import { translateCategory } from '../../utils/categories';
 import { useAuth } from '../../contexts/AuthContext';
 import { threadAPI, voteAPI } from '../../services/api';
+import { getMediaUrl } from '../../utils/mediaUrl';
 import './ThreadCard.css';
 
 interface ThreadCardProps {
@@ -90,7 +91,9 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
   };
 
   // Get user image path - use profile thumbnail if available, otherwise default
-  const userImagePath = thread.author_profile_thumbnail || "/user_default_image.png";
+  const userImagePath = thread.author_profile_thumbnail 
+    ? getMediaUrl(thread.author_profile_thumbnail) || "/user_default_image.png"
+    : "/user_default_image.png";
   
   return (
     <div className="thread-card">

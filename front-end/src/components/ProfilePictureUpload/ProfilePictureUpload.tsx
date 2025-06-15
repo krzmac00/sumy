@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { profileService } from '../../services/profileService';
+import { getMediaUrl } from '../../utils/mediaUrl';
 import './ProfilePictureUpload.css';
 
 interface ProfilePictureUploadProps {
@@ -120,12 +121,20 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
           {preview ? (
             <img src={preview} alt={t('profile.picture.preview', 'Preview')} />
           ) : currentPictureUrl ? (
-            <img src={currentPictureUrl} alt={t('profile.picture.current', 'Current profile picture')} />
-          ) : (
-            <div className="no-picture">
-              <i className="fas fa-user-circle"></i>
-            </div>
-          )}
+            <img 
+              src={getMediaUrl(currentPictureUrl) || ''} 
+              alt={t('profile.picture.current', 'Current profile picture')} 
+              onError={(e) => {
+                console.error('Failed to load profile picture:', currentPictureUrl);
+                console.error('Computed URL:', getMediaUrl(currentPictureUrl));
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.parentElement?.querySelector('.no-picture')?.classList.remove('d-none');
+              }}
+            />
+          ) : null}
+          <div className={`no-picture ${currentPictureUrl && !preview ? 'd-none' : ''}`}>
+            <i className="fas fa-user-circle"></i>
+          </div>
         </div>
 
         {error && (

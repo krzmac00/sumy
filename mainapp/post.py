@@ -77,8 +77,12 @@ class PostSerializer(serializers.ModelSerializer):
         if obj.user.profile_picture:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.user.profile_picture.url)
-            return obj.user.profile_picture.url
+                url = request.build_absolute_uri(obj.user.profile_picture.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.user.profile_picture.url}'
         return None
     
     def get_author_profile_thumbnail(self, obj):
@@ -87,8 +91,12 @@ class PostSerializer(serializers.ModelSerializer):
         if obj.user.profile_thumbnail:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.user.profile_thumbnail.url)
-            return obj.user.profile_thumbnail.url
+                url = request.build_absolute_uri(obj.user.profile_thumbnail.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.user.profile_thumbnail.url}'
         return None
             
     class Meta:
@@ -231,8 +239,12 @@ class ThreadSerializer(serializers.ModelSerializer):
         if obj.author.profile_picture:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.author.profile_picture.url)
-            return obj.author.profile_picture.url
+                url = request.build_absolute_uri(obj.author.profile_picture.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.author.profile_picture.url}'
         return None
     
     def get_author_profile_thumbnail(self, obj):
@@ -241,8 +253,12 @@ class ThreadSerializer(serializers.ModelSerializer):
         if obj.author.profile_thumbnail:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.author.profile_thumbnail.url)
-            return obj.author.profile_thumbnail.url
+                url = request.build_absolute_uri(obj.author.profile_thumbnail.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.author.profile_thumbnail.url}'
         return None
             
     class Meta:

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { getMediaUrl } from '../utils/mediaUrl';
 import './Navbar.css';
 import pcLogo from '../assets/pc-logo.svg';
 
@@ -100,13 +101,16 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
             <span className="user-icon">
               {currentUser?.profile_thumbnail_url ? (
                 <img 
-                  src={currentUser.profile_thumbnail_url} 
+                  src={getMediaUrl(currentUser.profile_thumbnail_url) || ''} 
                   alt={`${currentUser.first_name} ${currentUser.last_name}`}
                   className="user-avatar"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('d-none');
+                  }}
                 />
-              ) : (
-                <i className="fas fa-user-circle"></i>
-              )}
+              ) : null}
+              <i className={`fas fa-user-circle ${currentUser?.profile_thumbnail_url ? 'd-none' : ''}`}></i>
             </span>
             <span className="username">
               {currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'User'}

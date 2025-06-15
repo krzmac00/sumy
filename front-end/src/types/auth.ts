@@ -8,6 +8,8 @@ export interface User {
   first_name: string;
   last_name: string;
   role: 'student' | 'lecturer' | 'admin';
+  profile_picture_url?: string | null;
+  profile_thumbnail_url?: string | null;
 }
 
 /**

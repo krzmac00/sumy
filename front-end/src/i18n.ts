@@ -114,8 +114,8 @@ const resources = {
       "forum.error.fetchThreads": "Error loading threads. Please try again later.",
       "forum.error.fetchThread": "Error loading thread. Please try again later.",
       "forum.error.threadNotFound": "Thread not found.",
-      "forum.blacklist_on": "Czarna lista wł:",
-      "forum.blacklist_off": "Czarna lista wył:",
+      "forum.blacklist_on": "Black list:",
+      "forum.blacklist_off": "Black list:",
       "forum.disable_blacklist": "Wyłącz czarną listę",
       "forum.enable_blacklist": "Włącz czarną listę",
       
@@ -593,8 +593,8 @@ const resources = {
       "forum.error.fetchThreads": "Błąd podczas ładowania wątków. Spróbuj ponownie później.",
       "forum.error.fetchThread": "Błąd podczas ładowania wątku. Spróbuj ponownie później.",
       "forum.error.threadNotFound": "Wątek nie został znaleziony.",
-      "forum.blacklist_on": "Czarna lista wł:",
-      "forum.blacklist_off": "Czarna lista wył:",
+      "forum.blacklist_on": "Czarna lista:",
+      "forum.blacklist_off": "Czarna lista:",
       
       // Forum - Thread List
       "forum.threadList.title": "Wątki dyskusyjne",

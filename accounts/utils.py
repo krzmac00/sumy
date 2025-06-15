@@ -1,7 +1,11 @@
 import os
 from io import BytesIO
 from django.core.files.base import ContentFile
-# from PIL import Image  # Temporarily commented for migration
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
 import logging
 
 logger = logging.getLogger(__name__)
@@ -9,7 +13,7 @@ logger = logging.getLogger(__name__)
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp']
 PROFILE_PICTURE_SIZE = (400, 400)
-THUMBNAIL_SIZE = (100, 100)
+THUMBNAIL_SIZE = (64, 64)  # Slightly larger than 32px for retina displays
 
 
 def validate_image_file(file):
@@ -26,22 +30,28 @@ def validate_image_file(file):
         errors.append(f"File type '{ext}' is not allowed. Allowed types: {', '.join(ALLOWED_EXTENSIONS)}")
     
     # Verify it's actually an image
-    # try:
-    #     img = Image.open(file)
-    #     img.verify()
-    # except:
-    #     errors.append("Invalid image file")
+    if PIL_AVAILABLE:
+        try:
+            img = Image.open(file)
+            img.verify()
+            file.seek(0)  # Reset file pointer after verify
+        except:
+            errors.append("Invalid image file")
     
     return errors
 
 
 def process_profile_picture(image_file):
     """Process uploaded profile picture - resize and create thumbnail"""
-    # Temporarily return dummy files for migration
-    return ContentFile(b"dummy"), ContentFile(b"dummy")
+    if not PIL_AVAILABLE:
+        # If Pillow is not available, just return the original file
+        logger.error("Pillow is not installed. Cannot process images.")
+        image_file.seek(0)
+        content = image_file.read()
+        image_file.seek(0)
+        return ContentFile(content), ContentFile(content)
     
-    # TODO: Uncomment after installing Pillow
-    """try:
+    try:
         # Open the image
         img = Image.open(image_file)
         
@@ -93,7 +103,7 @@ def process_profile_picture(image_file):
         
     except Exception as e:
         logger.error(f"Error processing profile picture: {str(e)}")
-        raise"""
+        raise
 
 
 def delete_old_profile_pictures(user):

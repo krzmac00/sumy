@@ -4,6 +4,7 @@ import MainLayout from '../layouts/MainLayout';
 import './Profile.css';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../contexts/AuthContext';
 import ProfilePictureUpload from '../components/ProfilePictureUpload';
 
 interface UserData {
@@ -21,6 +22,7 @@ interface UserData {
 const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { updateUser } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [blacklist, setBlacklist] = useState('');
   const [bio, setBio] = useState('');
@@ -125,6 +127,18 @@ const ProfilePage: React.FC = () => {
     if (userData) {
       setUserData({
         ...userData,
+        profile_picture_url: updatedUser.profile_picture_url || null,
+        profile_thumbnail_url: updatedUser.profile_thumbnail_url || null
+      });
+      
+      // Update the auth context to reflect changes in navbar
+      updateUser({
+        id: updatedUser.id,
+        login: updatedUser.login,
+        email: updatedUser.email,
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+        role: updatedUser.role,
         profile_picture_url: updatedUser.profile_picture_url || null,
         profile_thumbnail_url: updatedUser.profile_thumbnail_url || null
       });

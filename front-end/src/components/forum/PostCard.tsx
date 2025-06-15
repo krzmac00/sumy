@@ -5,6 +5,7 @@ import { Post } from '../../types/forum';
 import { postAPI, voteAPI } from '../../services/api';
 import { formatTimeAgo } from '../../utils/dateUtils';
 import { useAuth } from '../../contexts/AuthContext';
+import { getMediaUrl } from '../../utils/mediaUrl';
 import './PostCard.css';
 
 interface PostCardProps {
@@ -42,7 +43,9 @@ const PostCard: React.FC<PostCardProps> = ({
   const isPostCreator = currentUser && post.user === currentUser.id;
 
   // Get user image path - use profile thumbnail if available, otherwise default
-  const userImagePath = post.author_profile_thumbnail || "/user_default_image.png";
+  const userImagePath = post.author_profile_thumbnail 
+    ? getMediaUrl(post.author_profile_thumbnail) || "/user_default_image.png"
+    : "/user_default_image.png";
 
   const handleVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
     e.preventDefault();

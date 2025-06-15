@@ -142,7 +142,11 @@
   }
   
   .user-icon {
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     margin-right: 8px;
   }
   
@@ -210,13 +214,19 @@
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #fff;
+    border: 2px solid #e0e0e0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
   }
   
   .user-icon i {
-    font-size: 32px;
+    font-size: 28px;
     color: #666;
+    line-height: 1;
+  }
+  
+  .d-none {
+    display: none !important;
   }
   
   @media (max-width: 768px) {

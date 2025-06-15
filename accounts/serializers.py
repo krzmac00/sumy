@@ -25,16 +25,24 @@ class UserSerializer(serializers.ModelSerializer):
         if obj.profile_picture:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.profile_picture.url)
-            return obj.profile_picture.url
+                url = request.build_absolute_uri(obj.profile_picture.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.profile_picture.url}'
         return None
     
     def get_profile_thumbnail_url(self, obj):
         if obj.profile_thumbnail:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.profile_thumbnail.url)
-            return obj.profile_thumbnail.url
+                url = request.build_absolute_uri(obj.profile_thumbnail.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.profile_thumbnail.url}'
         return None
 
     def to_representation(self, instance):
@@ -146,14 +154,22 @@ class PublicUserSerializer(serializers.ModelSerializer):
         if obj.profile_picture:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.profile_picture.url)
-            return obj.profile_picture.url
+                url = request.build_absolute_uri(obj.profile_picture.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.profile_picture.url}'
         return None
     
     def get_profile_thumbnail_url(self, obj):
         if obj.profile_thumbnail:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.profile_thumbnail.url)
-            return obj.profile_thumbnail.url
+                url = request.build_absolute_uri(obj.profile_thumbnail.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.profile_thumbnail.url}'
         return None

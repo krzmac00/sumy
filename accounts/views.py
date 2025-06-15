@@ -14,7 +14,12 @@ from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, Bl
 from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer, PublicUserSerializer
 from .tokens import generate_activation_token, validate_activation_token
 from .emails import send_activation_email, send_password_verification_email
-from .utils import validate_image_file, process_profile_picture, delete_old_profile_pictures
+try:
+    from .utils import validate_image_file, process_profile_picture, delete_old_profile_pictures
+except ImportError:
+    # Fallback if Pillow is not available
+    from .utils_simple import validate_image_file_simple as validate_image_file, process_profile_picture_simple as process_profile_picture
+    from .utils import delete_old_profile_pictures
 
 User = get_user_model()
 
@@ -297,9 +302,13 @@ class ProfilePictureUploadView(APIView):
             # Process the new image
             profile_file, thumb_file = process_profile_picture(file)
             
+            # Generate unique filenames
+            import uuid
+            unique_id = str(uuid.uuid4())[:8]
+            
             # Save the processed images
-            user.profile_picture.save(f'profile_{user.id}.jpg', profile_file, save=False)
-            user.profile_thumbnail.save(f'thumb_{user.id}.jpg', thumb_file, save=False)
+            user.profile_picture.save(f'profile_{user.id}_{unique_id}.jpg', profile_file, save=False)
+            user.profile_thumbnail.save(f'thumb_{user.id}_{unique_id}.jpg', thumb_file, save=False)
             
             # Update metadata
             user.profile_picture_uploaded_at = timezone.now()
