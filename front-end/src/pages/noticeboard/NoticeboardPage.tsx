@@ -30,49 +30,24 @@ const NoticeboardPage: React.FC = () => {
 
   const fetchAdvertisements = async () => {
     try {
-      console.log('=== FETCHING ADVERTISEMENTS ===');
-      console.log('Current filters:', filters);
-      
       setLoading(true);
       setError(null);
       
       const data = await advertisementAPI.list(filters);
       
-      console.log('API Response received:');
-      console.log('- Type:', typeof data);
-      console.log('- Is Array:', Array.isArray(data));
-      console.log('- Length:', Array.isArray(data) ? data.length : 'N/A');
-      console.log('- Full data:', JSON.stringify(data, null, 2));
       
-      if (Array.isArray(data) && data.length > 0) {
-        console.log('First advertisement:', data[0]);
-        console.log('Advertisement keys:', Object.keys(data[0]));
-      }
       
       // Ensure we have valid data before setting state
       if (Array.isArray(data)) {
         setAdvertisements(data);
-        console.log('State updated with advertisements:', data);
       } else {
-        console.error('Invalid data format received:', data);
         setAdvertisements([]);
       }
     } catch (err) {
-      console.error('=== ERROR FETCHING ADVERTISEMENTS ===');
-      console.error('Error details:', err);
-      
-      if (err instanceof Error) {
-        console.error('Error type:', err.constructor.name);
-        console.error('Error message:', err.message);
-        console.error('Error stack:', err.stack);
-      } else {
-        console.error('Unknown error type:', typeof err);
-      }
       
       setError(t('noticeboard.errors.fetchFailed'));
     } finally {
       setLoading(false);
-      console.log('Loading state set to false');
     }
   };
 

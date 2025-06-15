@@ -51,24 +51,12 @@ export const advertisementAPI = {
     // Add timestamp to prevent caching
     params.append('_t', Date.now().toString());
     
-    console.log('=== API REQUEST ===');
-    console.log('URL:', `/api/noticeboard/advertisements/?${params}`);
-    console.log('Filters:', filters);
     
     const response = await apiClient.get(`/api/noticeboard/advertisements/?${params}`);
     
-    console.log('=== API RESPONSE ===');
-    console.log('Status:', response.status);
-    console.log('Headers:', response.headers);
-    console.log('Data type:', typeof response.data);
-    console.log('Data is array:', Array.isArray(response.data));
-    console.log('Data:', response.data);
     
     // Check if response.data has a results property (pagination)
     if (response.data && typeof response.data === 'object' && 'results' in response.data) {
-      console.log('Response has pagination structure');
-      console.log('Results:', response.data.results);
-      console.log('Count:', response.data.count);
       return response.data.results;
     }
     
