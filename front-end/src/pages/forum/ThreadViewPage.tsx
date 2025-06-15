@@ -57,7 +57,6 @@ const ThreadViewPage: React.FC = () => {
       setVoteCount(threadData.vote_count || 0);
       setVoteStatus(threadData.user_vote || null);
     } catch (err) {
-      console.error('Error fetching thread:', err);
       setError(t('forum.error.fetchThread'));
     } finally {
       setLoading(false);
@@ -132,7 +131,6 @@ const ThreadViewPage: React.FC = () => {
       setVoteStatus(response.user_vote);
       
     } catch (err) {
-      console.error('Error voting on thread:', err);
       setError(err instanceof Error ? err.message : t('forum.error.voteGeneric'));
     } finally {
       setVoting(false);
@@ -145,7 +143,6 @@ const ThreadViewPage: React.FC = () => {
   const handlePostVoteUpdate = (postId: number, newVoteCount: number, userVote: 'upvote' | 'downvote' | null) => {
     // Optionally update local state or just let the PostCard handle its own state
     // This callback can be used for any global state management if needed
-    console.log(`Post ${postId} vote updated: ${newVoteCount} (${userVote})`);
   };
 
   if (loading) {

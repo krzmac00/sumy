@@ -68,15 +68,12 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
         is_anonymous: isAnonymous
       };
       
-      console.log('Submitting post data:', postData);
-      
       await postAPI.create(postData);
       
       // Clear form and notify parent
       setContent('');
       onSubmitSuccess();
     } catch (err) {
-      console.error('Error creating reply:', err);
       if (err instanceof Error) {
         setError(`${t('forum.reply.errorSubmit')}: ${err.message}`);
       } else {

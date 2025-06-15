@@ -13,12 +13,6 @@ interface AdvertisementCardProps {
 const AdvertisementCard: React.FC<AdvertisementCardProps> = ({ advertisement, onClick }) => {
   const { t } = useTranslation();
 
-  console.log('=== ADVERTISEMENT CARD RENDER ===');
-  console.log('Advertisement data:', advertisement);
-  console.log('Advertisement ID:', advertisement?.id);
-  console.log('Advertisement title:', advertisement?.title);
-  console.log('Advertisement category:', advertisement?.category);
-  console.log('Advertisement author:', advertisement?.author);
 
   const isExpiringSoon = () => {
     if (!advertisement.expires_at) return false;
@@ -30,17 +24,12 @@ const AdvertisementCard: React.FC<AdvertisementCardProps> = ({ advertisement, on
 
   // Safety check for missing data
   if (!advertisement) {
-    console.error('AdvertisementCard: No advertisement data provided');
     return null;
   }
 
   // Additional safety checks
   if (!advertisement.title || !advertisement.author) {
-    console.error('AdvertisementCard: Missing required fields', {
-      hasTitle: !!advertisement.title,
-      hasAuthor: !!advertisement.author,
-      advertisement
-    });
+    // Missing required fields
   }
 
   return (
