@@ -287,7 +287,7 @@ const ThreadList: React.FC<ThreadListProps> = ({
         <div className="thread-list" style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '1rem'
+          gap: '5px'
         }}>
           {filteredThreads.map(thread => (
             <ThreadCard 

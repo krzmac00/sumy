@@ -8,6 +8,7 @@
   }
   
   .profile-page h1 {
+    min-width: 940px;
     font-size: 24px;
     margin-bottom: 20px;
     color: #8b0002;
