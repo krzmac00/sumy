@@ -1,15 +1,19 @@
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
+from django.db.models import Q
 
 from rest_framework import generics, permissions, status
+from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
-from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer
+from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer, \
+    UserSearchSerializer
 from .tokens import generate_activation_token, validate_activation_token
 from .emails import send_activation_email, send_password_verification_email
 
@@ -233,7 +237,7 @@ class UserProfileView(APIView):
                 user = request.user
 
             profile = user.profile
-            serializer = UserProfileSerializer(profile)
+            serializer = UserSerializer(user, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -250,3 +254,22 @@ class UpdateUserProfileView(APIView):
             serializer.save()
             return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class NoPagination(PageNumberPagination):
+    page_size = None
+
+class UserSearchView(ListAPIView):
+    serializer_class = UserSearchSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = NoPagination #wyłączamy paginacje żeby zmienić formę outputu
+
+    def get_queryset(self):
+        q = self.request.query_params.get('q', '').strip()
+        if not q:
+            return User.objects.none()
+        qs = User.objects.filter(
+            Q(first_name__icontains=q) |
+            Q(last_name__icontains=q) |
+            Q(email__startswith=q)   # pasuje do numeru indeksu
+        ).order_by('first_name')[:10]
+        return qs

@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 from . import views
-from .views import UserProfileView, UpdateUserProfileView
+from .views import UserProfileView, UpdateUserProfileView, UserSearchView
 
 urlpatterns = [
     # Authentication
@@ -30,4 +30,6 @@ urlpatterns = [
     path('profile/', UserProfileView.as_view(), name='my-profile'),
     path('profile/update/', UpdateUserProfileView.as_view(), name='update-profile'),
     path('profile/<int:user_id>/', UserProfileView.as_view(), name='user-profile'),
+
+    path('users/search/', UserSearchView.as_view(), name='user-search'),
 ]
