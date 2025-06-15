@@ -2,18 +2,36 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import MainLayout from '../layouts/MainLayout';
-import UnderConstruction from '../components/UnderConstruction';
+import TabbedLayout from '../components/TabbedLayout/TabbedLayout';
+import DayView from '../components/DayView/DayView';
+import NewsFeed from '../components/NewsFeed/NewsFeed';
+import PinnedThreads from '../components/PinnedThreads/PinnedThreads';
 import './Home.css';
-//import Calendar from '@/components/Calendar';
-//import { useLocation } from 'react-router-dom';
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
-  //const { hash } = useLocation();
+
+  const tabs = [
+    {
+      id: 'today',
+      label: t('home.tabs.todayEvents', 'Wydarzenia dziś'),
+      component: DayView
+    },
+    {
+      id: 'news',
+      label: t('home.tabs.newsFeed', 'Aktualności'),
+      component: NewsFeed
+    },
+    {
+      id: 'pinned',
+      label: t('home.tabs.pinnedThreads', 'Przypięte wątki'),
+      component: PinnedThreads
+    }
+  ];
 
   return (
     <MainLayout>
-      <UnderConstruction />
+      <TabbedLayout tabs={tabs} defaultTab="today" />
     </MainLayout>
   );
 };
