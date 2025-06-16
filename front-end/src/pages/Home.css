@@ -40,11 +40,6 @@
     line-height: 1.4;
   }
 
-  /* Ensure the tabbed layout takes full height */
-  .main-content {
-    display: flex;
-    flex-direction: column;
-  }
   
   .main-content > * {
     flex: 1;
