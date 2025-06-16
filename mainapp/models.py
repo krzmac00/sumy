@@ -119,3 +119,6 @@ class Event(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.start_date:%Y-%m-%d})"
+
+# Import models from post.py to make them available for migrations
+from .post import Thread, Post, Vote, PinnedThread
