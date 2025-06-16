@@ -23,9 +23,6 @@
   object-fit: cover;
 }
 
-
-
-
 @media (max-width: 768px) {
   .current-picture-profile {
     width: 150px;

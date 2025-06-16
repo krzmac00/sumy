@@ -309,7 +309,9 @@ export const voteAPI = {
 export const eventAPI = {
   getAll: async (): Promise<CustomCalendarEvent[]> => {
     const url = `${API_BASE}/events/`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: authHeaders()
+    });
     const data = await response.json();
 
     if (!response.ok) {

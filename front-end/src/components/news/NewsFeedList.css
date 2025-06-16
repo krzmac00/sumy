@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
 .news-feed-container {
   width: 100%;
   max-width: 800px;
@@ -13,10 +15,11 @@
 }
 
 .news-feed-header h2 {
+  font-family: 'Anta', sans-serif;
   margin: 0;
   font-size: 24px;
-  font-weight: 600;
-  color: #333;
+  font-weight: 500;
+  color: #000;
 }
 
 .create-news-button {

@@ -18,7 +18,7 @@
 .main-content {
   flex: 1;
   min-width: 0;
-  padding: 20px;
+  padding-top: 20px;
   transition: margin-left 0.3s ease;
   background-color: transparent;
   position: relative;
