@@ -297,6 +297,9 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
         queryset = Thread.objects.all()
         user = self.request.user
 
+        if user.role == 'lecturer':
+            queryset = queryset.filter(visible_for_teachers=True)
+
         # Apply blacklist filter
         apply_blacklist = self.request.query_params.get("blacklist", "on") != "off"
 
@@ -531,12 +534,16 @@ def create_threads_from_emails(request):
                 ).exists()
                 if exists:
                     continue
+                if user.email and user.email[0].isdigit():
+                    visible_for_teachers_var = False
+                else:
+                    visible_for_teachers_var = True
                 thread_id = create_thread(
                     title=subject,
                     content=body,
                     category="other",
                     nickname=nickname,
-                    visible_for_teachers=True,
+                    visible_for_teachers=visible_for_teachers_var,
                     can_be_answered=False,
                     user=user,
                     is_anonymous=is_anonymous

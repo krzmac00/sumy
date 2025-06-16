@@ -265,10 +265,10 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
             </div>
           ) : null}
 
-          <div className="thread-action">
+          {/*<div className="thread-action">
             <span className="thread-action-icon">ℹ️</span>
             <span>{t('forum.action.info')}</span>
-          </div>
+          </div>*/}
         </div>
       </div>
       

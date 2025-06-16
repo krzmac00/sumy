@@ -143,9 +143,6 @@ const EditProfile: React.FC = () => {
             className="disabled-input"
           />
 
-          <label>Avatar:</label>
-          <input type="file" name="avatar" accept="image/*" onChange={handleChange} />
-
           <button
             type="button"
             className="toggle-password-button"
