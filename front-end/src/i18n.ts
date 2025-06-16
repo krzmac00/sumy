@@ -65,6 +65,7 @@ const resources = {
       
       // Navigation
       "nav.home": "Home",
+      "nav.forum": "Forum",
       "nav.newsfeed": "Newsfeed",
       "nav.noticeboard": "Noticeboard",
       "nav.map": "Map",
@@ -696,6 +697,7 @@ const resources = {
       
       // Navigation
       "nav.home": "Strona główna",
+      "nav.forum": "Forum",
       "nav.newsfeed": "Aktualności",
       "nav.noticeboard": "Ogłoszenia",
       "nav.map": "Mapa",
@@ -1067,7 +1069,7 @@ const resources = {
       "profile.edit.oldPassword": "Obecne hasło:",
       "profile.edit.newPassword": "Nowe hasło:",
       "profile.edit.repeatPassword": "Powtórz hasło:",
-      "profile.edit.cancel": "Anuluj:",
+      "profile.edit.cancel": "Anuluj",
       "profile.edit.empty_names": "Pola na imię i nazwisko nie mogą być puste",
       "profile.edit.fill_both_passwords": "Wypełnij oba pola na hasło",
       "profile.edit.password_len": "Hasło musi posiadać minimum 6 znaków",

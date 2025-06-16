@@ -30,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<number>();
+  const debounceRef = useRef<number>(null);
 
   // Ustawienie wyświetlanej nazwy
   useEffect(() => {
@@ -127,7 +127,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
       <div className="navbar-center">
         <ul className="nav-tabs">
           <li className="nav-item"><a href="/home">{t('nav.home')}</a></li>
-          <li className="nav-item"><a href="/forum">Tablica</a></li>
+          <li className="nav-item"><a href="/forum">{t('nav.forum')}</a></li>
           <li className="nav-item"><a href="/noticeboard">{t('nav.noticeboard')}</a></li>
           <li className="nav-item"><a href="/map">{t('nav.map')}</a></li>
           <li className="nav-item"><a href="/calendar">{t('nav.calendar')}</a></li>
