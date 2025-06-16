@@ -6,6 +6,7 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import { getMediaUrl } from '../utils/mediaUrl';
 import '../pages/Profile.css';
 import '../components/ProfilePictureUpload/ProfilePictureUpload.css';
+import './UserProfile.css';
 
 const UserProfile: React.FC = () => {
   const { t } = useTranslation();
@@ -42,7 +43,7 @@ const UserProfile: React.FC = () => {
         <h1>{t('profile.userProfile')}</h1>
 
         <div className="profile-section">
-          <div className="current-picture">
+          <div className="current-picture-profile">
             <img 
               src={getMediaUrl(userData.profile_picture_url) || '/user_default_image.png'}
               alt={t('profile.picture.current', 'Profile picture')}
@@ -52,8 +53,8 @@ const UserProfile: React.FC = () => {
             />
           </div>
           <div className="user-info">
-            <p><strong>{t('profile.firstName')}</strong> {userData.first_name}</p>
-            <p><strong>{t('profile.lastName')}</strong> {userData.last_name}</p>
+            <p><strong>{t('profile.firstName')}:</strong> {userData.first_name}</p>
+            <p><strong>{t('profile.lastName')}:</strong> {userData.last_name}</p>
             <p><strong>{t('profile.role')}:</strong> {t(`roles.${userData.role}`, userData.role)}</p>
             <p><strong>{t('profile.joinDate', 'Member since')}:</strong> {new Date(userData.date_joined).toLocaleDateString()}</p>
           </div>

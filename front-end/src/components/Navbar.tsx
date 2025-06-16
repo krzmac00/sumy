@@ -64,7 +64,17 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
     }
     setIsSearching(true);
     debounceRef.current = window.setTimeout(() => {
-      fetch(`http://localhost:8000/api/accounts/users/search/?q=${encodeURIComponent(query)}`)
+      const token = localStorage.getItem('auth_token');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      fetch(`http://localhost:8000/api/accounts/users/search/?q=${encodeURIComponent(query)}`, {
+        headers
+      })
         .then(res => res.json())
         .then((data: UserSuggestion[]) => {
           setSuggestions(data);

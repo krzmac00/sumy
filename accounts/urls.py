@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 from . import views
-from .views import UserProfileView, UpdateUserProfileView, PublicUserProfileView, ProfilePictureUploadView
+from .views import UserProfileView, UpdateUserProfileView, PublicUserProfileView, ProfilePictureUploadView, UserSearchView
 
 urlpatterns = [
     # Authentication
@@ -36,4 +36,7 @@ urlpatterns = [
     
     # Profile picture upload
     path('profile-picture/', ProfilePictureUploadView.as_view(), name='profile-picture-upload'),
+    
+    # User search
+    path('users/search/', UserSearchView.as_view(), name='user-search'),
 ]
