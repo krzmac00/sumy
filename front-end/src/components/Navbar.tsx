@@ -122,7 +122,12 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
           <li className="nav-item"><a href="/forum">{t('nav.home')}</a></li>
           <li className="nav-item"><a href="/map">{t('nav.map')}</a></li>
           <li className="nav-item"><a href="/calendar">{t('nav.calendar')}</a></li>
-          <li className="nav-item"><a href="/timetable">{t('nav.timetable')}</a></li>
+          {/* pokaże timetable tylko dla admina */}
+          {currentUser?.role === 'admin' && (
+            <li className="nav-item">
+              <a href="/timetable">{t('nav.timetable')}</a>
+            </li>
+          )}
         </ul>
       </div>
 
