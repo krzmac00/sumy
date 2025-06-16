@@ -21,7 +21,6 @@ const ProfilePage: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [blacklist, setBlacklist] = useState('');
   const [bio, setBio] = useState('');
-  // const blacklistRef = useRef<HTMLTextAreaElement>(null);
   const bioRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -49,15 +48,13 @@ const ProfilePage: React.FC = () => {
     fetchUserData();
   }, []);
 
-  // Dopasowanie wysokości textarea przy zmianie wartości
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; // reset wysokości
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'; // ustaw na wysokość zawartości
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
   }, [blacklist]);
 
-  // Auto-resize textarea for bio
   useEffect(() => {
     if (bioRef.current) {
       bioRef.current.style.height = 'auto';
@@ -80,13 +77,11 @@ const ProfilePage: React.FC = () => {
           },
         }
       );
-      // możesz dodać powiadomienie o sukcesie lub logowanie
     } catch (error) {
       console.error('Unable to save blacklist:', error);
     }
   };
 
-  // Save bio separately
   const saveBio = async (newBio: string) => {
     if (!userData) return;
     try {
@@ -136,7 +131,6 @@ const ProfilePage: React.FC = () => {
             </button>
           </div>
         </div>
-        {/* Bio section */}
         <div className="profile-box" style={{ marginTop: '20px' }}>
         <p><strong>{t("profile.bio")}</strong></p>
           <textarea
@@ -159,12 +153,12 @@ const ProfilePage: React.FC = () => {
           value={blacklist}
           onChange={handleBlacklistChange}
           placeholder={t('profile.addBlacklistedCotent')}
-          rows={1} // minimalna wysokość 1 linijka
+          rows={1}
           style={{
             width: '100%',
             boxSizing: 'border-box',
-            resize: 'none',      // blokada ręcznego zmieniania rozmiaru
-            overflow: 'hidden'   // ukrycie pasków przewijania
+            resize: 'none',
+            overflow: 'hidden'
           }}
         />
         </div>

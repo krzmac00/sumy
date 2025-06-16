@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 const EditProfile: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { updateUser, currentUser } = useAuth();
+  const { updateUser } = useAuth();
 
   const [formData, setFormData] = useState({
     firstName: '',
