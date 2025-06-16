@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import MainLayout from '../../layouts/MainLayout';
 import PostCard from '../../components/forum/PostCard';
@@ -13,6 +13,7 @@ import './ThreadViewPage.css';
 const ThreadViewPage: React.FC = () => {
   const { t } = useTranslation();
   const { threadId } = useParams<{ threadId: string }>();
+  const navigate = useNavigate();
   
   const [thread, setThread] = useState<Thread | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -189,9 +190,13 @@ const ThreadViewPage: React.FC = () => {
     <MainLayout>
       <div className="thread-view-container">
         <div className="thread-navigation">
-          <Link to="/forum" className="back-to-forum-link">
-            ← {t('forum.backToList')}
-          </Link>
+          <button 
+            onClick={() => navigate(-1)} 
+            className="back-to-forum-button"
+            type="button"
+          >
+            ← {t('common.back')}
+          </button>
           <Link to={`/forum?category=${thread.category}`} className="thread-category">
             {translateCategory(thread.category, t)}
           </Link>
