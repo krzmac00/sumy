@@ -17,11 +17,19 @@ class Post(models.Model):
                                                        related_name='replies', blank=True)
     is_anonymous = models.BooleanField(default=False)
     
+    # Cached vote count for efficient sorting
+    vote_count_cache = models.IntegerField(default=0, db_index=True)
+    
     def vote_count(self):
-        """Calculate vote count as upvotes - downvotes"""
+        """Return cached vote count"""
+        return self.vote_count_cache
+    
+    def update_vote_count(self):
+        """Update the cached vote count"""
         upvotes = self.votes.filter(vote_type='upvote').count()
         downvotes = self.votes.filter(vote_type='downvote').count()
-        return upvotes - downvotes
+        self.vote_count_cache = upvotes - downvotes
+        self.save(update_fields=['vote_count_cache'])
     
     def get_user_vote(self, user):
         """Get the current user's vote for this post"""
@@ -129,11 +137,25 @@ class Thread(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     last_activity_date = models.DateTimeField(auto_now=True)
     
+    # Cached counts for efficient sorting
+    vote_count_cache = models.IntegerField(default=0, db_index=True)
+    post_count = models.IntegerField(default=0, db_index=True)
+    
     def vote_count(self):
-        """Calculate vote count as upvotes - downvotes"""
+        """Return cached vote count"""
+        return self.vote_count_cache
+    
+    def update_vote_count(self):
+        """Update the cached vote count"""
         upvotes = self.votes.filter(vote_type='upvote').count()
         downvotes = self.votes.filter(vote_type='downvote').count()
-        return upvotes - downvotes
+        self.vote_count_cache = upvotes - downvotes
+        self.save(update_fields=['vote_count_cache'])
+    
+    def update_post_count(self):
+        """Update the cached post count"""
+        self.post_count = self.posts.count()
+        self.save(update_fields=['post_count'])
     
     def get_user_vote(self, user):
         """Get the current user's vote for this thread"""

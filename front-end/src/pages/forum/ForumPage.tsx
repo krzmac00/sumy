@@ -14,6 +14,7 @@ const ForumPage: React.FC = () => {
   const [blacklistOn, setBlacklistOn] = useState<boolean>(false);
   const [dateFrom, setDateFrom] = useState<string>('');
   const [dateTo, setDateTo] = useState<string>('');
+  const [sortBy, setSortBy] = useState<string>('-activity'); // Default to latest activity
   // Category filtering is handled by ThreadList component via URL params
 
   const fetchThreads = useCallback(async () => {
@@ -21,21 +22,16 @@ const ForumPage: React.FC = () => {
       setLoading(true);
       setError(null);
       await threadAPI.threadsFromEmail()
-      const threadsData = await threadAPI.getAll(blacklistOn, dateFrom, dateTo);
+      const threadsData = await threadAPI.getAll(blacklistOn, dateFrom, dateTo, sortBy);
       
-      // Ensure threadsData is an array before attempting to sort
+      // Ensure threadsData is an array
       if (!Array.isArray(threadsData)) {
         console.error('Threads data is not an array:', threadsData);
         setThreads([]);
         return;
       }
       
-      // Sort threads by last_activity_date in descending order (newest first)
-      const sortedThreads = [...threadsData].sort((a, b) => {
-        return new Date(b.last_activity_date).getTime() - new Date(a.last_activity_date).getTime();
-      });
-      
-      setThreads(sortedThreads);
+      setThreads(threadsData);
     } catch (err) {
       console.error('Error fetching threads:', err);
       setError(t('forum.error.fetchThreads'));
@@ -43,7 +39,7 @@ const ForumPage: React.FC = () => {
       setLoading(false);
     }
 
-  }, [t, blacklistOn, dateFrom, dateTo]);
+  }, [t, blacklistOn, dateFrom, dateTo, sortBy]);
 
   useEffect(() => {
     fetchThreads();
@@ -52,6 +48,10 @@ const ForumPage: React.FC = () => {
   const handleDateRangeChange = useCallback((newDateFrom: string, newDateTo: string) => {
     setDateFrom(newDateFrom);
     setDateTo(newDateTo);
+  }, []);
+
+  const handleSortChange = useCallback((newSort: string) => {
+    setSortBy(newSort);
   }, []);
 
   return (
@@ -69,6 +69,8 @@ const ForumPage: React.FC = () => {
           onRefresh={fetchThreads}
           onCategoryChange={() => {}} // URL state is managed by ThreadList itself
           onDateRangeChange={handleDateRangeChange}
+          onSortChange={handleSortChange}
+          sortBy={sortBy}
           blacklistOn={blacklistOn}
           setBlacklistOn={setBlacklistOn}
         />

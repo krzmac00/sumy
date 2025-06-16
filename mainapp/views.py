@@ -9,6 +9,7 @@ from datetime import date, datetime, time
 import imaplib
 import email
 from email.header import decode_header
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import *
 from .constants import CATEGORY_COLORS
 from .forms import EventForm
@@ -28,6 +29,7 @@ from .serializers import EventSerializer
 from .forms import EventForm
 from .post import create_thread
 from .permissions import IsOwnerOrReadOnly
+from .filters import ThreadFilter
 
 # ---------- COMMON HOME ----------
 def home(request):
@@ -288,16 +290,18 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 # ---------- THREAD SECTION ----------
 class ThreadListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ThreadSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['last_activity_date', 'post__date']
-    ordering = ['-last_activity_date']
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = ThreadFilter
+    ordering_fields = ['created_date', 'last_activity_date', 'vote_count_cache', 'post_count', 'title']
+    ordering = ['-last_activity_date']  # Default ordering
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         queryset = Thread.objects.all()
         user = self.request.user
 
-        if user.role == 'lecturer':
+        # Role-based filtering
+        if user.is_authenticated and user.role == 'lecturer':
             queryset = queryset.filter(visible_for_teachers=True)
 
         # Apply blacklist filter
@@ -314,30 +318,8 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
 
             for phrase in blacklist:
                 queryset = queryset.exclude(
-                    Q(title__contains=phrase) | Q(content__contains=phrase)
+                    Q(title__icontains=phrase) | Q(content__icontains=phrase)
                 )
-
-        # Apply date range filter
-        date_from = self.request.query_params.get('date_from')
-        date_to = self.request.query_params.get('date_to')
-        
-        if date_from:
-            try:
-                # Parse the date and filter threads created on or after this date
-                from_date = datetime.strptime(date_from, '%Y-%m-%d').date()
-                queryset = queryset.filter(created_date__gte=from_date)
-            except ValueError:
-                pass  # Invalid date format, ignore filter
-                
-        if date_to:
-            try:
-                # Parse the date and filter threads created on or before this date
-                # Add one day to include the entire day
-                to_date = datetime.strptime(date_to, '%Y-%m-%d').date()
-                to_datetime = datetime.combine(to_date, time.max)
-                queryset = queryset.filter(created_date__lte=to_datetime)
-            except ValueError:
-                pass  # Invalid date format, ignore filter
 
         return queryset
 

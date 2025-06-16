@@ -15,6 +15,8 @@ interface ThreadListProps {
   onRefresh?: () => void;
   onCategoryChange?: (category: string) => void;
   onDateRangeChange?: (dateFrom: string, dateTo: string) => void;
+  onSortChange?: (sort: string) => void;
+  sortBy?: string;
   blacklistOn: boolean;
   setBlacklistOn: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -25,6 +27,8 @@ const ThreadList: React.FC<ThreadListProps> = ({
   error, 
   onCategoryChange,
   onDateRangeChange,
+  onSortChange,
+  sortBy = '-activity',
   onRefresh,
   blacklistOn,
   setBlacklistOn 
@@ -270,6 +274,24 @@ const ThreadList: React.FC<ThreadListProps> = ({
               {translatedCategories.map(category => (
                 <option key={category.value} value={category.value}>{category.label}</option>
               ))}
+            </select>
+          </div>
+
+          {/* Sort By */}
+          <div className="sort-filter">
+            <label htmlFor="sort-select">{t('forum.filter.sortBy')}:</label>
+            <select
+              id="sort-select"
+              value={sortBy}
+              onChange={(e) => onSortChange?.(e.target.value)}
+              className="sort-select"
+            >
+              <option value="-activity">{t('forum.filter.sort.latestActivity')}</option>
+              <option value="-created">{t('forum.filter.sort.newest')}</option>
+              <option value="created">{t('forum.filter.sort.oldest')}</option>
+              <option value="-votes">{t('forum.filter.sort.mostVotes')}</option>
+              <option value="-posts">{t('forum.filter.sort.mostPosts')}</option>
+              <option value="title">{t('forum.filter.sort.title')}</option>
             </select>
           </div>
 

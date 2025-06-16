@@ -21,9 +21,9 @@ const JSON_HEADERS = {
  */
 export const threadAPI = {
   /**
-   * Get all threads with optional blacklist and date range parameters
+   * Get all threads with optional blacklist, date range, and ordering parameters
    */
-  getAll: async (blacklistOn = true, dateFrom?: string, dateTo?: string): Promise<Thread[]> => {
+  getAll: async (blacklistOn = true, dateFrom?: string, dateTo?: string, ordering?: string): Promise<Thread[]> => {
     const params = new URLSearchParams();
     
     if (!blacklistOn) {
@@ -36,6 +36,10 @@ export const threadAPI = {
     
     if (dateTo) {
       params.append('date_to', dateTo);
+    }
+    
+    if (ordering) {
+      params.append('ordering', ordering);
     }
     
     const queryString = params.toString();

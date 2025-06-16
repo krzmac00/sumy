@@ -144,6 +144,13 @@ const resources = {
       "forum.filter.dateTo": "To",
       "forum.filter.clearDates": "Clear dates",
       "forum.filter.invalidDateRange": "From date must be before To date",
+      "forum.filter.sortBy": "Sort by",
+      "forum.filter.sort.latestActivity": "Latest activity",
+      "forum.filter.sort.newest": "Newest first",
+      "forum.filter.sort.oldest": "Oldest first",
+      "forum.filter.sort.mostVotes": "Most votes",
+      "forum.filter.sort.mostPosts": "Most posts",
+      "forum.filter.sort.title": "Title (A-Z)",
 
       // Thread Categories
       "categories.general": "General",
@@ -794,6 +801,13 @@ const resources = {
       "forum.filter.dateTo": "Do",
       "forum.filter.clearDates": "Wyczyść daty",
       "forum.filter.invalidDateRange": "Data początkowa musi być przed datą końcową",
+      "forum.filter.sortBy": "Sortuj według",
+      "forum.filter.sort.latestActivity": "Ostatnia aktywność",
+      "forum.filter.sort.newest": "Najnowsze",
+      "forum.filter.sort.oldest": "Najstarsze",
+      "forum.filter.sort.mostVotes": "Najwięcej głosów",
+      "forum.filter.sort.mostPosts": "Najwięcej postów",
+      "forum.filter.sort.title": "Tytuł (A-Z)",
 
       // Thread Categories
       "categories.general": "Ogólne",
