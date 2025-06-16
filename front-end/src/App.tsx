@@ -79,18 +79,22 @@ const AuthLayout: React.FC = () => {
 };
 
 // Protected route component
-const ProtectedRoute: React.FC<{element: React.ReactNode}> = ({ element }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+const ProtectedRoute: React.FC<{element: React.ReactNode, requiredRole?: string}> = ({ element, requiredRole }) => {
+  const { isAuthenticated, isLoading, currentUser } = useAuth();
   
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  
-  return isAuthenticated ? (
-    <>{element}</>
-  ) : (
-    <Navigate to="/auth" replace />
-  );
+
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (requiredRole && currentUser?.role !== requiredRole) {
+    return <Navigate to="/home" replace />;
+  }
+
+  return <>{element}</>;
 };
 
 const AppRoutes: React.FC = () => {
@@ -110,7 +114,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/forum/create-thread" element={<ProtectedRoute element={<ThreadCreatePage />} />} />
 
       <Route path="/calendar" element={<ProtectedRoute element={<Calendar />} />} />
-      <Route path="/timetable" element={<ProtectedRoute element={<TimetablePage />} />} />
+      <Route path="/timetable" element={<ProtectedRoute element={<TimetablePage />} requiredRole="admin" />} />
       <Route path="/map" element={<ProtectedRoute element={<MapPage />} />} />
       <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
       <Route path="/profile/edit" element={<ProtectedRoute element={<EditProfile />} />} />
