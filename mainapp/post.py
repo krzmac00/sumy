@@ -41,6 +41,8 @@ class PostSerializer(serializers.ModelSerializer):
     vote_count = serializers.SerializerMethodField()
     user_vote = serializers.SerializerMethodField()
     can_vote = serializers.SerializerMethodField()
+    author_profile_picture = serializers.SerializerMethodField()
+    author_profile_thumbnail = serializers.SerializerMethodField()
     
     def get_user_display_name(self, obj):
         if obj.is_anonymous:
@@ -68,12 +70,41 @@ class PostSerializer(serializers.ModelSerializer):
             return False
         # User cannot vote on their own posts (even anonymous ones)
         return obj.user != request.user
+    
+    def get_author_profile_picture(self, obj):
+        if obj.is_anonymous or not obj.user:
+            return None
+        if obj.user.profile_picture:
+            request = self.context.get('request')
+            if request:
+                url = request.build_absolute_uri(obj.user.profile_picture.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.user.profile_picture.url}'
+        return None
+    
+    def get_author_profile_thumbnail(self, obj):
+        if obj.is_anonymous or not obj.user:
+            return None
+        if obj.user.profile_thumbnail:
+            request = self.context.get('request')
+            if request:
+                url = request.build_absolute_uri(obj.user.profile_thumbnail.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.user.profile_thumbnail.url}'
+        return None
             
     class Meta:
         model = Post
         fields = ['id', 'user', 'nickname', 'content', 'date', 'was_edited', 
                   'thread', 'replying_to', 'replies', 'is_anonymous', 'user_display_name',
-                  'vote_count', 'user_vote', 'can_vote']
+                  'vote_count', 'user_vote', 'can_vote', 'author_profile_picture', 
+                  'author_profile_thumbnail']
 
 class Thread(models.Model):
     # Primary key (auto-generated)
@@ -85,7 +116,7 @@ class Thread(models.Model):
     category = models.CharField(max_length=63)
     
     # Author information
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                               related_name='authored_threads', null=True, blank=True)
     nickname = models.CharField(max_length=63, default="Anonymous User")
     is_anonymous = models.BooleanField(default=False)
@@ -167,6 +198,12 @@ class ThreadSerializer(serializers.ModelSerializer):
     vote_count = serializers.SerializerMethodField()
     user_vote = serializers.SerializerMethodField()
     can_vote = serializers.SerializerMethodField()
+    author_profile_picture = serializers.SerializerMethodField()
+    author_profile_thumbnail = serializers.SerializerMethodField()
+    nickname = serializers.CharField(required=False, allow_blank=True)
+    visible_for_teachers = serializers.BooleanField(default=False)
+    can_be_answered = serializers.BooleanField(default=True)
+    is_anonymous = serializers.BooleanField(default=False)
     
     def get_author_display_name(self, obj):
         if obj.is_anonymous:
@@ -199,6 +236,34 @@ class ThreadSerializer(serializers.ModelSerializer):
             return False
         # User cannot vote on their own threads (even anonymous ones)
         return obj.author != request.user
+    
+    def get_author_profile_picture(self, obj):
+        if obj.is_anonymous or not obj.author:
+            return None
+        if obj.author.profile_picture:
+            request = self.context.get('request')
+            if request:
+                url = request.build_absolute_uri(obj.author.profile_picture.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.author.profile_picture.url}'
+        return None
+    
+    def get_author_profile_thumbnail(self, obj):
+        if obj.is_anonymous or not obj.author:
+            return None
+        if obj.author.profile_thumbnail:
+            request = self.context.get('request')
+            if request:
+                url = request.build_absolute_uri(obj.author.profile_thumbnail.url)
+                # Ensure it uses the correct protocol and host
+                if 'localhost:8000' not in url:
+                    url = url.replace(request.get_host(), 'localhost:8000')
+                return url
+            return f'http://localhost:8000{obj.author.profile_thumbnail.url}'
+        return None
             
     class Meta:
         model = Thread
@@ -206,7 +271,8 @@ class ThreadSerializer(serializers.ModelSerializer):
             'id', 'category', 'title', 'content', 'nickname', 'date',
             'visible_for_teachers', 'can_be_answered', 'last_activity_date',
             'posts', 'is_anonymous', 'user', 'author_display_name',
-            'vote_count', 'user_vote', 'can_vote'
+            'vote_count', 'user_vote', 'can_vote', 'author_profile_picture',
+            'author_profile_thumbnail'
         ]
 
 def create_post(nickname, content, replying_to_ids=None, thread_id=None, user=None, is_anonymous=False):
@@ -405,4 +471,40 @@ def vote_on_post(user, post_id, vote_type):
             
     except Post.DoesNotExist:
         return False, "Post not found", 0
+
+
+class PinnedThread(models.Model):
+    """Model to track threads pinned by users with last viewed timestamp."""
+    
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE,
+        related_name='pinned_threads'
+    )
+    thread = models.ForeignKey(
+        Thread,
+        on_delete=models.CASCADE,
+        related_name='pinned_by_users'
+    )
+    pinned_at = models.DateTimeField(auto_now_add=True)
+    last_viewed = models.DateTimeField(default=timezone.now)
+    
+    class Meta:
+        unique_together = ('user', 'thread')
+        ordering = ['-pinned_at']
+    
+    def get_unread_count(self):
+        """Calculate number of unread comments since last viewed."""
+        return Post.objects.filter(
+            thread=self.thread,
+            date__gt=self.last_viewed
+        ).count()
+    
+    def mark_as_viewed(self):
+        """Update last_viewed timestamp to current time."""
+        self.last_viewed = timezone.now()
+        self.save(update_fields=['last_viewed'])
+    
+    def __str__(self):
+        return f"{self.user.username} pinned {self.thread.title}"
 

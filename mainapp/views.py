@@ -34,79 +34,14 @@ def home(request):
     return HttpResponse("Hello World!")
 
 class SchedulePlanViewSet(viewsets.ModelViewSet):
-    queryset = SchedulePlan.objects.filter(is_active=True)
+    queryset = SchedulePlan.objects.filter(is_active=True).order_by('-created_at')
     serializer_class = SchedulePlanSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return SchedulePlan.objects.all()
-
-    # @action(detail=True, methods=['post'], serializer_class=ApplyPlanSerializer)
-    # def apply(self, request, pk=None):
-
-    #     plan = self.get_object()
-    #     serializer = ApplyPlanSerializer(data=request.data)
-    #     #serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-        
-    #     if AppliedPlan.objects.filter(user=request.user, plan=plan).exists():
-    #         return Response(
-    #             {'detail': 'Plan is already applied'},
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
-
-    #     applied_plan = AppliedPlan.objects.create(
-    #         user=request.user,
-    #         plan=plan,
-    #         **serializer.validated_data
-    #     )
-
-    #     start_date = serializer.validated_data['start_date']
-    #     events = []
-        
-    #     for schedule_event in plan.events.all():
-    #         days_ahead = (schedule_event.day_of_week - start_date.weekday() + 7) % 7
-    #         event_date = start_date + timedelta(days=days_ahead)
-            
-    #         events.append(Event(
-    #             user=request.user,
-    #             title=schedule_event.title,
-    #             start_date=timezone.make_aware(
-    #                 timezone.datetime.combine(event_date, schedule_event.start_time)
-    #             ),
-    #             end_date=timezone.make_aware(
-    #                 timezone.datetime.combine(event_date, schedule_event.end_time)
-    #             ),
-    #             category='timetable',
-    #             schedule_plan=plan,
-    #             room=schedule_event.room,
-    #             teacher=schedule_event.teacher
-    #         ))
-
-    #     Event.objects.bulk_create(events)
-        
-    #     return Response(
-    #         {'status': 'Plan applied successfully'},
-    #         status=status.HTTP_201_CREATED
-    #     )
-
-    # @action(detail=False, methods=['post'], url_path='add-by-code')
-    # def add_plan_by_code(self, request):
-    #     code = request.data.get('code')
-    #     plan = get_object_or_404(SchedulePlan, code=code)
-        
-    #     if AppliedPlan.objects.filter(user=request.user, plan=plan).exists():
-    #         return Response(
-    #             {'detail': 'Plan już został dodany'},
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
-
-    #     AppliedPlan.objects.create(user=request.user, plan=plan)
-    #     return Response({'status': 'Plan dodany pomyślnie'})
+        return SchedulePlan.objects.all().order_by('-created_at')
 
     def perform_create(self, serializer):
-    #    if not self.request.user.is_staff:
-    #        raise PermissionDenied("Only administrators can create plans")
         serializer.save(administrator=self.request.user)
 
     def destroy(self, request, *args, **kwargs):
@@ -116,7 +51,7 @@ class SchedulePlanViewSet(viewsets.ModelViewSet):
         
 
 class PublicSchedulePlanViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = SchedulePlan.objects.all()
+    queryset = SchedulePlan.objects.all().order_by('-created_at')
     serializer_class = SchedulePlanSerializer
     permission_classes = [IsAuthenticated]
 
@@ -146,13 +81,7 @@ class EventViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def get_queryset(self):
-        profile_id = self.request.query_params.get('profile_id')
-        if self.request.user.is_authenticated:
-            return Event.objects.filter(user=self.request.user)
-        return Event.objects.none()
-    
-    def get_queryset(self):
-        queryset = Event.objects.all()
+        queryset = Event.objects.all().order_by('-start_date', '-id')
 
         schedule_plan_id = self.request.query_params.get('schedule_plan')
 
@@ -246,26 +175,6 @@ def add_event(request):
         form = EventForm()
     return render(request, 'add_event.html', {'form': form})
 
-
-# def event_list(request):
-#     events = Event.objects.all().order_by('start_date', 'start_time')
-#     return render(request, 'event_list.html', {
-#         'events': events,
-#         'category_colors': CATEGORY_COLORS
-#     })
-
-# def event_list(request):
-#     events = Event.objects.filter(user=request.user)
-#     available_plans = SchedulePlan.objects.filter(
-#         Q(administrator=request.user)
-#     )
-#     return render(request, 'event_list.html', {
-#         'events': events,
-#         'available_plans': available_plans,
-#         'category_colors': CATEGORY_COLORS
-#     })
-
-#polaczone 2 wyzej 
 @login_required
 def event_list(request):
     events = Event.objects.filter(user=request.user).order_by('start_date')
@@ -315,8 +224,6 @@ def admin_create_plan(request):
 class PostListCreateAPIView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    # No permission class needed here since we want to allow anyone to create posts
-    # But users can only edit/delete their own posts (handled in PostRetrieveUpdateDestroyAPIView)
 
     def create(self, request, *args, **kwargs):
         try:
@@ -390,6 +297,9 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
         queryset = Thread.objects.all()
         user = self.request.user
 
+        if user.role == 'lecturer':
+            queryset = queryset.filter(visible_for_teachers=True)
+
         # Apply blacklist filter
         apply_blacklist = self.request.query_params.get("blacklist", "on") != "off"
 
@@ -432,7 +342,7 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
         return queryset
 
 class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Thread.objects.select_related('post').all()
+    queryset = Thread.objects.select_related('author').all()
     serializer_class = ThreadSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
@@ -463,10 +373,15 @@ class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 def create_thread_with_post(request):
     try:
         data = request.data
-        required_fields = ['nickname', 'content', 'category', 'title']
+        required_fields = ['content', 'category', 'title']
         for field in required_fields:
             if field not in data:
                 return Response({'error': f'Missing required field: {field}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Determine if the post is anonymous
+        is_anonymous = data.get('is_anonymous', False)
+        user = request.user if request.user.is_authenticated and not is_anonymous else None
+        nickname = data.get('nickname', 'Anonymous User') if is_anonymous else None
 
         with transaction.atomic():
             thread_id = create_thread(
@@ -480,7 +395,7 @@ def create_thread_with_post(request):
                 is_anonymous=is_anonymous
             )
             thread = Thread.objects.get(id=thread_id)
-            thread_data = ThreadSerializer(thread).data
+            thread_data = ThreadSerializer(thread, context={'request': request}).data
 
             return Response(thread_data, status=status.HTTP_201_CREATED)
     except Exception as e:
@@ -619,12 +534,16 @@ def create_threads_from_emails(request):
                 ).exists()
                 if exists:
                     continue
+                if user.email and user.email[0].isdigit():
+                    visible_for_teachers_var = False
+                else:
+                    visible_for_teachers_var = True
                 thread_id = create_thread(
                     title=subject,
                     content=body,
                     category="other",
                     nickname=nickname,
-                    visible_for_teachers=True,
+                    visible_for_teachers=visible_for_teachers_var,
                     can_be_answered=False,
                     user=user,
                     is_anonymous=is_anonymous

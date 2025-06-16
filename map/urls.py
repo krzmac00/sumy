@@ -9,13 +9,3 @@ urlpatterns = [
     path('buildings/by-type/<str:type_name>/', BuildingByTypeView.as_view(), name='buildings-by-type'),
 
 ]
-
-# from django.urls import path
-# from . import views
-#
-# urlpatterns = [
-#     path('buildings/', views.BuildingListView.as_view(), name='building-list'),
-#     path('buildings/<int:building_id>/floors/', views.FloorListView.as_view(), name='floor-list'),
-#     path('floors/<int:floor_id>/rooms/', views.RoomListView.as_view(), name='room-list'),
-#     path('search/', views.SearchView.as_view(), name='map-search'),
-# ]

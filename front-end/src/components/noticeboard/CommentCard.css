@@ -1,0 +1,226 @@
+.comment-card {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.comment-author {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.comment-author svg {
+  color: var(--color-text-secondary);
+}
+
+.author-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.owner-badge {
+  padding: 0.125rem 0.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.comment-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.comment-date {
+  color: var(--color-text-secondary);
+}
+
+.edited-badge {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.visibility-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  background-color: transparent;
+  cursor: default;
+  transition: all 0.2s;
+}
+
+.visibility-badge:not(:disabled) {
+  cursor: pointer;
+}
+
+.visibility-badge:not(:disabled):hover {
+  background-color: var(--color-surface);
+}
+
+.visibility-badge.public {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.visibility-badge.private {
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.comment-body {
+  margin-bottom: 0.5rem;
+}
+
+.comment-content {
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+.edit-form {
+  width: 100%;
+}
+
+.edit-form textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+}
+
+.edit-form textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  justify-content: flex-end;
+}
+
+.cancel-button-comment,
+.save-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-button-comment {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.cancel-button-comment:hover:not(:disabled) {
+  background-color: var(--color-background);
+}
+
+.save-button {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.save-button:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+}
+
+.save-button:disabled,
+.cancel-button-comment:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.comment-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.comment-actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.comment-actions button:hover:not(:disabled) {
+  color: var(--color-text-primary);
+  border-color: var(--color-primary);
+}
+
+.comment-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.comment-actions .delete-button:hover:not(:disabled) {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.private-comment-notice {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--color-warning-light);
+  color: var(--color-warning-dark);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .comment-card {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .edit-form textarea {
+  background-color: var(--color-background);
+}

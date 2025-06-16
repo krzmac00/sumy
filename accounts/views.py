@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.db.models import Q
+from django.utils import timezone
 
 from rest_framework import generics, permissions, status
 from rest_framework.generics import ListAPIView
@@ -9,13 +10,20 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
 from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer, \
-    UserSearchSerializer
+    UserSearchSerializer, PublicUserSerializer
 from .tokens import generate_activation_token, validate_activation_token
 from .emails import send_activation_email, send_password_verification_email
+try:
+    from .utils import validate_image_file, process_profile_picture, delete_old_profile_pictures
+except ImportError:
+    # Fallback if Pillow is not available
+    from .utils_simple import validate_image_file_simple as validate_image_file, process_profile_picture_simple as process_profile_picture
+    from .utils import delete_old_profile_pictures
 
 User = get_user_model()
 
@@ -254,6 +262,100 @@ class UpdateUserProfileView(APIView):
             serializer.save()
             return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PublicUserProfileView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            serializer = PublicUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ProfilePictureUploadView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+    
+    def post(self, request):
+        """Upload a new profile picture"""
+        user = request.user
+        file = request.FILES.get('profile_picture')
+        
+        if not file:
+            return Response(
+                {"error": "No file provided"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validate the image file
+        errors = validate_image_file(file)
+        if errors:
+            return Response(
+                {"errors": errors}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Delete old profile pictures
+            delete_old_profile_pictures(user)
+            
+            # Process the new image
+            profile_file, thumb_file = process_profile_picture(file)
+            
+            # Generate unique filenames
+            import uuid
+            unique_id = str(uuid.uuid4())[:8]
+            
+            # Save the processed images
+            user.profile_picture.save(f'profile_{user.id}_{unique_id}.jpg', profile_file, save=False)
+            user.profile_thumbnail.save(f'thumb_{user.id}_{unique_id}.jpg', thumb_file, save=False)
+            
+            # Update metadata
+            user.profile_picture_uploaded_at = timezone.now()
+            user.profile_picture_file_size = file.size
+            user.save()
+            
+            # Return updated user data
+            serializer = UserSerializer(user)
+            return Response({
+                "message": "Profile picture uploaded successfully",
+                "user": serializer.data
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response(
+                {"error": f"Failed to process image: {str(e)}"}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def delete(self, request):
+        """Delete the user's profile picture"""
+        user = request.user
+        
+        try:
+            # Delete profile pictures
+            delete_old_profile_pictures(user)
+            
+            # Clear the fields
+            user.profile_picture = None
+            user.profile_thumbnail = None
+            user.profile_picture_uploaded_at = None
+            user.profile_picture_file_size = None
+            user.save()
+            
+            return Response({
+                "message": "Profile picture deleted successfully"
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response(
+                {"error": f"Failed to delete profile picture: {str(e)}"}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class NoPagination(PageNumberPagination):
     page_size = None

@@ -22,8 +22,8 @@ if os.name == 'posix':  # Unix/Linux
 elif os.name == 'nt':  # Windows
     GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal310.dll'
     GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
-    # GDAL_LIBRARY_PATH = r'C:\ProgramData\anaconda3\Library\bin\gdal.dll'
-    # GEOS_LIBRARY_PATH = r'C:\ProgramData\anaconda3\Library\bin\geos_c.dll'
+    #GDAL_LIBRARY_PATH = r'C:\ProgramData\anaconda3\Library\bin\gdal.dll'
+    #GEOS_LIBRARY_PATH = r'C:\ProgramData\anaconda3\Library\bin\geos_c.dll'
 
 
 # Quick-start development settings - unsuitable for production
@@ -54,7 +54,11 @@ INSTALLED_APPS = [
     "mainapp",
     "accounts",
     "map",
+    "noticeboard",
+    "news",
+    "analytics",
     "django.contrib.gis",
+    "django.contrib.postgres",
 ]
 
 AUTH_USER_MODEL = 'auth.User'
@@ -72,6 +76,8 @@ MIDDLEWARE = [
     "accounts.middleware.SessionInactivityMiddleware",
     "accounts.middleware.SecurityHeadersMiddleware",
     "accounts.middleware.IPUserAgentBindingMiddleware",
+    # Analytics middleware for endpoint usage tracking
+    "analytics.middleware.EndpointUsageMiddleware",
 ]
 
 # Session security settings
@@ -100,6 +106,31 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'sumy.wsgi.application'
+
+# Cache configuration
+# Uncomment after installing django-redis with: pip install django-redis
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': 'redis://127.0.0.1:6379/1',
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#         },
+#         'KEY_PREFIX': 'sumy',
+#         'TIMEOUT': 300,  # 5 minutes default
+#     }
+# }
+
+# For now, use dummy cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
+# Session cache
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+# SESSION_CACHE_ALIAS = 'default'
 
 
 # Database
@@ -152,6 +183,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Media files (Uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

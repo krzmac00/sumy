@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { getMediaUrl } from '../utils/mediaUrl';
 import './Navbar.css';
 import pcLogo from '../assets/pc-logo.svg';
 
@@ -29,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<number>();
+  const debounceRef = useRef<number>(null);
 
   // Ustawienie wyświetlanej nazwy
   useEffect(() => {
@@ -110,7 +111,13 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        {/* <button className="sidebar-toggle" onClick={toggleSidebar}>…</button> */}
+        {/* <button className="sidebar-toggle" onClick={toggleSidebar}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button> */}
+       
+        
         <div className="brand">
           <img src={pcLogo} alt="Policonnect Logo" className="logo" />
           <h1 className="brand-name">PoliConnect</h1>
@@ -119,10 +126,17 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
 
       <div className="navbar-center">
         <ul className="nav-tabs">
-          <li className="nav-item"><a href="/forum">{t('nav.home')}</a></li>
+          <li className="nav-item"><a href="/home">{t('nav.home')}</a></li>
+          <li className="nav-item"><a href="/forum">{t('nav.forum')}</a></li>
+          <li className="nav-item"><a href="/noticeboard">{t('nav.noticeboard')}</a></li>
           <li className="nav-item"><a href="/map">{t('nav.map')}</a></li>
           <li className="nav-item"><a href="/calendar">{t('nav.calendar')}</a></li>
-          <li className="nav-item"><a href="/timetable">{t('nav.timetable')}</a></li>
+          {/* pokaże timetable tylko dla admina */}
+          {currentUser?.role === 'admin' && (
+            <li className="nav-item">
+              <a href="/timetable">{t('nav.timetable')}</a>
+            </li>
+          )}
         </ul>
       </div>
 
@@ -185,7 +199,20 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
         {/* Menu użytkownika */}
         <div className="user-menu">
           <button onClick={toggleUserDropdown} className="user-button">
-            <span className="user-icon">👤</span>
+            <span className="user-icon">
+              {currentUser?.profile_thumbnail_url ? (
+                <img 
+                  src={getMediaUrl(currentUser.profile_thumbnail_url) || ''} 
+                  alt={`${currentUser.first_name} ${currentUser.last_name}`}
+                  className="user-avatar"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('d-none');
+                  }}
+                />
+              ) : null}
+              <i className={`fas fa-user-circle ${currentUser?.profile_thumbnail_url ? 'd-none' : ''}`}></i>
+            </span>
             <span className="username">
               {currentUser ? displayName : 'User'}
             </span>

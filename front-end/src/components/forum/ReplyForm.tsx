@@ -68,15 +68,12 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
         is_anonymous: isAnonymous
       };
       
-      console.log('Submitting post data:', postData);
-      
       await postAPI.create(postData);
       
       // Clear form and notify parent
       setContent('');
       onSubmitSuccess();
     } catch (err) {
-      console.error('Error creating reply:', err);
       if (err instanceof Error) {
         setError(`${t('forum.reply.errorSubmit')}: ${err.message}`);
       } else {
@@ -169,7 +166,7 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
         <div className="reply-form-actions">
           <button 
             type="button" 
-            className="cancel-button"
+            className="cancel-button-comment"
             onClick={onCancel}
             disabled={isSubmitting}
           >
@@ -177,7 +174,7 @@ const ReplyForm: React.FC<ReplyFormProps> = ({
           </button>
           <button 
             type="submit" 
-            className="submit-button"
+            className="submit-button-reply"
             disabled={isSubmitting}
           >
             {isSubmitting 

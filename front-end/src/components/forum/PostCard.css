@@ -186,6 +186,16 @@
   color: #8b0002;
 }
 
+.replied-to-author-link {
+  color: #8b0002;
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.replied-to-author-link:hover {
+  text-decoration: underline;
+}
+
 .replied-to-preview {
   color: #666;
   font-style: italic;

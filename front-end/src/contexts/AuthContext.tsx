@@ -36,8 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (!isAuthPage && authService.isAuthenticated() && authService.shouldRefreshToken()) {
         authService.refreshToken()
           .catch(error => {
-            console.error('Token refresh error in interval:', error);
-            // If token refresh fails in the background, logout
+              // If token refresh fails in the background, logout
             authService.logout();
             setCurrentUser(null);
           });
@@ -46,6 +45,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     return () => clearInterval(tokenRefreshInterval);
   }, []);
+
+  // Listen for storage changes to sync auth across tabs
+  useEffect(() => {
+    const handleStorageChange = async (e: StorageEvent) => {
+      // Only react to changes from other tabs (not this one)
+      if (e.storageArea !== localStorage) return;
+      
+      if (e.key === 'auth_token' || e.key === 'isAuthenticated') {
+        const isNowAuthenticated = authService.isAuthenticated();
+        
+        if (!isNowAuthenticated && currentUser) {
+          // User logged out in another tab
+          setCurrentUser(null);
+          setError(null);
+          // Optionally navigate to login
+          if (!window.location.pathname.includes('/auth')) {
+            window.location.href = '/auth';
+          }
+        } else if (isNowAuthenticated && !currentUser) {
+          // User logged in in another tab
+          try {
+            const userData = await authService.getUserData();
+            setCurrentUser(userData);
+          } catch (err) {
+            console.error('Failed to sync user data:', err);
+          }
+        }
+      } else if (e.key === 'user_data' && e.newValue) {
+        // User data updated in another tab
+        try {
+          const updatedUser = JSON.parse(e.newValue);
+          setCurrentUser(updatedUser);
+        } catch (err) {
+          console.error('Failed to parse user data:', err);
+        }
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [currentUser]);
 
   // Load user data on mount
   useEffect(() => {
@@ -58,7 +98,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const userData = await authService.getUserData();
           setCurrentUser(userData);
         } catch (err) {
-          console.error('Failed to load user data:', err);
           // Clear auth state on error
           await authService.logout();
           setCurrentUser(null);
@@ -114,7 +153,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await authService.logout();
       setCurrentUser(null);
     } catch (err) {
-      console.error('Logout error:', err);
     } finally {
       setIsLoading(false);
     }

@@ -79,36 +79,36 @@
   gap: 12px;
 }
 
-.cancel-button,
-.submit-button {
+.cancel-button-comment,
+.submit-button-reply {
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
 }
 
-.cancel-button {
+.cancel-button-comment {
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
   color: #495057;
 }
 
-.cancel-button:hover {
+.cancel-button-comment:hover {
   background-color: #e9ecef;
 }
 
-.submit-button {
+.submit-button-reply {
   background-color: #8b0002;
   border: none;
   color: white;
 }
 
-.submit-button:hover {
+.submit-button-reply:hover {
   background-color: #7a0001;
 }
 
-.submit-button:disabled,
-.cancel-button:disabled {
+.submit-button-reply:disabled,
+.cancel-butto-comment:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -157,8 +157,8 @@
     flex-direction: column;
   }
   
-  .cancel-button,
-  .submit-button {
+  .cancel-button-comment,
+  .submit-button-reply {
     width: 100%;
   }
 }

@@ -4,6 +4,8 @@ import MainLayout from '../layouts/MainLayout';
 import './Profile.css';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../contexts/AuthContext';
+import ProfilePictureUpload from '../components/ProfilePictureUpload';
 
 interface UserData {
   first_name: string;
@@ -13,11 +15,14 @@ interface UserData {
   role: string;
   blacklist: string;
   bio: string;
+  profile_picture_url?: string | null;
+  profile_thumbnail_url?: string | null;
 }
 
 const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { updateUser } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [blacklist, setBlacklist] = useState('');
   const [bio, setBio] = useState('');
@@ -112,6 +117,29 @@ const ProfilePage: React.FC = () => {
     saveBio(newValue);
   };
 
+  const handleProfilePictureUpdate = (updatedUser: any) => {
+    // Update only the profile picture URLs
+    if (userData) {
+      setUserData({
+        ...userData,
+        profile_picture_url: updatedUser.profile_picture_url || null,
+        profile_thumbnail_url: updatedUser.profile_thumbnail_url || null
+      });
+      
+      // Update the auth context to reflect changes in navbar
+      updateUser({
+        id: updatedUser.id,
+        login: updatedUser.login,
+        email: updatedUser.email,
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+        role: updatedUser.role,
+        profile_picture_url: updatedUser.profile_picture_url || null,
+        profile_thumbnail_url: updatedUser.profile_thumbnail_url || null
+      });
+    }
+  };
+
 
   return (
     <MainLayout>
@@ -119,12 +147,17 @@ const ProfilePage: React.FC = () => {
         <h1>{t('profile.userProfile')}</h1>
 
         <div className="profile-section">
-          <div className="avatar">👤</div>
+          <ProfilePictureUpload 
+            currentPictureUrl={userData.profile_picture_url}
+            onUploadSuccess={handleProfilePictureUpdate}
+          />
           <div className="user-info">
             <p><strong>{t('profile.firstName')}</strong> {userData.first_name}</p>
             <p><strong>{t('profile.lastName')}</strong> {userData.last_name}</p>
             <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>{t('profile.indexNumber')}</strong> {userData.email.split('@')[0]}</p>
+            {userData.role === 'student' && (
+              <p><strong>{t('profile.indexNumber')}</strong> {userData.email.split('@')[0]}</p>
+            )}
 
             <button onClick={() => navigate('/profile/edit')} className="edit-profile-button">
               {t('profile.editProfile')}

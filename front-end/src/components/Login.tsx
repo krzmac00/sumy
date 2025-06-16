@@ -50,7 +50,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
             onLoginSuccess();
           } else {
             // Redirect to home if no success callback
-            window.location.href = '/forum';
+            window.location.href = '/home';
           }
         }, 100);
       } catch (err) {
@@ -105,7 +105,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
       
       <button 
         type="submit" 
-        className="submit-button"
+        className="submit-button-auth"
         disabled={isLoading}
       >
         {isLoading ? t('login.loading') : t('login.button')}
