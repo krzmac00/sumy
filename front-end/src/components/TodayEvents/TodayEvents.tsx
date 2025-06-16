@@ -63,7 +63,7 @@ const TodayEvents: React.FC<TodayEventsProps> = ({ scheduleId }) => {
       setEvents(todayEvents);
     } catch (err) {
       console.error('Failed to fetch today\'s events:', err);
-      setError('Failed to load events');
+      setError(t('todayEvents.loadError'));
     } finally {
       setLoading(false);
     }
@@ -101,13 +101,13 @@ const TodayEvents: React.FC<TodayEventsProps> = ({ scheduleId }) => {
       <div className="today-header">
         <h2>{format(new Date(), 'EEEE, d MMMM', { locale })}</h2>
         <span className="event-count">
-          {events.length} {events.length === 1 ? 'event' : 'events'}
+          {t('todayEvents.eventCount', { count: events.length })}
         </span>
       </div>
       
       {events.length === 0 ? (
         <div className="no-events">
-          <p>No events scheduled for today</p>
+          <p>{t('todayEvents.noEvents')}</p>
         </div>
       ) : (
         <div className="events-list">

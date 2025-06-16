@@ -634,6 +634,12 @@ const resources = {
       "home.tabs.newsFeed": "News Feed",
       "home.tabs.pinnedThreads": "Pinned Threads",
       
+      // Today Events
+      "todayEvents.eventCount_one": "{{count}} event",
+      "todayEvents.eventCount_other": "{{count}} events",
+      "todayEvents.noEvents": "No events scheduled for today",
+      "todayEvents.loadError": "Failed to load events",
+      
       // Profile picture
       "profile.picture.preview": "Preview",
       "profile.picture.current": "Current profile picture",
@@ -1270,6 +1276,14 @@ const resources = {
       "home.tabs.todayEvents": "Wydarzenia dziś",
       "home.tabs.newsFeed": "Aktualności",
       "home.tabs.pinnedThreads": "Przypięte wątki",
+      
+      // Today Events
+      "todayEvents.eventCount_one": "{{count}} wydarzenie",
+      "todayEvents.eventCount_few": "{{count}} wydarzenia",
+      "todayEvents.eventCount_many": "{{count}} wydarzeń",
+      "todayEvents.eventCount_other": "{{count}} wydarzeń",
+      "todayEvents.noEvents": "Brak wydarzeń zaplanowanych na dziś",
+      "todayEvents.loadError": "Nie udało się załadować wydarzeń",
       
       // Profile picture
       "profile.picture.preview": "Podgląd",
