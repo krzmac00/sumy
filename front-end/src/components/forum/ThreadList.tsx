@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Thread } from '../../types/forum';
 import ThreadCard from './ThreadCard';
 import { getTranslatedCategories, translateCategory } from '../../utils/categories';
+import { pinnedThreadService } from '../../services/pinnedThreadService';
+import { useAuth } from '../../contexts/AuthContext';
 import './ThreadList.css';
 
 interface ThreadListProps {
@@ -28,11 +30,13 @@ const ThreadList: React.FC<ThreadListProps> = ({
   setBlacklistOn 
 }) => {
   const { t } = useTranslation();
+  const { currentUser } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category') || '';
   const dateFrom = searchParams.get('dateFrom') || '';
   const dateTo = searchParams.get('dateTo') || '';
   const [dateError, setDateError] = React.useState<string>('');
+  const [pinStatuses, setPinStatuses] = useState<{ [threadId: number]: boolean }>({});
   
   // Get translated categories for the dropdown
   const translatedCategories = getTranslatedCategories(t);
@@ -95,6 +99,23 @@ const ThreadList: React.FC<ThreadListProps> = ({
     setDateError('');
     onDateRangeChange?.('', '');
   };
+
+  // Load pin statuses for all threads
+  useEffect(() => {
+    const loadPinStatuses = async () => {
+      if (currentUser && threads.length > 0) {
+        try {
+          const threadIds = threads.map(thread => thread.id);
+          const statuses = await pinnedThreadService.getBulkPinStatus(threadIds);
+          setPinStatuses(statuses);
+        } catch (err) {
+          console.error('Error loading pin statuses:', err);
+          // If bulk load fails, leave empty - threads will handle individually
+        }
+      }
+    };
+    loadPinStatuses();
+  }, [threads, currentUser]);
 
   // Sync with parent component when filters change
   useEffect(() => {
@@ -287,13 +308,17 @@ const ThreadList: React.FC<ThreadListProps> = ({
         <div className="thread-list" style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '1rem'
+          gap: '5px'
         }}>
           {filteredThreads.map(thread => (
             <ThreadCard 
               key={thread.id} 
               thread={thread} 
               onThreadDeleted={onRefresh}
+              initialPinStatus={pinStatuses[thread.id] || false}
+              onPinStatusChange={(threadId, isPinned) => {
+                setPinStatuses(prev => ({ ...prev, [threadId]: isPinned }));
+              }}
             />
           ))}
         </div>

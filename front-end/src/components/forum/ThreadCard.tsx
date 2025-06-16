@@ -6,15 +6,19 @@ import { formatTimeAgo } from '../../utils/dateUtils';
 import { translateCategory } from '../../utils/categories';
 import { useAuth } from '../../contexts/AuthContext';
 import { threadAPI, voteAPI } from '../../services/api';
+import { getMediaUrl } from '../../utils/mediaUrl';
+import { pinnedThreadService } from '../../services/pinnedThreadService';
 import './ThreadCard.css';
 
 interface ThreadCardProps {
   thread: Thread;
   onVoteUpdate?: (threadId: number, newVoteCount: number, userVote: 'upvote' | 'downvote' | null) => void;
   onThreadDeleted?: () => void;
+  onPinStatusChange?: (threadId: number, isPinned: boolean) => void;
+  initialPinStatus?: boolean;
 }
 
-const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadDeleted }) => {
+const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadDeleted, onPinStatusChange, initialPinStatus }) => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -23,9 +27,33 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
   const [error, setError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState<boolean>(false);
   const [voting, setVoting] = useState<boolean>(false);
+  const [isPinned, setIsPinned] = useState<boolean>(initialPinStatus || false);
+  const [pinning, setPinning] = useState<boolean>(false);
 
   // Check if current user is the thread creator
   const isThreadCreator = currentUser && thread.user === currentUser.id;
+
+  // Load pin status on component mount only if not provided
+  React.useEffect(() => {
+    const loadPinStatus = async () => {
+      if (currentUser && initialPinStatus === undefined) {
+        try {
+          const pinned = await pinnedThreadService.getPinStatus(thread.id);
+          setIsPinned(pinned);
+        } catch (err) {
+          // Ignore errors - assume not pinned
+        }
+      }
+    };
+    loadPinStatus();
+  }, [thread.id, currentUser, initialPinStatus]);
+
+  // Update local state when initialPinStatus changes
+  React.useEffect(() => {
+    if (initialPinStatus !== undefined) {
+      setIsPinned(initialPinStatus);
+    }
+  }, [initialPinStatus]);
 
   const handleVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
     e.preventDefault();
@@ -89,8 +117,39 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
     }
   };
 
-  // Default user image path
-  const userImagePath = "/user_default_image.png";
+  const handlePin = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!currentUser) {
+      setError(t('forum.error.loginRequired'));
+      return;
+    }
+
+    if (pinning) return;
+
+    try {
+      setPinning(true);
+      setError(null);
+      
+      const response = await pinnedThreadService.pinThread(thread.id);
+      const newPinStatus = response.status === 'pinned';
+      setIsPinned(newPinStatus);
+      
+      // Notify parent component of pin status change
+      onPinStatusChange?.(thread.id, newPinStatus);
+      
+    } catch (err) {
+      console.error('Error pinning thread:', err);
+      setError(err instanceof Error ? err.message : t('forum.error.pinGeneric'));
+    } finally {
+      setPinning(false);
+    }
+  };
+
+  // Get user image path - use profile thumbnail if available, otherwise default
+  const userImagePath = thread.author_profile_thumbnail 
+    ? getMediaUrl(thread.author_profile_thumbnail) || "/user_default_image.png"
+    : "/user_default_image.png";
   
   return (
     <div className="thread-card">
@@ -122,8 +181,20 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
           <span className="thread-separator">•</span>
           <img src={userImagePath} alt="User" className="thread-author-image" />
           <span className="thread-author">
-            {t('forum.threadList.by')} {thread.author_display_name || thread.nickname}
-            {thread.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+            {t('forum.threadList.by')} {thread.is_anonymous ? (
+              <>
+                {thread.author_display_name || thread.nickname}
+                <span className="anonymous-badge">{t('forum.anonymous')}</span>
+              </>
+            ) : (
+              <Link 
+                to={`/profile/${thread.user}`} 
+                className="thread-author-link"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {thread.author_display_name || thread.nickname}
+              </Link>
+            )}
           </span>
           <span className="thread-separator">•</span>
           <span className="thread-time">{formatTimeAgo(thread.last_activity_date, t)}</span>
@@ -151,9 +222,9 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
             </span>
           </div>
 
-          <div className="thread-action">
-            <span className="thread-action-icon">🔄</span>
-            <span>{t('forum.action.share')}</span>
+          <div className="thread-action" onClick={handlePin}>
+            <span className="thread-action-icon">{isPinned ? '📍' : '📌'}</span>
+            <span>{isPinned ? t('forum.action.unpin') : t('forum.action.pin')}</span>
           </div>
 
           {/* Only show edit option for thread creator */}

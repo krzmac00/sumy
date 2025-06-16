@@ -84,6 +84,16 @@
   margin-right: 4px;
 }
 
+.thread-author-link {
+  color: #8b0002;
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.thread-author-link:hover {
+  text-decoration: underline;
+}
+
 .thread-separator {
   margin: 0 4px;
 }
@@ -199,10 +209,13 @@
 }
 
 .thread-author-image {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  margin-right: 4px;
+  margin-right: 6px;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+  vertical-align: middle;
 }
 
 @media (max-width: 768px) {

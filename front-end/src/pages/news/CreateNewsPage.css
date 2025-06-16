@@ -1,0 +1,222 @@
+.create-news-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 0px 20px 20px;
+}
+
+.create-news-header {
+  min-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.create-news-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+
+.create-news-error {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #c00;
+}
+
+.create-news-form {
+  min-width: 800px;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="datetime-local"],
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #8b0002;
+  box-shadow: 0 0 0 2px rgba(139, 0, 2, 0.1);
+}
+
+.category-selection {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #f8f9fa;
+}
+
+.category-select-item {
+  margin-bottom: 8px;
+}
+
+.category-select-item.level-0 {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.category-select-item.level-1 {
+  margin-left: 24px;
+  font-weight: 500;
+}
+
+.category-select-item.level-2 {
+  margin-left: 48px;
+}
+
+.category-select-item.level-3 {
+  margin-left: 72px;
+}
+
+.category-select-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.category-select-label input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.category-select-name {
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.category-select-name.category-university {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.category-select-name.category-faculty {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.category-select-name.category-announcement {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.category-select-name.category-event {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.cancel-button-news {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-button {
+  border: none;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.cancel-button-news:hover {
+  background-color: #e0e0e0;
+}
+
+.submit-button-news {
+  background-color: #8b0002;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-width: 1px;
+}
+
+.submit-button-news:hover:not(:disabled) {
+  background-color: #6b0000;
+}
+
+.submit-button-news:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .create-news-page {
+    padding: 10px;
+  }
+  
+  .create-news-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .create-news-form {
+    padding: 16px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .cancel-button-news,
+  .submit-button {
+    width: 100%;
+  }
+}

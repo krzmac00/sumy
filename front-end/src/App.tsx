@@ -9,12 +9,18 @@ import Home from './pages/Home';
 import ForumPage from './pages/forum/ForumPage';
 import ThreadViewPage from './pages/forum/ThreadViewPage';
 import ThreadCreatePage from './pages/forum/ThreadCreatePage';
+import ThreadEditPage from './pages/forum/ThreadEditPage';
+import NoticeboardPage from './pages/noticeboard/NoticeboardPage';
+import AdvertisementViewPage from './pages/noticeboard/AdvertisementViewPage';
+import AdvertisementCreatePage from './pages/noticeboard/AdvertisementCreatePage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Calendar from './pages/Calendar';
 import './App.css';
 import MapPage from './pages/MapPage';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import UserProfile from './components/UserProfile';
+import CreateNewsPage from './pages/news/CreateNewsPage';
 import TimetablePage from './pages/TimetablePage';
 import PublicProfile from "@/pages/PublicProfile.tsx";
 
@@ -100,6 +106,7 @@ const AppRoutes: React.FC = () => {
       {/* Forum Routes */}
       <Route path="/forum" element={<ProtectedRoute element={<ForumPage />} />} />
       <Route path="/forum/threads/:threadId" element={<ProtectedRoute element={<ThreadViewPage />} />} />
+      <Route path="/forum/threads/:threadId/edit" element={<ProtectedRoute element={<ThreadEditPage />} />} />
       <Route path="/forum/create-thread" element={<ProtectedRoute element={<ThreadCreatePage />} />} />
 
       <Route path="/calendar" element={<ProtectedRoute element={<Calendar />} />} />
@@ -107,11 +114,19 @@ const AppRoutes: React.FC = () => {
       <Route path="/map" element={<ProtectedRoute element={<MapPage />} />} />
       <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
       <Route path="/profile/edit" element={<ProtectedRoute element={<EditProfile />} />} />
-      <Route path="/profile/:userId" element={<ProtectedRoute element={<PublicProfile />} />} />
+      <Route path="/profile/:userId" element={<ProtectedRoute element={<UserProfile />} />} />
+      
+      {/* News Routes */}
+      <Route path="/news/create" element={<ProtectedRoute element={<CreateNewsPage />} />} />
+      
+      {/* Noticeboard Routes */}
+      <Route path="/noticeboard" element={<ProtectedRoute element={<NoticeboardPage />} />} />
+      <Route path="/noticeboard/create" element={<ProtectedRoute element={<AdvertisementCreatePage />} />} />
+      <Route path="/noticeboard/:id" element={<ProtectedRoute element={<AdvertisementViewPage />} />} />
 
       {/* Default Routes */}
       <Route path="/" element={<Navigate to="/auth" replace />} />
-      <Route path="*" element={<Navigate to="/forum" replace />} />
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
 };

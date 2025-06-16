@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Post } from '../../types/forum';
 import { postAPI, voteAPI } from '../../services/api';
 import { formatTimeAgo } from '../../utils/dateUtils';
 import { useAuth } from '../../contexts/AuthContext';
+import { getMediaUrl } from '../../utils/mediaUrl';
 import './PostCard.css';
 
 interface PostCardProps {
@@ -40,8 +42,10 @@ const PostCard: React.FC<PostCardProps> = ({
   // Check if current user is the post creator
   const isPostCreator = currentUser && post.user === currentUser.id;
 
-  // Default user image path
-  const userImagePath = "/user_default_image.png";
+  // Get user image path - use profile thumbnail if available, otherwise default
+  const userImagePath = post.author_profile_thumbnail 
+    ? getMediaUrl(post.author_profile_thumbnail) || "/user_default_image.png"
+    : "/user_default_image.png";
 
   const handleVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
     e.preventDefault();
@@ -149,8 +153,20 @@ const PostCard: React.FC<PostCardProps> = ({
             {repliedToPosts.map(repliedPost => (
               <div key={repliedPost.id} className="replied-to-post">
                 <span className="replied-to-author">
-                  {repliedPost.user_display_name || repliedPost.nickname}
-                  {repliedPost.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+                  {repliedPost.is_anonymous ? (
+                    <>
+                      {repliedPost.user_display_name || repliedPost.nickname}
+                      <span className="anonymous-badge">{t('forum.anonymous')}</span>
+                    </>
+                  ) : (
+                    <Link 
+                      to={`/profile/${repliedPost.user}`} 
+                      className="replied-to-author-link"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {repliedPost.user_display_name || repliedPost.nickname}
+                    </Link>
+                  )}
                 </span>
                 <span className="replied-to-preview">
                   {repliedPost.content.length > 50
@@ -177,8 +193,20 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="thread-header">
           <img src={userImagePath} alt="User" className="thread-author-image" />
           <span className="thread-author">
-            {post.user_display_name || post.nickname}
-            {post.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+            {post.is_anonymous ? (
+              <>
+                {post.user_display_name || post.nickname}
+                <span className="anonymous-badge">{t('forum.anonymous')}</span>
+              </>
+            ) : (
+              <Link 
+                to={`/profile/${post.user}`} 
+                className="thread-author-link"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {post.user_display_name || post.nickname}
+              </Link>
+            )}
           </span>
           <span className="thread-separator">•</span>
           <span className="thread-time">{formatTimeAgo(post.date, t)}</span>

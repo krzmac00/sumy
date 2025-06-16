@@ -109,6 +109,7 @@
   }
   
   .brand {
+    margin-left: 41px;
     display: flex;
     align-items: center;
   }
@@ -145,10 +146,12 @@
   .nav-item a {
     text-decoration: none;
     color: #333;
-    font-weight: 500;
     padding: 8px 0;
     display: inline-block;
     position: relative;
+    font-family: "Michroma", sans-serif;
+    font-weight: 600;
+    font-style: normal;
   }
   
   .nav-item a:after {
@@ -159,7 +162,7 @@
     height: 2px;
     bottom: 0;
     left: 0;
-    background-color: #4a90e2;
+    background-color: #99090c;
     transform-origin: bottom right;
     transition: transform 0.3s ease-out;
   }
@@ -185,6 +188,7 @@
     border-radius: 4px;
     padding: 6px 12px;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
   }
   
@@ -202,7 +206,11 @@
   }
   
   .user-icon {
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     margin-right: 8px;
   }
   
@@ -262,6 +270,27 @@
   .user-dropdown a:hover,
   .user-dropdown .dropdown-button:hover {
     background-color: #f5f5f5;
+  }
+  
+  /* Profile picture in navbar */
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
+  }
+  
+  .user-icon i {
+    font-size: 28px;
+    color: #666;
+    line-height: 1;
+  }
+  
+  .d-none {
+    display: none !important;
   }
   
   @media (max-width: 768px) {

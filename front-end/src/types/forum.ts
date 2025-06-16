@@ -15,6 +15,8 @@ export interface Post {
   vote_count: number; // Net vote count (upvotes - downvotes)
   user_vote: 'upvote' | 'downvote' | null; // Current user's vote
   can_vote: boolean; // Whether current user can vote on this post
+  author_profile_picture?: string | null; // Author's profile picture URL
+  author_profile_thumbnail?: string | null; // Author's profile thumbnail URL
 }
 
 /**
@@ -37,6 +39,8 @@ export interface Thread {
   vote_count: number; // Net vote count (upvotes - downvotes)
   user_vote: 'upvote' | 'downvote' | null; // Current user's vote
   can_vote: boolean; // Whether current user can vote on this thread
+  author_profile_picture?: string | null; // Author's profile picture URL
+  author_profile_thumbnail?: string | null; // Author's profile thumbnail URL
   
   // Legacy field for backward compatibility during migration
   post?: number; // Legacy post ID reference

@@ -33,9 +33,6 @@ html, body, #root {
 
 body {
   background-color: #f5f5f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
 }
 
@@ -45,7 +42,7 @@ body {
   min-width: 1000px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
   margin: 0 auto;
@@ -211,7 +208,7 @@ body {
   margin-top: 10px;
 }
 
-.submit-button {
+.submit-button-auth {
   background-color: #8b0002;
   color: white;
   border: none;
@@ -223,7 +220,7 @@ body {
   margin-top: 10px;
 }
 
-.submit-button:hover {
+.submit-button-auth:hover {
   background-color: #6a0000;
 }
 

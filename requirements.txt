@@ -6,3 +6,8 @@ djangorestframework-simplejwt==5.5.0
 PyJWT==2.9.0
 coreapi==2.3.3  # For API schema documentation
 pyyaml==6.0.1   # For schema generation
+django-filter==25.1
+Pillow==10.4.0  # For image processing
+redis==5.0.1    # For Redis cache backend
+django-redis==5.4.0  # Django Redis cache backend
+hiredis==2.3.2  # C parser for improved Redis performance

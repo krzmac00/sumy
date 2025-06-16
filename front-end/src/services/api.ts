@@ -59,7 +59,6 @@ export const threadAPI = {
     }
     
     // If neither condition is met, return empty array to prevent errors
-    console.warn('Unexpected response format from threads API:', data);
     return [];
   },
 
@@ -143,7 +142,7 @@ export const threadAPI = {
             Authorization: `Bearer ${token}`,
         }
         }).then(response => {
-          console.log('Utworzone wątki:', response.data.created_threads);
+          // Thread creation successful
         }).catch(error => {
               console.error('Błąd podczas tworzenia wątków:', error.response?.data || error.message);
         });
@@ -180,7 +179,6 @@ export const postAPI = {
     }
     
     // If neither condition is met, return empty array to prevent errors
-    console.warn('Unexpected response format from posts API:', data);
     return [];
   },
 
@@ -206,8 +204,6 @@ export const postAPI = {
       replying_to: Array.isArray(data.replying_to) ? data.replying_to : []
     };
 
-    console.log('Sending post data to server:', postData);
-    
     const response = await fetch(`${API_BASE}/posts/`, {
       method: 'POST',
       headers: JSON_HEADERS,
@@ -218,7 +214,6 @@ export const postAPI = {
       // Try to get more detailed error information
       try {
         const errorData = await response.json();
-        console.error('Server returned error:', errorData);
         throw new Error(`Failed to create post: ${JSON.stringify(errorData)}`);
       } catch (jsonError) {
         // If can't parse JSON, fall back to statusText
