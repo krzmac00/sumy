@@ -116,7 +116,7 @@ class Thread(models.Model):
     category = models.CharField(max_length=63)
     
     # Author information
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                               related_name='authored_threads', null=True, blank=True)
     nickname = models.CharField(max_length=63, default="Anonymous User")
     is_anonymous = models.BooleanField(default=False)
@@ -200,6 +200,10 @@ class ThreadSerializer(serializers.ModelSerializer):
     can_vote = serializers.SerializerMethodField()
     author_profile_picture = serializers.SerializerMethodField()
     author_profile_thumbnail = serializers.SerializerMethodField()
+    nickname = serializers.CharField(required=False, allow_blank=True)
+    visible_for_teachers = serializers.BooleanField(default=False)
+    can_be_answered = serializers.BooleanField(default=True)
+    is_anonymous = serializers.BooleanField(default=False)
     
     def get_author_display_name(self, obj):
         if obj.is_anonymous:

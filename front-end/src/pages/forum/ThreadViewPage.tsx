@@ -267,8 +267,8 @@ const ThreadViewPage: React.FC = () => {
                     : t('forum.thread.replies')}
                 </span>
               </div>
-              
-              <div className="thread-action">
+
+              {/*<div className="thread-action">
                 <span className="thread-action-icon">🔄</span>
                 <span>{t('forum.action.share')}</span>
               </div>
@@ -276,7 +276,7 @@ const ThreadViewPage: React.FC = () => {
               <div className="thread-action">
                 <span className="thread-action-icon">💾</span>
                 <span>{t('forum.action.save')}</span>
-              </div>
+              </div>*/}
             </div>
           </div>
         </div>

@@ -432,7 +432,7 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
         return queryset
 
 class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Thread.objects.select_related('post').all()
+    queryset = Thread.objects.select_related('author').all()
     serializer_class = ThreadSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
@@ -461,30 +461,25 @@ class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 @api_view(['POST'])
 def create_thread_with_post(request):
-    try:
-        data = request.data
-        required_fields = ['nickname', 'content', 'category', 'title']
-        for field in required_fields:
-            if field not in data:
-                return Response({'error': f'Missing required field: {field}'}, status=status.HTTP_400_BAD_REQUEST)
-
-        with transaction.atomic():
-            thread_id = create_thread(
-                title=data['title'],
-                content=data['content'],
-                category=data['category'],
-                nickname=nickname,
-                visible_for_teachers=data.get('visible_for_teachers', False),
-                can_be_answered=data.get('can_be_answered', True),
-                user=user,
-                is_anonymous=is_anonymous
-            )
-            thread = Thread.objects.get(id=thread_id)
-            thread_data = ThreadSerializer(thread).data
-
-            return Response(thread_data, status=status.HTTP_201_CREATED)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    serializer = ThreadSerializer(data=request.data)
+    if serializer.is_valid():
+        thread_id = create_thread(
+            title=serializer.validated_data['title'],
+            content=serializer.validated_data['content'],
+            category=serializer.validated_data['category'],
+            nickname=serializer.validated_data.get('nickname'),
+            visible_for_teachers=serializer.validated_data.get(
+                'visible_for_teachers', False),
+            can_be_answered=serializer.validated_data.get('can_be_answered',
+                                                          True),
+            user=request.user,
+            is_anonymous=serializer.validated_data.get('is_anonymous', False),
+        )
+        thread = Thread.objects.get(id=thread_id)
+        return Response(ThreadSerializer(thread).data,
+                        status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # ---------- VOTING SECTION ----------
 @api_view(['POST'])
