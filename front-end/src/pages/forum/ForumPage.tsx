@@ -21,7 +21,12 @@ const ForumPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      await threadAPI.threadsFromEmail()
+      
+      // Fire and forget - don't wait for email threads
+      threadAPI.threadsFromEmail().catch(() => {
+        // Ignore errors from email thread fetching
+      });
+      
       const threadsData = await threadAPI.getAll(blacklistOn, dateFrom, dateTo, sortBy);
       
       // Ensure threadsData is an array
@@ -32,9 +37,14 @@ const ForumPage: React.FC = () => {
       }
       
       setThreads(threadsData);
-    } catch (err) {
-      console.error('Error fetching threads:', err);
-      setError(t('forum.error.fetchThreads'));
+    } catch (err: any) {
+      // Check if it's a connection error
+      if (err.message?.includes('Failed to fetch') || err.code === 'ERR_NETWORK') {
+        setError(t('forum.error.connectionError', 'Unable to connect to server. Please check if the server is running.'));
+      } else {
+        console.error('Error fetching threads:', err);
+        setError(t('forum.error.fetchThreads'));
+      }
     } finally {
       setLoading(false);
     }

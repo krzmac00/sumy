@@ -8,6 +8,7 @@ import { Thread, Post } from '../../types/forum';
 import { threadAPI, voteAPI } from '../../services/api';
 import { formatTimeAgo } from '../../utils/dateUtils';
 import { translateCategory } from '../../utils/categories';
+import { getMediaUrl } from '../../utils/mediaUrl';
 import './ThreadViewPage.css';
 
 const ThreadViewPage: React.FC = () => {
@@ -25,9 +26,6 @@ const ThreadViewPage: React.FC = () => {
   const [voteStatus, setVoteStatus] = useState<'upvote' | 'downvote' | null>(null);
   const [voteCount, setVoteCount] = useState<number>(0);
   const [voting, setVoting] = useState<boolean>(false);
-
-  // Default user image path
-  const userImagePath = "/user_default_image.png";
 
   useEffect(() => {
     fetchThread();
@@ -230,10 +228,32 @@ const ThreadViewPage: React.FC = () => {
                 {translateCategory(thread.category, t)}
               </Link>
               <span className="thread-separator">•</span>
-              <img src={userImagePath} alt="User" className="thread-author-image" />
+              <img 
+                src={thread.author_profile_thumbnail 
+                  ? getMediaUrl(thread.author_profile_thumbnail) || "/user_default_image.png"
+                  : "/user_default_image.png"} 
+                alt="User" 
+                className="thread-author-image" 
+              />
               <span className="thread-author">
-                {t('forum.threadList.by')} {thread.author_display_name || thread.nickname}
-                {thread.is_anonymous && <span className="anonymous-badge">{t('forum.anonymous')}</span>}
+                {t('forum.threadList.by')} {thread.is_anonymous ? (
+                  <>
+                    {thread.author_display_name || thread.nickname}
+                    <span className="anonymous-badge">{t('forum.anonymous')}</span>
+                  </>
+                ) : (
+                  thread.user ? (
+                    <Link 
+                      to={`/profile/${thread.user}`} 
+                      className="thread-author-link"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {thread.author_display_name || thread.nickname}
+                    </Link>
+                  ) : (
+                    thread.author_display_name || thread.nickname
+                  )
+                )}
               </span>
               <span className="thread-separator">•</span>
               <span className="thread-time">{formatTimeAgo(thread.last_activity_date, t)}</span>

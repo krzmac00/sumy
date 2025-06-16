@@ -17,6 +17,29 @@ const JSON_HEADERS = {
 };
 
 /**
+ * Helper function to make API calls with better error handling
+ */
+const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout = 10000): Promise<Response> => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error: any) {
+    clearTimeout(id);
+    if (error.name === 'AbortError') {
+      throw new Error('Request timeout');
+    }
+    throw error;
+  }
+};
+
+/**
  * Thread API service
  */
 export const threadAPI = {
@@ -45,25 +68,33 @@ export const threadAPI = {
     const queryString = params.toString();
     const url = `${API_BASE}/threads/${queryString ? `?${queryString}` : ''}`;
 
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch threads: ${response.statusText}`);
-    }
+    try {
+      const response = await fetchWithTimeout(url, {}, 5000);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch threads: ${response.statusText}`);
+      }
 
-    const data = await response.json();
-    
-    // Check if response is paginated (Django REST Framework pagination)
-    if (data && typeof data === 'object' && 'results' in data && Array.isArray(data.results)) {
-      return data.results;
+      const data = await response.json();
+      
+      // Check if response is paginated (Django REST Framework pagination)
+      if (data && typeof data === 'object' && 'results' in data && Array.isArray(data.results)) {
+        return data.results;
+      }
+      
+      // If it's a direct array
+      if (Array.isArray(data)) {
+        return data;
+      }
+      
+      // If neither condition is met, return empty array to prevent errors
+      return [];
+    } catch (error: any) {
+      // Re-throw with more context
+      if (error.message === 'Failed to fetch') {
+        throw new Error('Unable to connect to server');
+      }
+      throw error;
     }
-    
-    // If it's a direct array
-    if (Array.isArray(data)) {
-      return data;
-    }
-    
-    // If neither condition is met, return empty array to prevent errors
-    return [];
   },
 
   /**
@@ -128,31 +159,39 @@ export const threadAPI = {
   threadsFromEmail: async (): Promise<void> => {
     try {
       const token = localStorage.getItem('auth_token');
+      
+      // Skip if no token is available
+      if (!token) {
+        return;
+      }
+      
       const response = await axios.get('http://localhost:8000/api/accounts/me/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      
       if (response.data.role === "admin") {
         const emailResponse = await axios.get('http://localhost:8000/api/email/fetch-delete/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        axios.post('http://localhost:8000/api/email/create/', {
+        
+        await axios.post('http://localhost:8000/api/email/create/', {
           emails: emailResponse.data.emails
         }, {
           headers: {
             Authorization: `Bearer ${token}`,
-        }
-        }).then(response => {
-          // Thread creation successful
-        }).catch(error => {
-              console.error('Błąd podczas tworzenia wątków:', error.response?.data || error.message);
+          }
         });
       }
-    } catch (error) {
-      console.error('Error fetching user info or threads:', error);
+    } catch (error: any) {
+      // Only log non-connection errors
+      if (error.code !== 'ERR_NETWORK' && error.code !== 'ERR_CONNECTION_REFUSED') {
+        console.error('Error in threadsFromEmail:', error.message);
+      }
+      // Fail silently for connection errors since this is a background operation
     }
   }
 };

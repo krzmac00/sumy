@@ -66,32 +66,38 @@ const ThreadList: React.FC<ThreadListProps> = ({
   const handleDateChange = (type: 'from' | 'to', value: string) => {
     const newParams = new URLSearchParams(searchParams);
     
+    let actualDateFrom = dateFrom;
+    let actualDateTo = dateTo;
+    
     if (type === 'from') {
+      actualDateFrom = value;
       if (value) {
         newParams.set('dateFrom', value);
+        // If from date is after to date, adjust to date
+        if (dateTo && value > dateTo) {
+          actualDateTo = value;
+          newParams.set('dateTo', value);
+        }
       } else {
         newParams.delete('dateFrom');
       }
     } else {
+      actualDateTo = value;
       if (value) {
         newParams.set('dateTo', value);
+        // If to date is before from date, adjust from date
+        if (dateFrom && value < dateFrom) {
+          actualDateFrom = value;
+          newParams.set('dateFrom', value);
+        }
       } else {
         newParams.delete('dateTo');
       }
     }
     
     setSearchParams(newParams);
-    
-    // Validate date range
-    const newDateFrom = type === 'from' ? value : dateFrom;
-    const newDateTo = type === 'to' ? value : dateTo;
-    
-    if (newDateFrom && newDateTo && newDateFrom > newDateTo) {
-      setDateError(t('forum.filter.invalidDateRange'));
-    } else {
-      setDateError('');
-      onDateRangeChange?.(newDateFrom, newDateTo);
-    }
+    setDateError('');
+    onDateRangeChange?.(actualDateFrom, actualDateTo);
   };
 
   // Clear date filters
@@ -229,7 +235,7 @@ const ThreadList: React.FC<ThreadListProps> = ({
                 value={dateFrom}
                 onChange={(e) => handleDateChange('from', e.target.value)}
                 className="date-input"
-                max={new Date().toISOString().split('T')[0]}
+                max={dateTo || new Date().toISOString().split('T')[0]}
               />
             </div>
             <div className="date-input-group">
@@ -240,6 +246,7 @@ const ThreadList: React.FC<ThreadListProps> = ({
                 value={dateTo}
                 onChange={(e) => handleDateChange('to', e.target.value)}
                 className="date-input"
+                min={dateFrom}
                 max={new Date().toISOString().split('T')[0]}
               />
             </div>
