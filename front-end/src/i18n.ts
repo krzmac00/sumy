@@ -317,7 +317,7 @@ const resources = {
       "map.filter.administration":    "Administration",
 
       // Search bar
-      "map.search.placeholder":       "Search building…",
+      "map.search.placeholder":       "Search room or building",
 
       // Building Floor Modal
       "modal.close":                  "Close",
@@ -940,7 +940,7 @@ const resources = {
       "map.filter.nonFaculty": "Pozawydziałowy",
       "map.filter.administration": "Administracja",
 
-      "map.search.placeholder":   "Szukaj budynku…",
+      "map.search.placeholder":   "Szukaj sali lub budynku",
 
       "map.popup.goToWebsite":    "Przejdź do strony",
       "map.popup.buildingPlan":   "Plan budynku",
