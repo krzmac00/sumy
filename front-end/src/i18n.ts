@@ -70,6 +70,7 @@ const resources = {
       "nav.map": "Map",
       "nav.calendar": "Calendar",
       "nav.timetable": "Timetable",
+      "nav.search": "Search user...",
       
       // User menu
       "user.profile": "Profile",
@@ -259,6 +260,8 @@ const resources = {
 	    //Calendar
       "calendar.enterClass": "Enter class title",
       "calendar.deleteClass": "Delete event '{{title}}'?",
+      "calendar.enterRoom": "Enter room",
+      "calendar.enterTeacher": "Enter teacher",
       "calendar.previous": "Back",
       "calendar.next": "Next",
       "calendar.month": "Month",
@@ -266,28 +269,154 @@ const resources = {
       "calendar.day": "Day",
       "calendar.category.important": "Important",
       "calendar.category.private": "Private",
+      "calendar.category.exam": "Exam",
       "calendar.category.club": "Science Club",
       "calendar.category.student_council": "Student Council",
       "calendar.category.tul_events": "TUL Events",
+      "calendar.category.timetable_lecture": "Lecture",
+      "calendar.category.timetable_laboratory": "Laboratory",
+      "calendar.category.timetable_tutorials": "Tutorials",
+      "calendar.categoryShort.timetable_lecture": "LEC",
+      "calendar.categoryShort.timetable_laboratory": "LAB",
+      "calendar.categoryShort.timetable_tutorials": "TUT",
       "calendar.newEvent": "New event",
       "calendar.repeat.none": "Once",
       "calendar.repeat.weekly": "Weekly",
       "calendar.repeat.monthly": "Monthly",
+      "calendar.startDate": "Start Date",
+      "calendar.endDate": "End Date",
+      "calendar.time": "Time",
+      "calendar.cancel": "Cancel",
+      "calendar.save": "Save",
+      "calendar.invalidRange": "End date must be after start date",
+      "calendar.room": "Room",
+      "calendar.teacher": "Teacher",
+      "calendar.choose": "Choose a schedule",
+      "calendar.scheduleTitle": "Schedule title",
+      "calendar.scheduleCreated": "New timetable created",
+      "calendar.scheduleUpdated": "Schedule updated.",
+      "calendar.scheduleDeleted": "Schedule deleted.",
+      "calendar.deleteScheduleConfirm": "Are you sure you want to delete this schedule?",
+      "calendar.create": "Create",
+      "calendar.update": "Update title",
+      "calendar.delete": "Delete",
 
-      //MapFilterPanel
-      "map.filter.mapFilters": "Map filters",
-      "map.filter.buildingType": "Builingd type:",
-      "map.filter.generalAcademic": "General academic building",
-      "map.filter.faculty": "Faculty",
-      "map.filter.nonFaculty": "Non-faculty",
-      "map.filter.administration": "Administraion",
-      "map.filter.porter": "Porter's lodge",
-      "map.filter.roomType": "Room type:",
-      "map.filter.choice": "--select--",
-      "map.filter.auditorium": "Aula",
-      "map.filter.class": "Class",
-      "map.filter.laboratory": "Laboratory",
-      "map.filter.applyFilters": "Apply filters",
+      // Map Filter Panel
+      "map.filter.mapFilters":        "Map Filters",
+      "map.filter.buildingType":      "Building type",
+      "map.filter.faculty":           "Faculty buildings",
+      "map.filter.nonFaculty":        "Non-faculty buildings",
+      "map.filter.generalAcademic":   "General academic buildings",
+      "map.filter.administration":    "Administration",
+
+      // Search bar
+      "map.search.placeholder":       "Search building…",
+
+      // Building Floor Modal
+      "modal.close":                  "Close",
+      "map.popup.goToWebsite":    "Go to website",
+      "map.popup.buildingPlan":   "Building plan",
+
+      "modal.roomDetails.title":  "Room details",
+      "modal.roomDetails.name":   "Name",
+      "modal.roomDetails.type":   "Room type",
+      "modal.roomDetails.floor":  "Floor",
+      "room.type.auditorium": "Auditorium",
+
+      "floor.groundFloor":        "Ground floor",
+      "floor.firstFloor":         "1st floor",
+      "floor.secondFloor":        "2nd floor",
+      "floor.thirdFloor":         "3rd floor",
+      "floor.fourthFloor":        "4th floor",
+
+      "modal.floorPlanTitle":         "Floor plan of {{building}}",
+
+      "buildings": {
+        "B9":  {
+          "label":       "B9 Lodex",
+          "description": "Faculty of Technical Physics, Computer Science and Applied Mathematics"
+        },
+        "B14": {
+          "label":       "B14 Institute of Physics",
+          "description": "Institute of Physics"
+        },
+        "B19": {
+          "label":       "B19 CTI",
+          "description": "Information Technology Centre"
+        },
+        "B24": {
+          "label":       "B24 Language Centre",
+          "description": "Language Centre of Lodz University of Technology"
+        },
+        "B28": {
+          "label":       "B28 Sports Bay",
+          "description": "Academic Sports and Educational Centre of Lodz University of Technology"
+        },
+        "B22": {
+          "label":       "B22 Main Library",
+          "description": "Main Library of Lodz University of Technology"
+        },
+        "C4": {
+          "label":       "C4 Sports Centre",
+          "description": "Sports Centre of Lodz University of Technologu"
+        },
+        "C17": {
+          "label":       "SD VI",
+          "description": "Student Dormitory VI"
+        },
+        "C5": {
+          "label":       "SD VII",
+          "description": "Student Dormitory VII"
+        },
+        "C11": {
+          "label":       "SD IV",
+          "description": "Student Dormitory IV"
+        },
+        "C12": {
+          "label":       "SD III",
+          "description": "Student Dormitory III"
+        },
+        "C13": {
+          "label":       "SD II",
+          "description": "Student Dormitory II"
+        },
+        "C14": {
+          "label":       "SD I",
+          "description": "Student Dormitory I"
+        },
+        "C15": {
+          "label":       "SDS",
+          "description": "Student Government Headquarters"
+        },
+        "E1": {
+          "label":       "SD IX",
+          "description": "Student Dormitory IX"
+        },
+        "F1": {
+          "label":       "SD V",
+          "description": "Student Dormitory V"
+        },
+        "B11": {
+          "label":       "Dean’s Office",
+          "description": "Dean’s Office of FT-CS-AM"
+        }
+      },
+
+      "rooms": {
+        "F2":  "Auditorium F2",
+        "F3":  "Auditorium F3",
+        "F4":  "Auditorium F4",
+        "F5":  "Auditorium F5",
+        "F6":  "Auditorium F6",
+        "F7":  "Auditorium F7",
+        "F8":  "Auditorium F8",
+        "F9":  "Auditorium F9",
+        "F10": "Auditorium F10",
+        "S1":  "Cinema Room",
+        "A1":  "Aula Major",
+        "A3":  "Aula Minor",
+        "A2":  "Arena Magica"
+      },
 
       //UserProfile
       "profile.firstName": "First Name",
@@ -566,6 +695,7 @@ const resources = {
       "nav.map": "Mapa",
       "nav.calendar": "Kalendarz",
       "nav.timetable": "Plan zajęć",
+      "nav.search": "Szukaj użytkownika...",
       
       // User menu
       "user.profile": "Profil",
@@ -747,6 +877,8 @@ const resources = {
 	    //Calendar
       "calendar.enterClass": "Wprowadź tytuł zajęć",
       "calendar.deleteClass": "Usunąć wydarzenie '{{title}}'?",
+      "calendar.enterRoom": "Wprowadź pomieszczenie",
+      "calendar.enterTeacher": "Wprowadź nauczyciela",
       "calendar.previous": "Wstecz",
       "calendar.next": "Dalej",
       "calendar.month": "Miesiąc",
@@ -754,13 +886,37 @@ const resources = {
       "calendar.day": "Dzień",
       "calendar.category.important": "Ważne",
       "calendar.category.private": "Prywatne",
+      "calendar.category.exam": "Egzamin",
       "calendar.category.club": "Koło naukowe",
       "calendar.category.student_council": "Samorząd Studencki",
       "calendar.category.tul_events": "Wydarzenia PŁ",
+      "calendar.category.timetable_lecture": "Wykład",
+      "calendar.category.timetable_laboratory": "Laboratorium",
+      "calendar.category.timetable_tutorials": "Ćwiczenia",
+      "calendar.categoryShort.timetable_lecture": "WYK",
+      "calendar.categoryShort.timetable_laboratory": "LAB",
+      "calendar.categoryShort.timetable_tutorials": "ĆW",
       "calendar.newEvent": "Nowe wydarzenie",
       "calendar.repeat.none": "Jednorazowo",
       "calendar.repeat.weekly": "Co tydzień",
       "calendar.repeat.monthly": "Co miesiąc",
+      "calendar.startDate": "Data Początkowa",
+      "calendar.endDate": "Data Końcowa",
+      "calendar.time": "Czas",
+      "calendar.cancel": "Anuluj",
+      "calendar.save": "Zapisz",
+      "calendar.invalidRange": "Data końcowa musi być później niż data początkowa",
+      "calendar.room": "Pomieszczenie",
+      "calendar.teacher": "Nauczyciel",
+      "calendar.choose": "Wybierz plan",
+      "calendar.scheduleTitle": "Tytuł planu",
+      "calendar.scheduleCreated": "Utworzono nowy plan",
+      "calendar.scheduleUpdated": "Zaktualizowano plan",
+      "calendar.scheduleDeleted": "Plan został usunięty",
+      "calendar.deleteScheduleConfirm": "Czy na pewno chcesz usunąć ten plan?",
+      "calendar.create": "Utwórz",
+      "calendar.update": "Aktualizuj tytuł",
+      "calendar.delete": "Usuń",
 
       //MapFilterPanel
       "map.filter.mapFilters": "Filtry mapy",
@@ -769,13 +925,113 @@ const resources = {
       "map.filter.faculty": "Wydziałowy",
       "map.filter.nonFaculty": "Pozawydziałowy",
       "map.filter.administration": "Administracja",
-      "map.filter.porter": "Portiernia",
-      "map.filter.roomType": "Typ pomieszczenia:",
-      "map.filter.choice": "--wybierz--",
-      "map.filter.auditorium": "Aula",
-      "map.filter.class": "Sala",
-      "map.filter.laboratory": "Laboratorium",
-      "map.filter.applyFilters": "Zastosuj filtry",
+
+      "map.search.placeholder":   "Szukaj budynku…",
+
+      "map.popup.goToWebsite":    "Przejdź do strony",
+      "map.popup.buildingPlan":   "Plan budynku",
+
+      "modal.roomDetails.title":  "Szczegóły sali",
+      "modal.roomDetails.name":   "Nazwa",
+      "modal.roomDetails.type":   "Typ sali",
+      "modal.roomDetails.floor":  "Piętro",
+
+      "room.type.auditorium": "Aula",
+
+      "floor.groundFloor":        "Parter",
+      "floor.firstFloor":         "Piętro 1",
+      "floor.secondFloor":        "Piętro 2",
+      "floor.thirdFloor":         "Piętro 3",
+      "floor.fourthFloor":        "Piętro 4",
+
+      "modal.floorPlanTitle":         "Plan budynku {{building}}",
+
+      "buildings": {
+        "B9":  {
+          "label":       "B9 Lodex",
+          "description": "Wydział Fizyki Technicznej, Informatyki i Matematyki Stosowanej"
+        },
+        "B14": {
+          "label":       "B14 Instytut Fizyki",
+          "description": "Instytut Fizyki"
+        },
+        "B19": {
+          "label":       "B19 Centrum Technologii Informatycznych CTI",
+          "description": "Centrum Technologii Informatycznych CTI"
+        },
+        "B24": {
+          "label":       "B24 Centrum Językowe",
+          "description": "Centrum Językowe Politechniki Łódzkiej"
+        },
+        "B28": {
+          "label":       "B28 Zatoka Sportu",
+          "description": "Akademickie Centrum Sportowo-Dydaktyczne Politechniki Łódzkiej"
+        },
+        "B22": {
+          "label":       "B22 Biblioteka Główna",
+          "description": "Biblioteka Główna Politechniki Łódzkiej"
+        },
+        "C4": {
+          "label":       "C4 Centrum Sportu",
+          "description": "Centrum Sportu Politechniki Łódzkiej"
+        },
+        "C17": {
+          "label":       "VI DS",
+          "description": "VI Dom Studencki"
+        },
+        "C5": {
+          "label":       "VII DS",
+          "description": "VII Dom Studencki"
+        },
+        "C11": {
+          "label":       "IV DS",
+          "description": "IV Dom Studencki"
+        },
+        "C12": {
+          "label":       "III DS",
+          "description": "III Dom Studencki"
+        },
+        "C13": {
+          "label":       "II DS",
+          "description": "II Dom Studencki"
+        },
+        "C14": {
+          "label":       "I DS",
+          "description": "I Dom Studencki"
+        },
+        "C15": {
+          "label":       "SDS",
+          "description": "Siedziba Samorządu Studenckiego"
+        },
+        "E1": {
+          "label":       "IX DS",
+          "description": "IX Dom Studencki"
+        },
+        "F1": {
+          "label":       "V DS",
+          "description": "V Dom Studencki"
+        },
+        "B11": {
+          "label":       "Dziekanat WFTiMS",
+          "description": "Dziekanat WFTiMS"
+        }
+      },
+
+      "rooms": {
+        "F2":  "Aula F2",
+        "F3":  "Aula F3",
+        "F4":  "Aula F4",
+        "F5":  "Aula F5",
+        "F6":  "Aula F6",
+        "F7":  "Aula F7",
+        "F8":  "Aula F8",
+        "F9":  "Aula F9",
+        "F10": "Aula F10",
+        "S1":  "Sala kinowa",
+        "A1":  "Aula Major",
+        "A3":  "Aula Minor",
+        "A2":  "Arena Magica"
+      },
 
       //UserProfile
       "profile.firstName": "Imię",

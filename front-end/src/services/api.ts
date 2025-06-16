@@ -1,6 +1,7 @@
 import { CustomCalendarEvent } from '@/types/event';
 import { Post, PostCreateData, PostUpdateData, Thread, ThreadCreateData, VoteData, VoteResponse } from '../types/forum';
 import axios from 'axios';
+import { SchedulePlan } from '@/types/SchedulePlan';
 
 /**
  * Base API URL
@@ -306,98 +307,300 @@ export const voteAPI = {
  * Event API service
  */
 export const eventAPI = {
-  /**
-   * Get all events
-   */
   getAll: async (): Promise<CustomCalendarEvent[]> => {
-    const response = await fetch(`${API_BASE}/events/`);
+    const url = `${API_BASE}/events/`;
+    const response = await fetch(url);
+    const data = await response.json();
+
     if (!response.ok) {
       throw new Error(`Failed to fetch events: ${response.statusText}`);
     }
-    const data = await response.json();
 
     return data.results.map((event: any) => ({
       ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-      repeatType: event.repeat_type
+      start: new Date(event.start_date),
+      end: new Date(event.end_date),
+      repeatType: event.repeat_type,
+      schedule_plan: event.schedule_plan ?? null,
+      room: event.room ?? null,
+      teacher: event.teacher ?? null,
     }));
   },
 
-  /**
-   * Get a specific event by ID
-   */
   getOne: async (id: number): Promise<CustomCalendarEvent> => {
-    const response = await fetch(`${API_BASE}/events/${id}/`);
+    const url = `${API_BASE}/events/${id}/`;
+    const response = await fetch(url);
+    const data = await response.json();
+
     if (!response.ok) {
       throw new Error(`Failed to fetch event ${id}: ${response.statusText}`);
     }
-    const event = await response.json();
+
     return {
-      ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-      repeatType: event.repeat_type
+      ...data,
+      start: new Date(data.start_date),
+      end: new Date(data.end_date),
+      repeatType: data.repeat_type,
+      schedule_plan: data.schedule_plan ?? null,
+      room: data.room ?? null,
+      teacher: data.teacher ?? null,
     };
   },
 
-  /**
-   * Create a new event
-   */
   create: async (data: Omit<CustomCalendarEvent, "id">): Promise<CustomCalendarEvent> => {
-    const response = await fetch(`${API_BASE}/events/`, {
+    const url = `${API_BASE}/events/`;
+    const payload = {
+      ...data,
+      start_date: data.start,
+      end_date: data.end,
+      repeat_type: data.repeatType,
+      schedule_plan: data.schedule_plan ?? null,
+      room: data.room ?? null,
+      teacher: data.teacher ?? null,
+    };
+
+    const response = await fetch(url, {
       method: "POST",
       headers: JSON_HEADERS,
-      body: JSON.stringify({
-        ...data,
-        repeat_type: data.repeatType,
-      }),
+      body: JSON.stringify(payload),
     });
+
+    const result = await response.json();
+
     if (!response.ok) {
-      throw new Error(`Failed to create event: ${response.statusText}`);
+      console.error("[ERROR]", response.status, result);
     }
-    const event = await response.json();
+
     return {
-      ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-      repeatType: event.repeat_type,
+      ...result,
+      start: new Date(result.start_date),
+      end: new Date(result.end_date),
+      repeatType: result.repeat_type,
+      schedule_plan: result.schedule_plan ?? null,
+      room: result.room ?? null,
+      teacher: result.teacher ?? null,
     };
   },
 
-  /**
-   * Update an existing event
-   */
   update: async (id: number, data: Partial<CustomCalendarEvent>): Promise<CustomCalendarEvent> => {
-    const response = await fetch(`${API_BASE}/events/${id}/`, {
+    const url = `${API_BASE}/events/${id}/`;
+    const payload = {
+      ...data,
+      start_date: data.start,
+      end_date: data.end,
+      repeat_type: data.repeatType,
+      schedule_plan: data.schedule_plan ?? null,
+      room: data.room ?? null,
+      teacher: data.teacher ?? null,
+    };
+
+    const response = await fetch(url, {
       method: "PUT",
       headers: JSON_HEADERS,
-      body: JSON.stringify({
-        ...data,
-        repeat_type: data.repeatType
-      }),
+      body: JSON.stringify(payload),
     });
+
+    const result = await response.json();
+
     if (!response.ok) {
-      throw new Error(`Failed to update event ${id}: ${response.statusText}`);
+      console.error("[ERROR]", response.status, result);
     }
-    const event = await response.json();
+
     return {
-      ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-      repeatType: event.repeat_type,
+      ...result,
+      start: new Date(result.start_date),
+      end: new Date(result.end_date),
+      repeatType: result.repeat_type,
+      schedule_plan: result.schedule_plan ?? null,
+      room: result.room ?? null,
+      teacher: result.teacher ?? null,
     };
   },
 
-  /**
-   * Delete an event
-   */
   delete: async (id: number): Promise<void> => {
-    const response = await fetch(`${API_BASE}/events/${id}/`, {
-      method: "DELETE",
-    });
+    const url = `${API_BASE}/events/${id}/`;
+    console.log("[DELETE]", url);
+
+    const response = await fetch(url, { method: "DELETE" });
+
     if (!response.ok) {
-      throw new Error(`Failed to delete event ${id}: ${response.statusText}`);
+      console.error("[ERROR]", response.status, await response.text());
+    }
+  },
+};
+
+function authHeaders() {
+  const token = localStorage.getItem('auth_token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export const scheduleAPI = {
+  getAll: async (): Promise<SchedulePlan[]> => {
+    const url = `${API_BASE}/schedule-plans/`;
+
+    try {
+      const response = await axios.get(url, { headers: authHeaders() });
+      const data = response.data;
+
+      if (!Array.isArray(data.results)) {
+        return [];
+      }
+
+      return data.results;
+    } catch (err: any) {
+      console.error("[ERROR GETTING SCHEDULES]", err.response?.status, err.response?.data);
+      throw err;
+    }
+  },
+
+  create: async (payload: Pick<SchedulePlan, 'name' | 'description' | 'code'>): Promise<SchedulePlan> => {
+    const url = `${API_BASE}/schedule-plans/`;
+    console.log("[POST]", url, payload);
+
+    try {
+      const response = await axios.post(url, payload, {
+        headers: {
+          ...authHeaders(),
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (err: any) {
+      console.error("[ERROR CREATING SCHEDULE]", err.response?.status, err.response?.data);
+      throw err;
+    }
+  },
+
+  getEvents: async (scheduleId: number): Promise<CustomCalendarEvent[]> => {
+    const url = `${API_BASE}/events/?schedule_plan=${scheduleId}`;
+    console.log("[GET EVENTS]", url);
+
+    try {
+      const response = await axios.get(url, { headers: authHeaders() });
+      const data = response.data;
+
+      if (!Array.isArray(data.results)) {
+        return [];
+      }
+
+      return data.results.map((event: any) => ({
+        id: event.id,
+        title: event.title,
+        description: event.description ?? '',
+        category: event.category,
+        color: event.color,
+        repeatType: event.repeat_type,
+        start: new Date(event.start_date),
+        end: new Date(event.end_date),
+        schedule_plan: event.schedule_plan ?? null,
+        room: event.room ?? null,
+        teacher: event.teacher ?? null,
+      }));
+    } catch (err: any) {
+      console.error("[ERROR FETCHING EVENTS]", err.response?.status, err.response?.data);
+      throw err;
+    }
+  },
+
+  addEvent: async (scheduleId: number, event: Omit<CustomCalendarEvent, "id">): Promise<CustomCalendarEvent> => {
+    const url = `${API_BASE}/events/`;
+    const payload = {
+      title: event.title,
+      description: event.description ?? '',
+      category: event.category,
+      start_date: event.start,
+      end_date: event.end,
+      repeat_type: event.repeatType,
+      room: event.room,
+      teacher: event.teacher,
+      schedule_plan: scheduleId,
+    };
+
+    try {
+      const response = await axios.post(url, payload, {
+        headers: {
+          ...authHeaders(),
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const saved = response.data;
+      return {
+        ...saved,
+        start: new Date(saved.start_date),
+        end: new Date(saved.end_date),
+        repeatType: saved.repeat_type,
+        schedule_plan: saved.schedule_plan ?? null,
+        room: saved.room ?? null,
+        teacher: saved.teacher ?? null,
+        color: saved.color ?? '',
+      };
+    } catch (err: any) {
+      console.error("[ERROR ADDING EVENT]", err.response?.status, err.response?.data);
+      throw err;
+    }
+  },
+
+  update: async (id: number, data: Partial<SchedulePlan>): Promise<void> => {
+    const url = `${API_BASE}/schedule-plans/${id}/`;
+
+    try {
+      await axios.patch(url, data, {
+        headers: authHeaders(),
+      });
+    } catch (err: any) {
+      console.error("[ERROR UPDATING SCHEDULE]", err.response?.status, err.response?.data);
+      throw err;
+    }
+  },
+
+  deleteEvent: async (eventId: number): Promise<void> => {
+    const url = `${API_BASE}/events/${eventId}/`;
+
+    try {
+      await axios.delete(url, {
+        headers: authHeaders(),
+      });
+    } catch (err: any) {
+      console.error("[ERROR DELETING EVENT]", err.response?.status, err.response?.data);
+      throw err;
+    }
+  },
+
+  updateEvent: async (scheduleId: number, event: CustomCalendarEvent): Promise<void> => {
+    const baseId = event.id.toString().split('-')[0];
+    const url = `${API_BASE}/events/${baseId}/`;
+
+    const payload = {
+      title: event.title,
+      description: event.description ?? '',
+      category: event.category,
+      start_date: event.start,
+      end_date: event.end,
+      repeat_type: event.repeatType,
+      room: event.room,
+      teacher: event.teacher,
+      schedule_plan: scheduleId,
+    };
+
+    try {
+      await axios.patch(url, payload, {
+        headers: authHeaders(),
+      });
+    } catch (err: any) {
+      console.error("[ERROR UPDATING EVENT]", err.response?.status, err.response?.data);
+    }
+  },
+
+  delete: async (id: number): Promise<void> => {
+    const url = `${API_BASE}/schedule-plans/${id}/`;
+
+    try {
+      await axios.delete(url, {
+        headers: authHeaders(),
+      });
+    } catch (err: any) {
+      console.error("[ERROR DELETING SCHEDULE]", err.response?.status, err.response?.data);
     }
   },
 };

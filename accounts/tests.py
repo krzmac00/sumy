@@ -407,3 +407,63 @@ class UserProfileAPITests(TestCase):
         # Ensure bio remains unchanged
         self.user.profile.refresh_from_db()
         self.assertEqual(self.user.profile.bio, '')
+
+class UserSearchViewTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+        # Tworzymy użytkownika do uwierzytelnienia
+        self.auth_user = User.objects.create_user(
+            email='authuser@p.lodz.pl',
+            password='securepass',
+            first_name='Auth',
+            last_name='User',
+            role='lecturer'
+        )
+        self.client.force_authenticate(user=self.auth_user)
+
+        # Użytkownicy do testów wyszukiwania
+        self.student = User.objects.create_user(
+            email='123456@edu.p.lodz.pl',
+            password='testpass',
+            first_name='Jan',
+            last_name='Kowalski',
+            role='student'
+        )
+        self.lecturer = User.objects.create_user(
+            email='anna.nowak@p.lodz.pl',
+            password='testpass',
+            first_name='Anna',
+            last_name='Nowak',
+            role='lecturer'
+        )
+
+    def test_search_by_first_name(self):
+        response = self.client.get(reverse('user-search'), {'q': 'Jan'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['first_name'], 'Jan')
+        self.assertEqual(response.data[0]['last_name'], 'Kowalski')
+
+    def test_search_by_last_name(self):
+        response = self.client.get(reverse('user-search'), {'q': 'Now'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['last_name'], 'Nowak')
+        self.assertEqual(response.data[0]['first_name'], 'Anna')
+
+    def test_search_by_index_number(self):
+        response = self.client.get(reverse('user-search'), {'q': '123456'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['index_number'], '123456')
+
+    def test_search_empty_query_returns_empty_list(self):
+        response = self.client.get(reverse('user-search'), {'q': ''})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, [])
+
+    def test_search_requires_authentication(self):
+        self.client.force_authenticate(user=None)  # Wylogowanie
+        response = self.client.get(reverse('user-search'), {'q': 'Jan'})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

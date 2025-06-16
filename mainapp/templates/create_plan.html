@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Plan</title>
+</head>
+<body>
+    <h1>Create New Schedule Plan (Admin Only)</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Plan Name" required><br>
+        <textarea name="description" placeholder="Plan Description"></textarea><br>
+        
+        <h3>Events:</h3>
+        <div id="events">
+            <div class="event">
+                <input type="text" name="events.0.title" placeholder="Title" required>
+                <select name="events.0.day_of_week" required>
+                    <option value="0">Monday</option>
+                    <option value="1">Tuesday</option>
+                    <option value="2">Wednesday</option>
+                    <option value="3">Thursday</option>
+                    <option value="4">Friday</option>
+                </select>
+                <input type="time" name="events.0.start_time" required>
+                <input type="time" name="events.0.end_time" required>
+                <input type="text" name="events.0.room" placeholder="Room">
+                <input type="text" name="events.0.teacher" placeholder="Teacher">
+            </div>
+        </div>
+        
+        <button type="button" onclick="addEvent()">Add Another Event</button>
+        <button type="submit">Create Plan</button>
+    </form>
+
+    <script>
+        let eventCount = 1;
+        function addEvent() {
+            const container = document.getElementById('events');
+            const newEvent = document.createElement('div');
+            newEvent.className = 'event';
+            newEvent.innerHTML = `
+                <input type="text" name="events.${eventCount}.title" placeholder="Title" required>
+                <select name="events.${eventCount}.day_of_week" required>
+                    ${[...Array(5).keys()].map(i => 
+                        `<option value="${i}">${['Monday','Tuesday','Wednesday','Thursday','Friday'][i]}</option>`
+                    ).join('')}
+                </select>
+                <input type="time" name="events.${eventCount}.start_time" required>
+                <input type="time" name="events.${eventCount}.end_time" required>
+                <input type="text" name="events.${eventCount}.room" placeholder="Room">
+                <input type="text" name="events.${eventCount}.teacher" placeholder="Teacher">
+            `;
+            container.appendChild(newEvent);
+            eventCount++;
+        }
+    </script>
+</body>
+</html>

@@ -1,14 +1,16 @@
-// src/components/CtiSvg.tsx
 import React from 'react';
 
-interface CtiSvgProps extends React.SVGProps<SVGSVGElement> {}
-
-const ctiSvg: React.FC<CtiSvgProps> = props => (
-  <svg
-    viewBox="0 0 1600 1000"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+const ctiSvg = React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
+  (props, ref) => (
+    <svg
+      ref={ref}
+      width="1600"
+      height="1000"
+      viewBox="0 0 1600 1000"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
         
     <path d="M382.312 97.651H1184V790.578H382.312V97.651Z" fill="white"/>
     <path d="M382.312 97.651H1183.51V790.578H382.312V97.651Z" fill="white"/>
@@ -59,13 +61,14 @@ const ctiSvg: React.FC<CtiSvgProps> = props => (
     <path d="M564.188 489.354C590.432 469.146 616.677 448.937 642.922 428.724" stroke="black" stroke-width="2"/>
 
     <polygon
-    id="Sala Kinowa"
+    id="S1"
     data-name="Sala kinowa"
+    data-type="Aula"
     points="386.734,104.198 731.135,104.198 731.135,428.729 386.734,428.729"
     className="room"
-    fill="green"
     />
   </svg>
+  )
 );
 
 export default ctiSvg;

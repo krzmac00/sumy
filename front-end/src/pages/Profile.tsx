@@ -26,7 +26,7 @@ const ProfilePage: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [blacklist, setBlacklist] = useState('');
   const [bio, setBio] = useState('');
-  const blacklistRef = useRef<HTMLTextAreaElement>(null);
+  // const blacklistRef = useRef<HTMLTextAreaElement>(null);
   const bioRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -168,6 +168,7 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
         {/* Bio section */}
+        <div className="profile-box" style={{ marginTop: '20px' }}>
         <p><strong>{t("profile.bio")}</strong></p>
           <textarea
             ref={bioRef}
@@ -177,7 +178,10 @@ const ProfilePage: React.FC = () => {
             rows={3}
             style={{ width: '100%', boxSizing: 'border-box', resize: 'none', overflow: 'hidden' }}
           />
-        <p style={{ marginTop: '16px'}}><strong>{t('profile.blackListForum')}</strong></p>
+        </div>
+
+        <div className="profile-box">
+        <p><strong>{t('profile.blackListForum')}</strong></p>
         <p style={{ color: '#555555', fontStyle: 'italic', marginTop: '-4px', marginBottom: '4px' }}>
           {t('profile.blacklistExample')}
         </p>
@@ -194,6 +198,7 @@ const ProfilePage: React.FC = () => {
             overflow: 'hidden'   // ukrycie pasków przewijania
           }}
         />
+        </div>
       </div>
 
 

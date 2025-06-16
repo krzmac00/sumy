@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    EventViewSet, home, event_list, add_event,
+    EventViewSet, SchedulePlanViewSet, home, event_list, add_event,
     PostListCreateAPIView, PostRetrieveUpdateDestroyAPIView,
     ThreadListCreateAPIView, ThreadRetrieveUpdateDestroyAPIView,
     create_thread_with_post, vote_thread, vote_post,
@@ -10,18 +10,24 @@ from .views import (
 from .api.pinned_threads import (
     pin_thread, get_pinned_threads, mark_thread_as_viewed, get_pin_status
 )
+from mainapp import views
 
 # Setup DRF router for EventViewSet
 router = DefaultRouter()
 router.register(r'events', EventViewSet)
+router.register(r'schedule-plans', SchedulePlanViewSet, basename='scheduleplan')
 
 urlpatterns = [
-    # Home page
-    path('', home, name='home'),
-
-    # Event-related views
-    path('list', event_list, name='event_list'),
-    path('add', add_event, name='add_event'),
+    path('', include(router.urls)),
+    path('home', views.home, name='home'),
+    path('list', views.event_list, name='event_list'),
+    path('add', views.add_event, name='add_event'),
+    path('save-calendar', EventViewSet.as_view({'post': 'save_calendar'}), name='save-calendar'),
+    path('events/bulk/', EventViewSet.as_view({'post': 'bulk_create'}), name='event-bulk-create'),
+    path('events/save-as-plan/', EventViewSet.as_view({'post': 'save_as_plan'})),
+    path('create-plan/', views.create_plan, name='create-plan'),
+    path('plans/', views.plans_list, name='plans-list'),
+    path('plans/<int:pk>/apply/', views.SchedulePlanViewSet.as_view({'post': 'apply'}), name='apply-plan'),
 
     # Post endpoints
     path('posts/', PostListCreateAPIView.as_view(), name='post-list-create'),
