@@ -956,6 +956,7 @@ const resources = {
 
       "map.search.placeholder":   "Szukaj sali lub budynku",
 
+      "modal.close":                  "Zamknij",
       "map.popup.goToWebsite":    "Przejdź do strony",
       "map.popup.buildingPlan":   "Plan budynku",
 
