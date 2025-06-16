@@ -11,13 +11,8 @@ const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-api.interceptors.request.use((config) => {
-  const token = getAuthToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Note: We don't add auth headers for news API since most endpoints are public
+// If you need auth for specific endpoints, add it in the individual methods
 
 export const newsAPI = {
   // Categories
@@ -55,7 +50,10 @@ export const newsAPI = {
     event_date?: string;
     event_location?: string;
   }): Promise<NewsItem> => {
-    const response = await api.post('/items/create/', data);
+    const token = getAuthToken();
+    const response = await api.post('/items/create/', data, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
     return response.data;
   },
 
@@ -67,12 +65,18 @@ export const newsAPI = {
     event_location?: string;
     is_published: boolean;
   }>): Promise<NewsItem> => {
-    const response = await api.patch(`/items/${id}/`, data);
+    const token = getAuthToken();
+    const response = await api.patch(`/items/${id}/`, data, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
     return response.data;
   },
 
   deleteNewsItem: async (id: number): Promise<void> => {
-    await api.delete(`/items/${id}/`);
+    const token = getAuthToken();
+    await api.delete(`/items/${id}/`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
   },
 };
 

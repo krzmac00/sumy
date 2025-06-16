@@ -7,15 +7,17 @@ import { translateCategory } from '../../utils/categories';
 import { useAuth } from '../../contexts/AuthContext';
 import { threadAPI, voteAPI } from '../../services/api';
 import { getMediaUrl } from '../../utils/mediaUrl';
+import { pinnedThreadService } from '../../services/pinnedThreadService';
 import './ThreadCard.css';
 
 interface ThreadCardProps {
   thread: Thread;
   onVoteUpdate?: (threadId: number, newVoteCount: number, userVote: 'upvote' | 'downvote' | null) => void;
   onThreadDeleted?: () => void;
+  onPinStatusChange?: (threadId: number, isPinned: boolean) => void;
 }
 
-const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadDeleted }) => {
+const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadDeleted, onPinStatusChange }) => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -24,9 +26,26 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
   const [error, setError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState<boolean>(false);
   const [voting, setVoting] = useState<boolean>(false);
+  const [isPinned, setIsPinned] = useState<boolean>(false);
+  const [pinning, setPinning] = useState<boolean>(false);
 
   // Check if current user is the thread creator
   const isThreadCreator = currentUser && thread.user === currentUser.id;
+
+  // Load pin status on component mount
+  React.useEffect(() => {
+    const loadPinStatus = async () => {
+      if (currentUser) {
+        try {
+          const pinned = await pinnedThreadService.getPinStatus(thread.id);
+          setIsPinned(pinned);
+        } catch (err) {
+          // Ignore errors - assume not pinned
+        }
+      }
+    };
+    loadPinStatus();
+  }, [thread.id, currentUser]);
 
   const handleVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
     e.preventDefault();
@@ -87,6 +106,35 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
         setError(t('forum.thread.errorDelete'));
       }
       setConfirmingDelete(false);
+    }
+  };
+
+  const handlePin = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!currentUser) {
+      setError(t('forum.error.loginRequired'));
+      return;
+    }
+
+    if (pinning) return;
+
+    try {
+      setPinning(true);
+      setError(null);
+      
+      const response = await pinnedThreadService.pinThread(thread.id);
+      const newPinStatus = response.status === 'pinned';
+      setIsPinned(newPinStatus);
+      
+      // Notify parent component of pin status change
+      onPinStatusChange?.(thread.id, newPinStatus);
+      
+    } catch (err) {
+      console.error('Error pinning thread:', err);
+      setError(err instanceof Error ? err.message : t('forum.error.pinGeneric'));
+    } finally {
+      setPinning(false);
     }
   };
 
@@ -166,9 +214,9 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
             </span>
           </div>
 
-          <div className="thread-action">
-            <span className="thread-action-icon">🔄</span>
-            <span>{t('forum.action.share')}</span>
+          <div className="thread-action" onClick={handlePin}>
+            <span className="thread-action-icon">{isPinned ? '📍' : '📌'}</span>
+            <span>{isPinned ? t('forum.action.unpin') : t('forum.action.pin')}</span>
           </div>
 
           {/* Only show edit option for thread creator */}

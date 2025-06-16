@@ -249,6 +249,12 @@ const resources = {
       "forum.action.info": "More Info",
       "forum.action.upvote": "Upvote",
       "forum.action.downvote": "Downvote",
+      "forum.action.pin": "Pin",
+      "forum.action.unpin": "Unpin",
+      "forum.error.loginRequired": "Please login to perform this action",
+      "forum.error.pinGeneric": "Failed to pin thread",
+      "forum.error.cannotVoteOwnThread": "You cannot vote on your own thread",
+      "forum.error.voteGeneric": "Failed to vote on thread",
 
 	    //Calendar
       "calendar.enterClass": "Enter class title",
@@ -381,7 +387,6 @@ const resources = {
       "noticeboard.errors.contentRequired": "Content is required",
       "noticeboard.errors.categoryRequired": "Category is required",
       "noticeboard.errors.invalidPrice": "Invalid price",
-      "common.loading": "Loading...",
       "common.search": "Search",
       "common.filters": "Filters",
       "common.all": "All",
@@ -397,6 +402,18 @@ const resources = {
       "common.creating": "Creating...",
       "common.by": "by",
       "common.edited": "edited",
+      "common.loading": "Loading...",
+
+      // Pinned Threads
+      "pinnedThreads.empty.title": "No Pinned Threads",
+      "pinnedThreads.empty.description": "Pin your favorite threads to keep track of them here",
+      "pinnedThreads.empty.browseThreads": "Browse Forum Threads",
+      "pinnedThreads.error.loadFailed": "Failed to load pinned threads",
+      "pinnedThreads.error.unpinFailed": "Failed to unpin thread",
+      "pinnedThreads.unpin": "Unpin thread",
+      "pinnedThreads.unread": "new",
+      "pinnedThreads.lastActivity": "Last activity",
+      "forum.threadList.votes": "votes",
 
       // News
       "news.title": "News Feed",
@@ -858,7 +875,6 @@ const resources = {
       "noticeboard.errors.contentRequired": "Treść jest wymagana",
       "noticeboard.errors.categoryRequired": "Kategoria jest wymagana",
       "noticeboard.errors.invalidPrice": "Nieprawidłowa cena",
-      "common.loading": "Ładowanie...",
       "common.search": "Szukaj",
       "common.filters": "Filtry",
       "common.all": "Wszystkie",
@@ -874,6 +890,18 @@ const resources = {
       "common.creating": "Tworzenie...",
       "common.by": "przez",
       "common.edited": "edytowano",
+      "common.loading": "Ładowanie...",
+
+      // Pinned Threads
+      "pinnedThreads.empty.title": "Brak przypiętych wątków",
+      "pinnedThreads.empty.description": "Przypnij swoje ulubione wątki, aby śledzić je tutaj",
+      "pinnedThreads.empty.browseThreads": "Przeglądaj wątki forum",
+      "pinnedThreads.error.loadFailed": "Nie udało się załadować przypiętych wątków",
+      "pinnedThreads.error.unpinFailed": "Nie udało się odpiąć wątku",
+      "pinnedThreads.unpin": "Odepnij wątek",
+      "pinnedThreads.unread": "nowe",
+      "pinnedThreads.lastActivity": "Ostatnia aktywność",
+      "forum.threadList.votes": "głosy",
 
       // News
       "news.title": "Aktualności",

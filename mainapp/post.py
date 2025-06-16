@@ -468,3 +468,39 @@ def vote_on_post(user, post_id, vote_type):
     except Post.DoesNotExist:
         return False, "Post not found", 0
 
+
+class PinnedThread(models.Model):
+    """Model to track threads pinned by users with last viewed timestamp."""
+    
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE,
+        related_name='pinned_threads'
+    )
+    thread = models.ForeignKey(
+        Thread,
+        on_delete=models.CASCADE,
+        related_name='pinned_by_users'
+    )
+    pinned_at = models.DateTimeField(auto_now_add=True)
+    last_viewed = models.DateTimeField(default=timezone.now)
+    
+    class Meta:
+        unique_together = ('user', 'thread')
+        ordering = ['-pinned_at']
+    
+    def get_unread_count(self):
+        """Calculate number of unread comments since last viewed."""
+        return Post.objects.filter(
+            thread=self.thread,
+            date__gt=self.last_viewed
+        ).count()
+    
+    def mark_as_viewed(self):
+        """Update last_viewed timestamp to current time."""
+        self.last_viewed = timezone.now()
+        self.save(update_fields=['last_viewed'])
+    
+    def __str__(self):
+        return f"{self.user.username} pinned {self.thread.title}"
+

@@ -7,6 +7,9 @@ from .views import (
     create_thread_with_post, vote_thread, vote_post,
     fetch_and_delete_emails, create_threads_from_emails
 )
+from .api.pinned_threads import (
+    pin_thread, get_pinned_threads, mark_thread_as_viewed, get_pin_status
+)
 
 # Setup DRF router for EventViewSet
 router = DefaultRouter()
@@ -34,6 +37,12 @@ urlpatterns = [
     # Voting endpoints
     path('threads/<int:thread_id>/vote/', vote_thread, name='vote-thread'),
     path('posts/<int:post_id>/vote/', vote_post, name='vote-post'),
+
+    # Pinned threads endpoints
+    path('threads/pin/', pin_thread, name='pin-thread'),
+    path('threads/pinned/', get_pinned_threads, name='get-pinned-threads'),
+    path('threads/<int:thread_id>/mark-viewed/', mark_thread_as_viewed, name='mark-thread-viewed'),
+    path('threads/<int:thread_id>/pin-status/', get_pin_status, name='get-pin-status'),
 
     # Include the router URLs for EventViewSet
     path('', include(router.urls)),
