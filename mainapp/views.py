@@ -345,7 +345,7 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
         return queryset
 
 class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Thread.objects.select_related('post').all()
+    queryset = Thread.objects.select_related('author').all()
     serializer_class = ThreadSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
@@ -376,10 +376,15 @@ class ThreadRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 def create_thread_with_post(request):
     try:
         data = request.data
-        required_fields = ['nickname', 'content', 'category', 'title']
+        required_fields = ['content', 'category', 'title']
         for field in required_fields:
             if field not in data:
                 return Response({'error': f'Missing required field: {field}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Determine if the post is anonymous
+        is_anonymous = data.get('is_anonymous', False)
+        user = request.user if request.user.is_authenticated and not is_anonymous else None
+        nickname = data.get('nickname', 'Anonymous User') if is_anonymous else None
 
         with transaction.atomic():
             thread_id = create_thread(
@@ -393,7 +398,7 @@ def create_thread_with_post(request):
                 is_anonymous=is_anonymous
             )
             thread = Thread.objects.get(id=thread_id)
-            thread_data = ThreadSerializer(thread).data
+            thread_data = ThreadSerializer(thread, context={'request': request}).data
 
             return Response(thread_data, status=status.HTTP_201_CREATED)
     except Exception as e:

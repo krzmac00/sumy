@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import MainLayout from '../layouts/MainLayout';
 import { useUserProfile } from '../hooks/useUserProfile';
+import { getMediaUrl } from '../utils/mediaUrl';
 import '../pages/Profile.css';
+import '../components/ProfilePictureUpload/ProfilePictureUpload.css';
 
 const UserProfile: React.FC = () => {
   const { t } = useTranslation();
@@ -40,7 +42,15 @@ const UserProfile: React.FC = () => {
         <h1>{t('profile.userProfile')}</h1>
 
         <div className="profile-section">
-          <div className="avatar">👤</div>
+          <div className="current-picture">
+            <img 
+              src={getMediaUrl(userData.profile_picture_url) || '/user_default_image.png'}
+              alt={t('profile.picture.current', 'Profile picture')}
+              onError={(e) => {
+                e.currentTarget.src = '/user_default_image.png';
+              }}
+            />
+          </div>
           <div className="user-info">
             <p><strong>{t('profile.firstName')}</strong> {userData.first_name}</p>
             <p><strong>{t('profile.lastName')}</strong> {userData.last_name}</p>

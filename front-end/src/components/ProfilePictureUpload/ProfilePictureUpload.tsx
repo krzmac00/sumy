@@ -127,14 +127,17 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
               onError={(e) => {
                 console.error('Failed to load profile picture:', currentPictureUrl);
                 console.error('Computed URL:', getMediaUrl(currentPictureUrl));
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.parentElement?.querySelector('.no-picture')?.classList.remove('d-none');
+                // Replace with default image on error
+                e.currentTarget.src = '/user_default_image.png';
               }}
             />
           ) : null}
-          <div className={`no-picture ${currentPictureUrl && !preview ? 'd-none' : ''}`}>
-            <i className="fas fa-user-circle"></i>
-          </div>
+          {!preview && !currentPictureUrl && (
+            <img 
+              src="/user_default_image.png" 
+              alt={t('profile.picture.current', 'Current profile picture')} 
+            />
+          )}
         </div>
 
         {error && (

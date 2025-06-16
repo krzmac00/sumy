@@ -12,6 +12,7 @@ urlpatterns = [
         path("v1/", include("mainapp.urls")),  # Versioned API
         path("noticeboard/", include("noticeboard.urls")),
         path("news/", include("news.urls")),
+        path("analytics/", include("analytics.urls")),
     ])),
 
     path('api/map/', include('map.urls')),

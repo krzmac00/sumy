@@ -25,19 +25,7 @@
   object-fit: cover;
 }
 
-.no-picture {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f5f5f5;
-}
-
-.no-picture i {
-  font-size: 120px;
-  color: #ccc;
-}
+/* Removed .no-picture styles - using default user image instead */
 
 .upload-error {
   background-color: #fee;
@@ -115,9 +103,6 @@
     height: 150px;
   }
   
-  .no-picture i {
-    font-size: 80px;
-  }
   
   .upload-actions {
     flex-direction: column;

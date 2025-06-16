@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import ForumPage from './pages/forum/ForumPage';
 import ThreadViewPage from './pages/forum/ThreadViewPage';
 import ThreadCreatePage from './pages/forum/ThreadCreatePage';
+import ThreadEditPage from './pages/forum/ThreadEditPage';
 import NoticeboardPage from './pages/noticeboard/NoticeboardPage';
 import AdvertisementViewPage from './pages/noticeboard/AdvertisementViewPage';
 import AdvertisementCreatePage from './pages/noticeboard/AdvertisementCreatePage';
@@ -105,6 +106,7 @@ const AppRoutes: React.FC = () => {
       {/* Forum Routes */}
       <Route path="/forum" element={<ProtectedRoute element={<ForumPage />} />} />
       <Route path="/forum/threads/:threadId" element={<ProtectedRoute element={<ThreadViewPage />} />} />
+      <Route path="/forum/threads/:threadId/edit" element={<ProtectedRoute element={<ThreadEditPage />} />} />
       <Route path="/forum/create-thread" element={<ProtectedRoute element={<ThreadCreatePage />} />} />
 
       <Route path="/calendar" element={<ProtectedRoute element={<Calendar />} />} />

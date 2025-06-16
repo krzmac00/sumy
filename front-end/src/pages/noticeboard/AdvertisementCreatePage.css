@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
 
 .advertisement-create-page {
+  min-width: 960px;
   padding: 2rem;
   max-width: 900px;
   margin: 0 auto;

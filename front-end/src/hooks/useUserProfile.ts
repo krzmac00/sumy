@@ -9,6 +9,8 @@ interface UserProfileData {
   role: string;
   bio: string;
   date_joined: string;
+  profile_picture_url?: string | null;
+  profile_thumbnail_url?: string | null;
 }
 
 export const useUserProfile = (userId: string) => {
