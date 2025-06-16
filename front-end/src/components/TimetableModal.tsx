@@ -30,7 +30,7 @@ interface CalendarModalProps {
   isOpen: boolean;
   defaultStart: Date;
   defaultEnd: Date;
-  categories: CategoryKey[]; // Should be only the 3 allowed categories
+  categories: CategoryKey[];
   scheduleId: number;
   onSave: (data: Omit<CustomCalendarEvent, "id">) => void;
   onCancel: () => void;
