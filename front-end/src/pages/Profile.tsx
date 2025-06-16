@@ -160,7 +160,9 @@ const ProfilePage: React.FC = () => {
             <p><strong>{t('profile.firstName')}</strong> {userData.first_name}</p>
             <p><strong>{t('profile.lastName')}</strong> {userData.last_name}</p>
             <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>{t('profile.indexNumber')}</strong> {userData.email.split('@')[0]}</p>
+            {userData.role === 'student' && (
+              <p><strong>{t('profile.indexNumber')}</strong> {userData.email.split('@')[0]}</p>
+            )}
 
             <button onClick={() => navigate('/profile/edit')} className="edit-profile-button">
               {t('profile.editProfile')}

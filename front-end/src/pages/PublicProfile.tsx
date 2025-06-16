@@ -10,6 +10,7 @@ interface PublicUserData {
   last_name: string;
   email: string;
   bio: string;
+  role: string;
 }
 
 const PublicProfile: React.FC = () => {
@@ -53,7 +54,9 @@ const PublicProfile: React.FC = () => {
             <p><strong>{t('profile.firstName')}</strong> {userData.first_name}</p>
             <p><strong>{t('profile.lastName')}</strong> {userData.last_name}</p>
             <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>{t('profile.indexNumber')}</strong> {userData.email.split('@')[0]}</p>
+            {userData.role === 'student' && (
+              <p><strong>{t('profile.indexNumber')}</strong> {userData.email.split('@')[0]}</p>
+            )}
           </div>
         </div>
         <div className="profile-box" style={{ marginTop: '20px' }}>
