@@ -1,0 +1,228 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: pointer;
+}
+
+.renew-dialog-enhanced {
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
+  z-index: 10000;
+  cursor: default;
+  pointer-events: all;
+}
+
+.renew-dialog-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.renew-dialog-header .header-icon {
+  animation: subtle-spin 4s linear infinite;
+}
+
+@keyframes subtle-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.renew-dialog-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.renew-dialog-body {
+  padding: 1.5rem;
+}
+
+.current-expiration {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.current-expiration strong {
+  color: var(--text-primary);
+}
+
+.renew-options {
+  margin-bottom: 1.5rem;
+}
+
+.renew-options h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.preset-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.preset-button {
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-color);
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-primary);
+  pointer-events: all;
+  position: relative;
+  z-index: 1;
+}
+
+.preset-button:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  background-color: var(--bg-secondary);
+}
+
+.preset-button.selected {
+  border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.preset-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.custom-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.custom-option label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.custom-option input {
+  width: 80px;
+  padding: 0.5rem;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  text-align: center;
+  transition: all 0.2s;
+  pointer-events: all;
+  position: relative;
+  z-index: 1;
+}
+
+.custom-option input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.custom-option input.selected {
+  border-color: var(--primary-color);
+  background-color: white;
+}
+
+.days-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.new-expiration {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: #e8f5e9;
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #2e7d32;
+}
+
+.new-expiration .new-date {
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+.dialog-actions {
+  padding: 1.5rem;
+  background-color: var(--bg-secondary);
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.renew-confirm {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.renew-confirm .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Ensure all buttons and inputs are interactive */
+.renew-dialog-enhanced button,
+.renew-dialog-enhanced input,
+.renew-dialog-enhanced select {
+  pointer-events: all;
+  position: relative;
+  z-index: 1;
+}
+
+/* Action buttons specific styling */
+.cancel-button-advertisment,
+.renew-confirm {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .preset-options {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .custom-option {
+    flex-wrap: wrap;
+  }
+}

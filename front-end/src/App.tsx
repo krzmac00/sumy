@@ -13,6 +13,7 @@ import ThreadEditPage from './pages/forum/ThreadEditPage';
 import NoticeboardPage from './pages/noticeboard/NoticeboardPage';
 import AdvertisementViewPage from './pages/noticeboard/AdvertisementViewPage';
 import AdvertisementCreatePage from './pages/noticeboard/AdvertisementCreatePage';
+import AdvertisementEditPage from './pages/noticeboard/AdvertisementEditPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Calendar from './pages/Calendar';
 import './App.css';
@@ -127,6 +128,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/noticeboard" element={<ProtectedRoute element={<NoticeboardPage />} />} />
       <Route path="/noticeboard/create" element={<ProtectedRoute element={<AdvertisementCreatePage />} />} />
       <Route path="/noticeboard/:id" element={<ProtectedRoute element={<AdvertisementViewPage />} />} />
+      <Route path="/noticeboard/:id/edit" element={<ProtectedRoute element={<AdvertisementEditPage />} />} />
 
       {/* Default Routes */}
       <Route path="/" element={<Navigate to="/auth" replace />} />

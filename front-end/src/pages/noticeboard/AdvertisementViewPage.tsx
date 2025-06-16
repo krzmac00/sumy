@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit, Trash2, Clock, MapPin, DollarSign, User, Phone, Mail, Calendar, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Clock, MapPin, DollarSign, User, Phone, Mail, Calendar, RefreshCw, CheckCircle } from 'lucide-react';
 import { AdvertisementDetail, Comment } from '../../types/noticeboard';
 import { advertisementAPI, formatDate, formatPrice } from '../../services/noticeboardAPI';
 import { useAuth } from '../../contexts/AuthContext';
 import CommentCard from '../../components/noticeboard/CommentCard';
 import CommentForm from '../../components/noticeboard/CommentForm';
+import RenewDialog from '../../components/noticeboard/RenewDialog';
 import { CATEGORY_COLORS } from '../../types/noticeboard';
 import MainLayout from '../../layouts/MainLayout';
 import './AdvertisementViewPage.css';
@@ -21,7 +22,8 @@ const AdvertisementViewPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showRenewDialog, setShowRenewDialog] = useState(false);
-  const [renewDays, setRenewDays] = useState(30);
+  const [isRenewing, setIsRenewing] = useState(false);
+  const [renewSuccess, setRenewSuccess] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -55,16 +57,25 @@ const AdvertisementViewPage: React.FC = () => {
     }
   };
 
-  const handleRenew = async () => {
+  const handleRenew = async (days: number) => {
     if (!advertisement) return;
 
     try {
-      const renewed = await advertisementAPI.renew(advertisement.id, renewDays);
+      setIsRenewing(true);
+      const renewed = await advertisementAPI.renew(advertisement.id, days);
       setAdvertisement({ ...advertisement, ...renewed });
       setShowRenewDialog(false);
+      setRenewSuccess(true);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setRenewSuccess(false);
+      }, 3000);
     } catch (err) {
       setError(t('noticeboard.errors.renewFailed'));
       console.error('Error renewing advertisement:', err);
+    } finally {
+      setIsRenewing(false);
     }
   };
 
@@ -200,18 +211,27 @@ const AdvertisementViewPage: React.FC = () => {
         )}
 
         {advertisement.expires_at && (
-          <div className="expiration-section">
-            <Clock size={18} />
-            {advertisement.is_expired ? (
-              <span className="expired-text">{t('noticeboard.expiredOn')} {new Date(advertisement.expires_at).toLocaleDateString('pl-PL')}</span>
+          <div className={`expiration-section ${renewSuccess ? 'renew-success' : ''}`}>
+            {renewSuccess ? (
+              <>
+                <CheckCircle size={18} className="success-icon" />
+                <span className="success-text">{t('noticeboard.renewSuccess')}</span>
+              </>
             ) : (
-              <span>{t('noticeboard.expiresOn')} {new Date(advertisement.expires_at).toLocaleDateString('pl-PL')}</span>
-            )}
-            {isOwner && !advertisement.is_expired && (
-              <button className="renew-button" onClick={() => setShowRenewDialog(true)}>
-                <RefreshCw size={16} />
-                {t('noticeboard.renew')}
-              </button>
+              <>
+                <Clock size={18} />
+                {advertisement.is_expired ? (
+                  <span className="expired-text">{t('noticeboard.expiredOn')} {new Date(advertisement.expires_at).toLocaleDateString('pl-PL')}</span>
+                ) : (
+                  <span>{t('noticeboard.expiresOn')} {new Date(advertisement.expires_at).toLocaleDateString('pl-PL')}</span>
+                )}
+                {isOwner && !advertisement.is_expired && (
+                  <button className="renew-button" onClick={() => setShowRenewDialog(true)}>
+                    <RefreshCw size={16} />
+                    {t('noticeboard.renew')}
+                  </button>
+                )}
+              </>
             )}
           </div>
         )}
@@ -261,29 +281,13 @@ const AdvertisementViewPage: React.FC = () => {
         </div>
       )}
 
-      {showRenewDialog && (
-        <div className="modal-overlay" onClick={() => setShowRenewDialog(false)}>
-          <div className="renew-dialog" onClick={(e) => e.stopPropagation()}>
-            <h3>{t('noticeboard.renewAdvertisement')}</h3>
-            <p>{t('noticeboard.renewDaysPrompt')}</p>
-            <input
-              type="number"
-              min="1"
-              max="90"
-              value={renewDays}
-              onChange={(e) => setRenewDays(parseInt(e.target.value))}
-            />
-            <div className="dialog-actions">
-              <button className="cancel-button-advertisment" onClick={() => setShowRenewDialog(false)}>
-                {t('common.cancel')}
-              </button>
-              <button className="confirm-button" onClick={handleRenew}>
-                {t('noticeboard.renew')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <RenewDialog
+        isOpen={showRenewDialog}
+        onClose={() => setShowRenewDialog(false)}
+        onConfirm={handleRenew}
+        currentExpiration={advertisement?.expires_at || ''}
+        isRenewing={isRenewing}
+      />
     </div>
     </MainLayout>
   );
