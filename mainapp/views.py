@@ -34,12 +34,12 @@ def home(request):
     return HttpResponse("Hello World!")
 
 class SchedulePlanViewSet(viewsets.ModelViewSet):
-    queryset = SchedulePlan.objects.filter(is_active=True)
+    queryset = SchedulePlan.objects.filter(is_active=True).order_by('-created_at')
     serializer_class = SchedulePlanSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return SchedulePlan.objects.all()
+        return SchedulePlan.objects.all().order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(administrator=self.request.user)
@@ -51,7 +51,7 @@ class SchedulePlanViewSet(viewsets.ModelViewSet):
         
 
 class PublicSchedulePlanViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = SchedulePlan.objects.all()
+    queryset = SchedulePlan.objects.all().order_by('-created_at')
     serializer_class = SchedulePlanSerializer
     permission_classes = [IsAuthenticated]
 
@@ -81,13 +81,7 @@ class EventViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def get_queryset(self):
-        profile_id = self.request.query_params.get('profile_id')
-        if self.request.user.is_authenticated:
-            return Event.objects.filter(user=self.request.user)
-        return Event.objects.none()
-    
-    def get_queryset(self):
-        queryset = Event.objects.all()
+        queryset = Event.objects.all().order_by('-start_date', '-id')
 
         schedule_plan_id = self.request.query_params.get('schedule_plan')
 

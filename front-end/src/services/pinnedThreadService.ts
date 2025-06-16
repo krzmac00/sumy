@@ -55,6 +55,13 @@ class PinnedThreadService {
     const response = await api.get<{ is_pinned: boolean }>(`/api/v1/threads/${threadId}/pin-status/`);
     return response.data.is_pinned;
   }
+
+  async getBulkPinStatus(threadIds: number[]): Promise<{ [threadId: number]: boolean }> {
+    const response = await api.post<{ pin_statuses: { [threadId: number]: boolean } }>('/api/v1/threads/bulk-pin-status/', {
+      thread_ids: threadIds
+    });
+    return response.data.pin_statuses;
+  }
 }
 
 export const pinnedThreadService = new PinnedThreadService();

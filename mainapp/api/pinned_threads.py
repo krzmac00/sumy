@@ -75,3 +75,29 @@ def get_pin_status(request, thread_id):
     ).exists()
     
     return Response({'is_pinned': is_pinned})
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def get_bulk_pin_status(request):
+    """Check pin status for multiple threads at once."""
+    thread_ids = request.data.get('thread_ids', [])
+    
+    if not thread_ids:
+        return Response({'error': 'No thread IDs provided'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Get all pinned thread IDs for the user
+    pinned_thread_ids = set(
+        PinnedThread.objects.filter(
+            user=request.user,
+            thread_id__in=thread_ids
+        ).values_list('thread_id', flat=True)
+    )
+    
+    # Create response mapping thread_id to pin status
+    pin_statuses = {
+        thread_id: thread_id in pinned_thread_ids
+        for thread_id in thread_ids
+    }
+    
+    return Response({'pin_statuses': pin_statuses})

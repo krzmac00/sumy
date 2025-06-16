@@ -8,7 +8,7 @@ from .views import (
     fetch_and_delete_emails, create_threads_from_emails
 )
 from .api.pinned_threads import (
-    pin_thread, get_pinned_threads, mark_thread_as_viewed, get_pin_status
+    pin_thread, get_pinned_threads, mark_thread_as_viewed, get_pin_status, get_bulk_pin_status
 )
 from mainapp import views
 
@@ -49,6 +49,7 @@ urlpatterns = [
     path('threads/pinned/', get_pinned_threads, name='get-pinned-threads'),
     path('threads/<int:thread_id>/mark-viewed/', mark_thread_as_viewed, name='mark-thread-viewed'),
     path('threads/<int:thread_id>/pin-status/', get_pin_status, name='get-pin-status'),
+    path('threads/bulk-pin-status/', get_bulk_pin_status, name='bulk-pin-status'),
 
     # Include the router URLs for EventViewSet
     path('', include(router.urls)),

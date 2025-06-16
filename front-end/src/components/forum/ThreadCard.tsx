@@ -15,9 +15,10 @@ interface ThreadCardProps {
   onVoteUpdate?: (threadId: number, newVoteCount: number, userVote: 'upvote' | 'downvote' | null) => void;
   onThreadDeleted?: () => void;
   onPinStatusChange?: (threadId: number, isPinned: boolean) => void;
+  initialPinStatus?: boolean;
 }
 
-const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadDeleted, onPinStatusChange }) => {
+const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadDeleted, onPinStatusChange, initialPinStatus }) => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -26,16 +27,16 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
   const [error, setError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState<boolean>(false);
   const [voting, setVoting] = useState<boolean>(false);
-  const [isPinned, setIsPinned] = useState<boolean>(false);
+  const [isPinned, setIsPinned] = useState<boolean>(initialPinStatus || false);
   const [pinning, setPinning] = useState<boolean>(false);
 
   // Check if current user is the thread creator
   const isThreadCreator = currentUser && thread.user === currentUser.id;
 
-  // Load pin status on component mount
+  // Load pin status on component mount only if not provided
   React.useEffect(() => {
     const loadPinStatus = async () => {
-      if (currentUser) {
+      if (currentUser && initialPinStatus === undefined) {
         try {
           const pinned = await pinnedThreadService.getPinStatus(thread.id);
           setIsPinned(pinned);
@@ -45,7 +46,14 @@ const ThreadCard: React.FC<ThreadCardProps> = ({ thread, onVoteUpdate, onThreadD
       }
     };
     loadPinStatus();
-  }, [thread.id, currentUser]);
+  }, [thread.id, currentUser, initialPinStatus]);
+
+  // Update local state when initialPinStatus changes
+  React.useEffect(() => {
+    if (initialPinStatus !== undefined) {
+      setIsPinned(initialPinStatus);
+    }
+  }, [initialPinStatus]);
 
   const handleVote = async (voteType: 'upvote' | 'downvote', e: React.MouseEvent) => {
     e.preventDefault();
