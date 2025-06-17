@@ -77,6 +77,10 @@ const resources = {
       "user.profile": "Profile",
       "user.settings": "Settings",
       "user.logout": "Logout",
+      
+      // Common actions
+      "common.retry": "Retry",
+      "common.clear": "Clear",
 
       // Sidebar
       "sidebar.title": "Navigation",
@@ -152,6 +156,14 @@ const resources = {
       "forum.filter.sort.mostVotes": "Most votes",
       "forum.filter.sort.mostPosts": "Most posts",
       "forum.filter.sort.title": "Title (A-Z)",
+      
+      // Forum Search
+      "forum.search.placeholder": "Search threads...",
+      "forum.search.clear": "Clear search",
+      "forum.search.resultsCount_one": "Found {{count}} thread for \"{{query}}\"",
+      "forum.search.resultsCount_other": "Found {{count}} threads for \"{{query}}\"",
+      "forum.search.noResults": "No threads found for \"{{query}}\"",
+      "forum.search.tryDifferent": "Try a different search term",
 
       // Thread Categories
       "categories.general": "General",
@@ -737,6 +749,10 @@ const resources = {
       "user.profile": "Profil",
       "user.settings": "Ustawienia",
       "user.logout": "Wyloguj",
+      
+      // Common actions
+      "common.retry": "Spróbuj ponownie",
+      "common.clear": "Wyczyść",
 
       // Sidebar
       "sidebar.title": "Nawigacja",
@@ -810,6 +826,14 @@ const resources = {
       "forum.filter.sort.mostVotes": "Najwięcej głosów",
       "forum.filter.sort.mostPosts": "Najwięcej postów",
       "forum.filter.sort.title": "Tytuł (A-Z)",
+      
+      // Forum Search
+      "forum.search.placeholder": "Szukaj wątków...",
+      "forum.search.clear": "Wyczyść wyszukiwanie",
+      "forum.search.resultsCount_one": "Znaleziono {{count}} wątek dla \"{{query}}\"",
+      "forum.search.resultsCount_other": "Znaleziono {{count}} wątków dla \"{{query}}\"",
+      "forum.search.noResults": "Nie znaleziono wątków dla \"{{query}}\"",
+      "forum.search.tryDifferent": "Spróbuj innego terminu wyszukiwania",
 
       // Thread Categories
       "categories.general": "Ogólne",

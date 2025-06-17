@@ -44,9 +44,9 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout 
  */
 export const threadAPI = {
   /**
-   * Get all threads with optional blacklist, date range, and ordering parameters
+   * Get all threads with optional blacklist, date range, ordering, and search parameters
    */
-  getAll: async (blacklistOn = true, dateFrom?: string, dateTo?: string, ordering?: string): Promise<Thread[]> => {
+  getAll: async (blacklistOn = true, dateFrom?: string, dateTo?: string, ordering?: string, search?: string): Promise<Thread[]> => {
     const params = new URLSearchParams();
     
     if (!blacklistOn) {
@@ -63,6 +63,10 @@ export const threadAPI = {
     
     if (ordering) {
       params.append('ordering', ordering);
+    }
+    
+    if (search) {
+      params.append('search', search);
     }
     
     const queryString = params.toString();

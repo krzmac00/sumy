@@ -26,7 +26,7 @@
 }
 
 .search-input {
-  padding: 8px 12px;
+  padding: 8px 12px 0 25px;
   border: 1px solid #ddd;
   border-radius: 4px;
   width: 200px;
@@ -36,6 +36,10 @@
 
 .search-input:focus {
   border-color: #4a90e2;
+}
+
+.search-input::placeholder {
+  padding-left: 25px;
 }
 
 .loader-spinner {
