@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer, UserProfileSerializer, \
     UserSearchSerializer, PublicUserSerializer
@@ -26,6 +27,25 @@ except ImportError:
     from .utils import delete_old_profile_pictures
 
 User = get_user_model()
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """Custom JWT login view that returns user data along with tokens"""
+    
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            # Get user from email
+            email = request.data.get('email')
+            try:
+                user = User.objects.get(email=email)
+                serializer = UserSerializer(user)
+                response.data['user'] = serializer.data
+            except User.DoesNotExist:
+                pass
+                
+        return response
 
 
 class RegisterView(generics.CreateAPIView):

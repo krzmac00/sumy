@@ -8,8 +8,8 @@ urlpatterns = [
 
     # API routes
     path("api/", include([
-        path("accounts/", include("accounts.urls")),
-        path("v1/", include("mainapp.urls")),  # Versioned API
+        path("accounts/", include("accounts.urls", namespace="accounts")),
+        path("v1/", include("mainapp.urls", namespace="mainapp")),  # Versioned API
         path("noticeboard/", include("noticeboard.urls")),
         path("news/", include("news.urls")),
         path("analytics/", include("analytics.urls")),

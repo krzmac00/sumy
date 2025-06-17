@@ -141,10 +141,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
         
     def get_full_name(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name}".strip()
         
     def get_short_name(self):
         return self.first_name
+    
+    def get_user_type(self):
+        """Return the user's role/type"""
+        return self.role
+    
+    @property
+    def username(self):
+        """Alias for login field to maintain compatibility"""
+        return self.login
 
 
 class EmailActivationToken(models.Model):

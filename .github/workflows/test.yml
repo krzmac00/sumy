@@ -1,0 +1,161 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_sumy
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-test.txt
+    
+    - name: Run migrations
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_sumy
+      run: |
+        python manage.py migrate
+    
+    - name: Run tests with coverage
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_sumy
+      run: |
+        python tests/test_runner.py
+    
+    - name: Upload test report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-reports
+        path: reports/
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.json
+        flags: unittests
+        name: codecov-umbrella
+    
+    - name: Comment PR with test results
+      uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          
+          // Read test results
+          let testSummary = 'Test results not available';
+          try {
+            const testData = JSON.parse(fs.readFileSync('reports/test-report.json', 'utf8'));
+            const summary = testData.summary;
+            
+            testSummary = `## Test Results
+            
+            | Status | Count |
+            |--------|-------|
+            | ✅ Passed | ${summary.passed || 0} |
+            | ❌ Failed | ${summary.failed || 0} |
+            | ⏭️ Skipped | ${summary.skipped || 0} |
+            | **Total** | **${summary.total}** |
+            
+            **Duration:** ${testData.duration.toFixed(2)}s
+            `;
+            
+            // Add failed test details if any
+            if (summary.failed > 0) {
+              testSummary += '\n### Failed Tests\n';
+              const failedTests = testData.tests.filter(t => t.outcome === 'failed');
+              failedTests.forEach(test => {
+                testSummary += `- \`${test.nodeid}\`\n`;
+              });
+            }
+          } catch (e) {
+            console.error('Error reading test results:', e);
+          }
+          
+          // Read coverage data
+          let coverageSummary = '';
+          try {
+            const coverageData = JSON.parse(fs.readFileSync('coverage.json', 'utf8'));
+            const totalCoverage = coverageData.totals.percent_covered.toFixed(1);
+            
+            coverageSummary = `\n## Coverage: ${totalCoverage}%`;
+          } catch (e) {
+            console.error('Error reading coverage:', e);
+          }
+          
+          const comment = testSummary + coverageSummary;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: front-end/package-lock.json
+    
+    - name: Install frontend dependencies
+      working-directory: ./front-end
+      run: npm ci
+    
+    - name: Run frontend linting
+      working-directory: ./front-end
+      run: npm run lint
+    
+    - name: Run frontend type checking
+      working-directory: ./front-end
+      run: npx tsc --noEmit
+    
+    - name: Build frontend
+      working-directory: ./front-end
+      run: npm run build

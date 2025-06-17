@@ -144,6 +144,7 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': 'localhost',  # Or use 'db' if connecting from within the Docker network
         'PORT': '5433',       # The mapped port in your compose file
+        'ATOMIC_REQUESTS': False,  # Don't wrap each request in a transaction
     }
 }
 

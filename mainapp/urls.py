@@ -17,6 +17,8 @@ router = DefaultRouter()
 router.register(r'events', EventViewSet)
 router.register(r'schedule-plans', SchedulePlanViewSet, basename='scheduleplan')
 
+app_name = 'mainapp'
+
 urlpatterns = [
     path('', include(router.urls)),
     path('home', views.home, name='home'),

@@ -110,6 +110,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('password2')
+        # Users are inactive until they activate their account via email
+        validated_data['is_active'] = False
         return User.objects.create_user(**validated_data)
 
 
