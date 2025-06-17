@@ -284,6 +284,17 @@ const ThreadList: React.FC<ThreadListProps> = ({
             </select>
           </div>
 
+          {/* Refresh Button */}
+          {onRefresh && (
+            <button
+              onClick={onRefresh}
+              className="refresh-button"
+              title={t('forum.refresh', 'Refresh')}
+            >
+              ↻
+            </button>
+          )}
+
           {/* Sort By */}
           <div className="sort-filter">
             <label htmlFor="sort-select">{t('forum.filter.sortBy')}:</label>
@@ -301,17 +312,6 @@ const ThreadList: React.FC<ThreadListProps> = ({
               <option value="title">{t('forum.filter.sort.title')}</option>
             </select>
           </div>
-
-          {/* Refresh Button */}
-          {onRefresh && (
-            <button
-              onClick={onRefresh}
-              className="refresh-button"
-              title={t('forum.refresh', 'Refresh')}
-            >
-              ↻
-            </button>
-          )}
 
           {/* Create Thread Button */}
           <Link 
