@@ -128,8 +128,9 @@ const resources = {
       "forum.error.contentRequired": "Content is required.",
       "forum.blacklist_on": "Black list:",
       "forum.blacklist_off": "Black list:",
-      "forum.disable_blacklist": "Wyłącz czarną listę",
-      "forum.enable_blacklist": "Włącz czarną listę",
+      "forum.disable_blacklist": "Disable blacklist",
+      "forum.enable_blacklist": "Enable blacklist",
+      "forum.blacklist.label": "Blacklist",
       
       // Forum - Thread List
       "forum.threadList.title": "Discussion Threads",
@@ -800,6 +801,9 @@ const resources = {
       "forum.error.contentRequired": "Treść jest wymagana.",
       "forum.blacklist_on": "Czarna lista:",
       "forum.blacklist_off": "Czarna lista:",
+      "forum.disable_blacklist": "Wyłącz czarną listę",
+      "forum.enable_blacklist": "Włącz czarną listę",
+      "forum.blacklist.label": "Czarna lista",
       
       // Forum - Thread List
       "forum.threadList.title": "Wątki dyskusyjne",

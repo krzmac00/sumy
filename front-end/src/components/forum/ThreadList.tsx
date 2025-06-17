@@ -243,15 +243,12 @@ const ThreadList: React.FC<ThreadListProps> = ({
             </form>
 
             {/* Blacklist Toggle */}
-            <div className="blacklist-toggle" style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.5rem' 
-            }}>
-              <span style={{ marginTop: '4px' }}>
-                {blacklistOn ? t("forum.blacklist_on") : t("forum.blacklist_off")}
+            <div className="blacklist-toggle">
+              <span>
+                {t("forum.blacklist.label", "Blacklist")}
               </span>
               <div
+                className="toggle-switch"
                 onClick={() => setBlacklistOn(prev => !prev)}
                 role="button"
                 tabIndex={0}
@@ -263,27 +260,12 @@ const ThreadList: React.FC<ThreadListProps> = ({
                   }
                 }}
                 style={{
-                  width: '40px',
-                  height: '20px',
-                  backgroundColor: blacklistOn ? '#22aa22' : '#aa2222',
-                  borderRadius: '9999px',
-                  position: 'relative',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.3s',
-                  marginRight: '10px',
-                  marginTop: '4px',
+                  backgroundColor: blacklistOn ? '#8b0002' : '#e5e7eb',
                 }}
               >
                 <div
                   style={{
-                    width: '16px',
-                    height: '16px',
-                    backgroundColor: 'white',
-                    borderRadius: '50%',
-                    position: 'absolute',
-                    top: '2px',
-                    left: blacklistOn ? '20px' : '2px',
-                    transition: 'left 0.3s',
+                    transform: blacklistOn ? 'translateX(20px)' : 'translateX(0)',
                   }}
                 />
               </div>
@@ -368,27 +350,38 @@ const ThreadList: React.FC<ThreadListProps> = ({
 
             
           </div>
-        </div>
-                
-        <div className="thread-list-actions">
-                {/* Refresh Button */}
+          
+          {/* Action Buttons */}
+          <div className="thread-list-action-buttons">
+            {/* Refresh Button */}
             {onRefresh && (
               <button
                 onClick={onRefresh}
-                className="refresh-button"
+                className="btn-icon refresh-button"
                 title={t('forum.refresh', 'Refresh')}
+                aria-label={t('forum.refresh', 'Refresh')}
               >
-                ↻
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                  <path d="M21 3v5h-5"/>
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                  <path d="M8 16H3v5"/>
+                </svg>
               </button>
             )}
 
             {/* Create Thread Button */}
             <Link 
               to="/forum/create-thread" 
-              className="create-thread-button"
+              className="btn-primary-create-thread-button"
             >
-              {t('forum.threadList.createNew')}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>{t('forum.threadList.createNew')}</span>
             </Link>
+          </div>
         </div>
       
       {/* Search results info */}
