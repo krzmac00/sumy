@@ -79,7 +79,6 @@ const resources = {
       "user.logout": "Logout",
       
       // Common actions
-      "common.retry": "Retry",
       "common.clear": "Clear",
 
       // Sidebar
@@ -752,7 +751,6 @@ const resources = {
       "user.logout": "Wyloguj",
       
       // Common actions
-      "common.retry": "Spróbuj ponownie",
       "common.clear": "Wyczyść",
 
       // Sidebar
