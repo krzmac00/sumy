@@ -331,7 +331,7 @@ const ThreadList: React.FC<ThreadListProps> = ({
             </div>
 
             {/* Sort By */}
-            <div className="sort-filter">
+          {/*<div className="sort-filter">
               <label htmlFor="sort-select">{t('forum.filter.sortBy')}:</label>
               <select
                 id="sort-select"
@@ -346,7 +346,7 @@ const ThreadList: React.FC<ThreadListProps> = ({
                 <option value="-posts">{t('forum.filter.sort.mostPosts')}</option>
                 <option value="title">{t('forum.filter.sort.title')}</option>
               </select>
-            </div>
+            </div>*/}
 
             
           </div>
