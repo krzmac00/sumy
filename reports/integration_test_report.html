@@ -1,0 +1,590 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PoliConnect Integration Test Report</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .summary {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .passed { color: #28a745; }
+        .failed { color: #dc3545; }
+        .skipped { color: #ffc107; }
+        .error { color: #dc3545; }
+        
+        .test-results {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .test-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 4px solid #e9ecef;
+            background: #f8f9fa;
+        }
+        
+        .test-item.passed {
+            border-left-color: #28a745;
+        }
+        
+        .test-item.failed {
+            border-left-color: #dc3545;
+        }
+        
+        .test-item.skipped {
+            border-left-color: #ffc107;
+        }
+        
+        .failure-details {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff5f5;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        
+        .timestamp {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .coverage-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .coverage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s ease;
+        }
+        
+        .coverage-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 PoliConnect Integration Test Report</h1>
+    
+    <div class="timestamp">
+        Generated on: 2025-06-17 09:44:31
+    </div>
+    
+    <div class="summary">
+        <h2>Executive Summary</h2>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Tests</div>
+                <div class="stat-value">24</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Passed</div>
+                <div class="stat-value passed">15</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Failed</div>
+                <div class="stat-value failed">9</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Skipped</div>
+                <div class="stat-value skipped">0</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Pass Rate</div>
+                <div class="stat-value">62.5%</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Duration</div>
+                <div class="stat-value">43.88s</div>
+            </div>
+        </div>
+        
+        <h3>Code Coverage</h3>
+        <div class="coverage-bar">
+            <div class="coverage-fill" style="width: 37.9%"></div>
+            <div class="coverage-text">37.9%</div>
+        </div>
+    </div>
+    
+    <div class="test-results">
+        <h2>Test Results by Module</h2>
+        
+        <h3>TestUserContentCreationFlow</h3>
+
+            <div class="test-item failed">
+                <strong>test_complete_user_journey</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="failed">FAILED</span>
+                </div>
+            </div>
+            
+<h3>TestForumUserInteractions</h3>
+
+            <div class="test-item failed">
+                <strong>test_anonymous_posting_with_user_tracking</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="failed">FAILED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item passed">
+                <strong>test_user_blacklist_affects_content_visibility</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+<h3>TestNewsAndForumIntegration</h3>
+
+            <div class="test-item passed">
+                <strong>test_lecturer_news_creates_discussion_thread</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+<h3>TestAdvertisementUserPermissions</h3>
+
+            <div class="test-item failed">
+                <strong>test_advertisement_lifecycle_with_permissions</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="failed">FAILED</span>
+                </div>
+            </div>
+            
+<h3>TestEventCalendarIntegration</h3>
+
+            <div class="test-item passed">
+                <strong>test_personal_and_shared_events</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+<h3>TestMapBuildingIntegration</h3>
+
+            <div class="test-item failed">
+                <strong>test_building_room_navigation</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="failed">FAILED</span>
+                </div>
+            </div>
+            
+<h3>TestCrossModuleSearch</h3>
+
+            <div class="test-item failed">
+                <strong>test_unified_search_across_modules</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="failed">FAILED</span>
+                </div>
+            </div>
+            
+<h3>TestAnalyticsIntegration</h3>
+
+            <div class="test-item failed">
+                <strong>test_user_activity_tracking</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="failed">FAILED</span>
+                </div>
+            </div>
+            
+<h3>TestPerformanceAcrossModules</h3>
+
+            <div class="test-item passed">
+                <strong>test_bulk_content_creation_performance</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+<h3>TestDataConsistency</h3>
+
+            <div class="test-item failed">
+                <strong>test_advertisement_expiry_consistency</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="failed">FAILED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item passed">
+                <strong>test_cascade_update_counts</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item passed">
+                <strong>test_concurrent_vote_updates</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item passed">
+                <strong>test_event_overlap_validation</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item failed">
+                <strong>test_thread_deletion_cascades</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="failed">FAILED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item failed">
+                <strong>test_user_deletion_cascades</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="failed">FAILED</span>
+                </div>
+            </div>
+            
+<h3>TestTransactionIntegrity</h3>
+
+            <div class="test-item passed">
+                <strong>test_bulk_operation_atomicity</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item passed">
+                <strong>test_concurrent_update_safety</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+<h3>TestNotificationFlows</h3>
+
+            <div class="test-item passed">
+                <strong>test_advertisement_comment_notifications</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item passed">
+                <strong>test_event_reminder_notifications</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item passed">
+                <strong>test_forum_reply_notifications</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item passed">
+                <strong>test_mention_notifications_in_posts</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+<h3>TestDigestNotifications</h3>
+
+            <div class="test-item passed">
+                <strong>test_daily_activity_digest</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+
+            <div class="test-item passed">
+                <strong>test_weekly_summary_generation</strong>
+                <span style="float: right; color: #6c757d;">0.000s</span>
+                <div style="color: #6c757d; font-size: 0.9em;">
+                    Status: <span class="passed">PASSED</span>
+                </div>
+            </div>
+            
+    </div>
+    
+    <div class="test-results">
+        <h2>Failure Analysis</h2>
+        
+        
+        <div class="test-item failed">
+            <strong>tests/integration/test_cross_module_interactions.py::TestUserContentCreationFlow::test_complete_user_journey</strong>
+            <div class="failure-details">
+tests/integration/test_cross_module_interactions.py:142: in test_complete_user_journey
+    self.assertEqual(Thread.objects.filter(author=user).count(), 1)
+E   AssertionError: 0 != 1
+            </div>
+        </div>
+        
+
+        <div class="test-item failed">
+            <strong>tests/integration/test_cross_module_interactions.py::TestForumUserInteractions::test_anonymous_posting_with_user_tracking</strong>
+            <div class="failure-details">
+tests/integration/test_cross_module_interactions.py:206: in test_anonymous_posting_with_user_tracking
+    self.assertEqual(thread.author, self.test_user)
+E   AssertionError: None != &lt;User: api_test@edu.p.lodz.pl&gt;
+            </div>
+        </div>
+        
+
+        <div class="test-item failed">
+            <strong>tests/integration/test_cross_module_interactions.py::TestAdvertisementUserPermissions::test_advertisement_lifecycle_with_permissions</strong>
+            <div class="failure-details">
+tests/integration/test_cross_module_interactions.py:361: in test_advertisement_lifecycle_with_permissions
+    self.assertEqual(edit_response.status_code, status.HTTP_403_FORBIDDEN)
+E   AssertionError: 404 != 403
+            </div>
+        </div>
+        
+
+        <div class="test-item failed">
+            <strong>tests/integration/test_cross_module_interactions.py::TestMapBuildingIntegration::test_building_room_navigation</strong>
+            <div class="failure-details">
+tests/integration/test_cross_module_interactions.py:556: in test_building_room_navigation
+    self.assertIn(&#x27;EB&#x27;, event.location)
+E   AttributeError: &#x27;Event&#x27; object has no attribute &#x27;location&#x27;
+            </div>
+        </div>
+        
+
+        <div class="test-item failed">
+            <strong>tests/integration/test_cross_module_interactions.py::TestCrossModuleSearch::test_unified_search_across_modules</strong>
+            <div class="failure-details">
+tests/integration/test_cross_module_interactions.py:624: in test_unified_search_across_modules
+    self.assertGreaterEqual(ad_search.data[&#x27;count&#x27;], 1)
+E   TypeError: list indices must be integers or slices, not str
+            </div>
+        </div>
+        
+
+        <div class="test-item failed">
+            <strong>tests/integration/test_cross_module_interactions.py::TestAnalyticsIntegration::test_user_activity_tracking</strong>
+            <div class="failure-details">
+tests/integration/test_cross_module_interactions.py:681: in test_user_activity_tracking
+    self.assertIsNotNone(thread_usage.timestamp)
+E   AttributeError: &#x27;EndpointUsage&#x27; object has no attribute &#x27;timestamp&#x27;
+            </div>
+        </div>
+        
+
+        <div class="test-item failed">
+            <strong>tests/integration/test_data_consistency.py::TestDataConsistency::test_advertisement_expiry_consistency</strong>
+            <div class="failure-details">
+tests/integration/test_data_consistency.py:208: in test_advertisement_expiry_consistency
+    ad_ids = [ad[&#x27;id&#x27;] for ad in response.data[&#x27;results&#x27;]]
+E   TypeError: list indices must be integers or slices, not str
+            </div>
+        </div>
+        
+
+        <div class="test-item failed">
+            <strong>tests/integration/test_data_consistency.py::TestDataConsistency::test_thread_deletion_cascades</strong>
+            <div class="failure-details">
+    self.clean()
+mainapp/post.py:199: in clean
+    raise ValidationError(&quot;Vote must be for either a thread or a post, not both or neither.&quot;)
+E   django.core.exceptions.ValidationError: [&#x27;Vote must be for either a thread or a post, not both or neither.&#x27;]
+mainapp/post.py:199: in clean
+    raise ValidationError(&quot;Vote must be for either a thread or a post, not both or neither.&quot;)
+E   django.core.exceptions.ValidationError: [&#x27;Vote must be for either a thread or a post, not both or neither.&#x27;]
+            </div>
+        </div>
+        
+
+        <div class="test-item failed">
+            <strong>tests/integration/test_data_consistency.py::TestDataConsistency::test_user_deletion_cascades</strong>
+            <div class="failure-details">
+    self.clean()
+mainapp/post.py:199: in clean
+    raise ValidationError(&quot;Vote must be for either a thread or a post, not both or neither.&quot;)
+E   django.core.exceptions.ValidationError: [&#x27;Vote must be for either a thread or a post, not both or neither.&#x27;]
+mainapp/post.py:199: in clean
+    raise ValidationError(&quot;Vote must be for either a thread or a post, not both or neither.&quot;)
+E   django.core.exceptions.ValidationError: [&#x27;Vote must be for either a thread or a post, not both or neither.&#x27;]
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class="test-results">
+        <h2>Performance Metrics</h2>
+        
+        <h3>Slowest Tests</h3>
+
+        <div class="test-item">
+            <strong>test_complete_user_journey</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+
+        <div class="test-item">
+            <strong>test_anonymous_posting_with_user_tracking</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+
+        <div class="test-item">
+            <strong>test_user_blacklist_affects_content_visibility</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+
+        <div class="test-item">
+            <strong>test_lecturer_news_creates_discussion_thread</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+
+        <div class="test-item">
+            <strong>test_advertisement_lifecycle_with_permissions</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+
+        <div class="test-item">
+            <strong>test_personal_and_shared_events</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+
+        <div class="test-item">
+            <strong>test_building_room_navigation</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+
+        <div class="test-item">
+            <strong>test_unified_search_across_modules</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+
+        <div class="test-item">
+            <strong>test_user_activity_tracking</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+
+        <div class="test-item">
+            <strong>test_bulk_content_creation_performance</strong>
+            <span style="float: right; color: #28a745; font-weight: bold;">0.000s</span>
+        </div>
+        
+    </div>
+    
+    <div class="test-results">
+        <h2>Recommendations</h2>
+        
+        <ul><li>⚠️ <strong>Low pass rate:</strong> Focus on fixing failing tests before adding new features.</li>
+<li>📊 <strong>Low coverage:</strong> Consider adding more integration tests for uncovered modules.</li>
+<li>🔧 <strong>9 failing tests:</strong> Review failure analysis and fix critical issues first.</li></ul>
+    </div>
+</body>
+</html>

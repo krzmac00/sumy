@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import BuildingListView, BuildingDetailView, search_view, autocomplete_view, BuildingByTypeView
 
+app_name = 'map'
+
 urlpatterns = [
     path('buildings/', BuildingListView.as_view(), name='building-list'),
     path('buildings/<int:pk>/', BuildingDetailView.as_view(), name='building-detail'),

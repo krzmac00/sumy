@@ -60,8 +60,11 @@ class Comment(models.Model):
         return f'Comment by {self.author.username} on {self.advertisement.title}'
     
     def save(self, *args, **kwargs):
-        # Update advertisement's last activity date when comment is added
-        if not self.pk:  # New comment
-            self.advertisement.last_activity_date = timezone.now()
-            self.advertisement.save(update_fields=['last_activity_date'])
+        # Save the comment first
         super().save(*args, **kwargs)
+        
+        # Then update advertisement's last activity date
+        if self.advertisement_id:
+            Advertisement.objects.filter(pk=self.advertisement_id).update(
+                last_activity_date=timezone.now()
+            )

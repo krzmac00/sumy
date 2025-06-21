@@ -210,6 +210,7 @@ class NewsItemFactory(DjangoModelFactory):
     """Factory for NewsItem model"""
     class Meta:
         model = NewsItem
+        skip_postgeneration_save = True
     
     title = Faker('sentence', nb_words=6)
     content = Faker('text', max_nb_chars=1000)
@@ -257,6 +258,7 @@ class BuildingFactory(DjangoModelFactory):
     class Meta:
         model = Building
         django_get_or_create = ('short_name',)
+        skip_postgeneration_save = True
     
     name = factory.Sequence(lambda n: f"Building {n}")
     short_name = factory.Sequence(lambda n: f"B{n}")

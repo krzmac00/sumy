@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = 'news'
+
 urlpatterns = [
     path('categories/', views.NewsCategoryListView.as_view(), name='news-category-list'),
     path('items/', views.NewsItemListView.as_view(), name='news-item-list'),

@@ -25,7 +25,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'created_date', 'is_public', 'was_edited',
             'can_edit', 'can_view'
         ]
-        read_only_fields = ['created_date', 'was_edited', 'advertisement']
+        read_only_fields = ['created_date', 'was_edited']
     
     def get_can_edit(self, obj):
         request = self.context.get('request')

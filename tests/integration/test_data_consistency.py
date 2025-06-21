@@ -10,6 +10,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db import transaction
 from rest_framework import status
+from datetime import timedelta
+from concurrent.futures import ThreadPoolExecutor
+import time
 
 from tests.base import BaseAPITestCase
 from tests.factories import (
@@ -42,11 +45,17 @@ class TestDataConsistency(BaseAPITestCase):
         # Create forum content
         thread = ThreadFactory(author=user)
         post1 = PostFactory(thread=thread, user=user)
-        post2 = PostFactory(user=user)  # Post in another thread
         
-        # Create votes
-        vote1 = VoteFactory(thread=thread, user=user)
-        vote2 = VoteFactory(post=post2, user=user)
+        # Create another thread by different user for post2
+        other_user = UserFactory()
+        other_thread = ThreadFactory(author=other_user)
+        post2 = PostFactory(thread=other_thread, user=user)  # Post in another thread
+        
+        # Create votes on other users' content
+        other_thread2 = ThreadFactory(author=other_user)
+        other_post = PostFactory(thread=other_thread2, user=other_user)
+        vote1 = VoteFactory(thread=other_thread2, user=user)
+        vote2 = VoteFactory(post=other_post, user=user)
         
         # Create advertisement with comments
         ad = AdvertisementFactory(author=user)
@@ -79,14 +88,17 @@ class TestDataConsistency(BaseAPITestCase):
         - No orphaned data remains
         """
         # Create thread with posts and votes
-        thread = ThreadFactory()
-        posts = PostFactory.create_batch(5, thread=thread)
+        thread_author = UserFactory()
+        thread = ThreadFactory(author=thread_author)
+        posts = PostFactory.create_batch(5, thread=thread, user=thread_author)
         
-        # Add votes to thread and posts
+        # Add votes to thread and posts (ensuring different users)
         voters = UserFactory.create_batch(3)
         for voter in voters:
-            VoteFactory(thread=thread, user=voter, vote_type='upvote')
-            VoteFactory(post=posts[0], user=voter, vote_type='upvote')
+            # Only create votes if voter is not the author
+            if voter != thread_author:
+                VoteFactory(thread=thread, user=voter, vote_type='upvote')
+                VoteFactory(post=posts[0], user=voter, vote_type='upvote')
         
         # Update cache counts
         thread.update_vote_count()
