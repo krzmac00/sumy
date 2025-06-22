@@ -301,6 +301,7 @@ class ThreadListCreateAPIView(generics.ListCreateAPIView):
         user = self.request.user
 
         # Role-based filtering
+        # Lecturers should only see threads marked as visible_for_teachers
         if user.is_authenticated and user.role == 'lecturer':
             queryset = queryset.filter(visible_for_teachers=True)
 

@@ -85,7 +85,8 @@ const ThreadCreatePage: React.FC = () => {
         category,
         content,
         nickname: isAnonymous ? nickname : undefined, // Only send nickname if anonymous
-        visible_for_teachers: visibleForTeachers,
+        // Lecturers' threads are always visible_for_teachers
+        visible_for_teachers: currentUser?.role === 'lecturer' ? true : visibleForTeachers,
         can_be_answered: canBeAnswered,
         is_anonymous: isAnonymous
       };
@@ -208,19 +209,22 @@ const ThreadCreatePage: React.FC = () => {
           )}
           
           <div className="thread-options">
-            <div className="form-check">
-              <input
-                id="visible-for-teachers"
-                type="checkbox"
-                checked={visibleForTeachers}
-                onChange={(e) => setVisibleForTeachers(e.target.checked)}
-                className="form-check-input"
-                disabled={submitting}
-              />
-              <label className="form-check-label" htmlFor="visible-for-teachers">
-                {t('forum.create.visibleForTeachers')}
-              </label>
-            </div>
+            {/* Only show visible_for_teachers checkbox for students */}
+            {currentUser && currentUser.role !== 'lecturer' && (
+              <div className="form-check">
+                <input
+                  id="visible-for-teachers"
+                  type="checkbox"
+                  checked={visibleForTeachers}
+                  onChange={(e) => setVisibleForTeachers(e.target.checked)}
+                  className="form-check-input"
+                  disabled={submitting}
+                />
+                <label className="form-check-label" htmlFor="visible-for-teachers">
+                  {t('forum.create.visibleForTeachers')}
+                </label>
+              </div>
+            )}
             
             <div className="form-check">
               <input
