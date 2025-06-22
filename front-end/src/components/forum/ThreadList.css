@@ -130,7 +130,7 @@
 }
 
 .blacklist-toggle .toggle-switch:hover {
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 0 1px #8b0002;
 }
 
 .blacklist-toggle .toggle-switch:focus {
@@ -163,6 +163,7 @@
   border: 1px solid #ccc;
   background-color: #fff;
   margin-left: 8px;
+  cursor: pointer;
 }
 
 /* Date Range Picker Styles */
@@ -449,9 +450,11 @@
   background-color: white;
   font-size: 14px;
   transition: border-color 0.2s;
+  cursor: pointer;
 }
 
-.sort-select:hover {
+.sort-select:hover,
+.category-select:hover {
   border-color: #8b0002;
 }
 

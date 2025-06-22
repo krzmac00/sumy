@@ -56,6 +56,13 @@ class ThreadFilter(django_filters.FilterSet):
         model = Thread
         fields = ['category', 'can_be_answered', 'visible_for_teachers', 'is_anonymous']
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Set default ordering if none provided
+        if 'ordering' not in self.data:
+            self.data = self.data.copy()
+            self.data['ordering'] = '-activity'
+    
     def search_filter(self, queryset, name, value):
         """Custom search filter that searches in title and content"""
         return queryset.filter(

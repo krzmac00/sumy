@@ -290,10 +290,8 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 # ---------- THREAD SECTION ----------
 class ThreadListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ThreadSerializer
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend]
     filterset_class = ThreadFilter
-    ordering_fields = ['created_date', 'last_activity_date', 'vote_count_cache', 'post_count', 'title']
-    ordering = ['-last_activity_date']  # Default ordering
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):

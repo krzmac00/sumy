@@ -211,7 +211,7 @@ const ThreadList: React.FC<ThreadListProps> = ({
     <div className="thread-list-container">
       <div className="thread-list-actions">
         <div className="thread-list-controls">
-            {/* Search Form - Reusing noticeboard style */}
+            {/* Search Form*/}
             <form className="search-form" onSubmit={(e) => e.preventDefault()}>
               <div className="search-input-wrapper">
                 <Search size={20} />
