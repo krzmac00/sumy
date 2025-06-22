@@ -254,7 +254,7 @@
 }
 
 .upvote-button:hover:not(:disabled) {
-  color: #ff4500;
+  color: #8b0002;
 }
 
 .upvote-active {
@@ -262,7 +262,7 @@
 }
 
 .downvote-button:hover:not(:disabled) {
-  color: #7193ff;
+  color: #8b0002;
 }
 
 .downvote-active {

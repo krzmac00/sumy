@@ -18,7 +18,7 @@ urlpatterns = [
     path('api/map/', include('map.urls')),
 
     # Legacy (non-versioned) API and root paths
-    path("", include("mainapp.urls")),
+    path("", include("mainapp.urls", namespace="mainapp-root")),
 ]
 # Serve media files in development
 if settings.DEBUG:

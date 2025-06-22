@@ -22,7 +22,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 20px;
+  gap: 16px;
   width: 100%;
   padding: 20px;
   background-color: #f8f9fa;
@@ -99,6 +99,7 @@
 
 /* Blacklist Toggle Styles */
 .blacklist-toggle {
+  height: 48px;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -153,7 +154,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: 20px;
 }
 
 .category-filter select,
@@ -247,10 +247,9 @@
 
 /* Action Buttons Section */
 .thread-list-action-buttons {
-  padding-top: 5px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   margin-left: auto;
 }
 
@@ -259,8 +258,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 47px;
+  height: 47px;
   padding: 0;
   background-color: white;
   border: 1px solid #e5e7eb;
@@ -295,6 +294,7 @@
 
 /* Primary Button Style */
 .btn-primary-create-thread-button {
+  height: 44px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
