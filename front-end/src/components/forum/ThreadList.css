@@ -71,6 +71,10 @@
   color: var(--color-text-secondary, #6b7280);
 }
 
+.search-input-wrapper input:focus {
+  border-color: #8b0002;
+}
+
 .search-input-wrapper button {
   padding: 0.5rem 1rem;
   background-color: var(--color-primary, #8b0002);

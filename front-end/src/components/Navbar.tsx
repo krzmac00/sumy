@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { getMediaUrl } from '../utils/mediaUrl';
 import './Navbar.css';
@@ -152,22 +153,41 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
 
       <div className="navbar-right">
         {/* Pole wyszukiwarki */}
-        <div className="user-search" ref={searchRef}>
-          <input
-            type="text"
-            className="search-input"
-            placeholder={t('nav.search') || 'Szukaj...'}
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            onFocus={() => query && setShowDropdown(true)}
-            onKeyDown={e => {
-            if (e.key === 'Enter' && suggestions.length > 0) {
-              e.preventDefault();
-              onSelect(suggestions[0]);
-            }
-          }}
-          />
-          {isSearching && <div className="loader-spinner" />}
+        <form className="user-search search-form" ref={searchRef} onSubmit={(e) => e.preventDefault()}>
+          <div className="search-input-wrapper-navbar">
+            <Search size={20} />
+            <input
+              type="text"
+              placeholder={t('nav.search') || 'Szukaj...'}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onFocus={() => query && setShowDropdown(true)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && suggestions.length > 0) {
+                  e.preventDefault();
+                  onSelect(suggestions[0]);
+                } else if (e.key === 'Escape') {
+                  setQuery('');
+                  setSuggestions([]);
+                  setShowDropdown(false);
+                }
+              }}
+            />
+            {query && (
+              <button 
+                type="button"
+                onClick={() => {
+                  setQuery('');
+                  setSuggestions([]);
+                  setShowDropdown(false);
+                }}
+                title={t('common.clear', 'Clear')}
+              >
+                {t('common.clear', 'Clear')}
+              </button>
+            )}
+            {isSearching && <div className="loader-spinner" />}
+          </div>
           {showDropdown && suggestions.length > 0 && (
             <ul className="search-dropdown">
               {suggestions.map(user => (
@@ -181,7 +201,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               ))}
             </ul>
           )}
-        </div>
+        </form>
 
         {/* Wybór języka */}
         <div className="language-selector">
