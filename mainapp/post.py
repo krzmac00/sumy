@@ -430,14 +430,14 @@ class VoteSerializer(serializers.ModelSerializer):
 
 def vote_on_thread(user, thread_id, vote_type):
     """
-    Vote on a thread. Returns (success, message, vote_count)
+    Vote on a thread. Returns (success, message, vote_count, current_user_vote)
     """
     try:
         thread = Thread.objects.get(id=thread_id)
         
         # Check if user can vote (not their own thread)
         if thread.author == user:
-            return False, "You cannot vote on your own thread", thread.vote_count()
+            return False, "You cannot vote on your own thread", thread.vote_count(), None
         
         # Check if vote already exists
         try:
@@ -446,31 +446,34 @@ def vote_on_thread(user, thread_id, vote_type):
             if existing_vote.vote_type == vote_type:
                 # Same vote - withdraw it
                 existing_vote.delete()
-                return True, "Vote withdrawn", thread.vote_count()
+                thread.update_vote_count()
+                return True, "Vote withdrawn", thread.vote_count(), None
             else:
                 # Different vote - change it
                 existing_vote.vote_type = vote_type
                 existing_vote.save()
-                return True, f"Vote changed to {vote_type}", thread.vote_count()
+                thread.update_vote_count()
+                return True, f"Vote changed to {vote_type}", thread.vote_count(), vote_type
                 
         except Vote.DoesNotExist:
             # Create new vote
             Vote.objects.create(user=user, thread=thread, vote_type=vote_type)
-            return True, f"Voted {vote_type}", thread.vote_count()
+            thread.update_vote_count()
+            return True, f"Voted {vote_type}", thread.vote_count(), vote_type
             
     except Thread.DoesNotExist:
-        return False, "Thread not found", 0
+        return False, "Thread not found", 0, None
 
 def vote_on_post(user, post_id, vote_type):
     """
-    Vote on a post. Returns (success, message, vote_count)
+    Vote on a post. Returns (success, message, vote_count, current_user_vote)
     """
     try:
         post = Post.objects.get(id=post_id)
         
         # Check if user can vote (not their own post)
         if post.user == user:
-            return False, "You cannot vote on your own post", post.vote_count()
+            return False, "You cannot vote on your own post", post.vote_count(), None
         
         # Check if vote already exists
         try:
@@ -479,20 +482,23 @@ def vote_on_post(user, post_id, vote_type):
             if existing_vote.vote_type == vote_type:
                 # Same vote - withdraw it
                 existing_vote.delete()
-                return True, "Vote withdrawn", post.vote_count()
+                post.update_vote_count()
+                return True, "Vote withdrawn", post.vote_count(), None
             else:
                 # Different vote - change it
                 existing_vote.vote_type = vote_type
                 existing_vote.save()
-                return True, f"Vote changed to {vote_type}", post.vote_count()
+                post.update_vote_count()
+                return True, f"Vote changed to {vote_type}", post.vote_count(), vote_type
                 
         except Vote.DoesNotExist:
             # Create new vote
             Vote.objects.create(user=user, post=post, vote_type=vote_type)
-            return True, f"Voted {vote_type}", post.vote_count()
+            post.update_vote_count()
+            return True, f"Voted {vote_type}", post.vote_count(), vote_type
             
     except Post.DoesNotExist:
-        return False, "Post not found", 0
+        return False, "Post not found", 0, None
 
 
 class PinnedThread(models.Model):

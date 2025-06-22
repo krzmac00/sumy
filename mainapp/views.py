@@ -395,13 +395,13 @@ def vote_thread(request, thread_id):
         return Response({'error': 'Invalid vote type. Must be "upvote" or "downvote"'}, 
                        status=status.HTTP_400_BAD_REQUEST)
     
-    success, message, vote_count = vote_on_thread(request.user, thread_id, vote_type)
+    success, message, vote_count, current_user_vote = vote_on_thread(request.user, thread_id, vote_type)
     
     if success:
         return Response({
             'message': message,
             'vote_count': vote_count,
-            'user_vote': vote_type if 'withdrawn' not in message else None
+            'user_vote': current_user_vote
         }, status=status.HTTP_200_OK)
     else:
         return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
@@ -417,13 +417,13 @@ def vote_post(request, post_id):
         return Response({'error': 'Invalid vote type. Must be "upvote" or "downvote"'}, 
                        status=status.HTTP_400_BAD_REQUEST)
     
-    success, message, vote_count = vote_on_post(request.user, post_id, vote_type)
+    success, message, vote_count, current_user_vote = vote_on_post(request.user, post_id, vote_type)
     
     if success:
         return Response({
             'message': message,
             'vote_count': vote_count,
-            'user_vote': vote_type if 'withdrawn' not in message else None
+            'user_vote': current_user_vote
         }, status=status.HTTP_200_OK)
     else:
         return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
