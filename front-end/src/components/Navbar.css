@@ -28,6 +28,7 @@
 /* Search Form Styles - Matching ThreadList */
 .navbar-right .user-search.search-form {
   width: 200px;
+  margin: 0;
 }
 
 .navbar-right .user-search .search-input-wrapper-navbar {
