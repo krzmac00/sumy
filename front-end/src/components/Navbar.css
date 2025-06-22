@@ -23,6 +23,7 @@
 .user-search {
   position: relative;
   margin-right: 20px;
+  
 }
 
 /* Search Form Styles - Matching ThreadList */
@@ -128,6 +129,8 @@
   .navbar-left {
     display: flex;
     align-items: center;
+    flex: 1;
+    flex-basis: 0;
   }
   
   .sidebar-toggle {
@@ -169,9 +172,9 @@
   }
   
   .navbar-center {
-    flex: 1;
     display: flex;
     justify-content: center;
+    align-items: center;
   }
   
   .nav-tabs {
@@ -217,6 +220,9 @@
   .navbar-right {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    flex-basis: 0;
   }
   
   .language-selector {
@@ -342,6 +348,18 @@
     
     .brand-name {
       display: none;
+    }
+    
+    .navbar-left {
+      flex: 0 0 auto;
+    }
+    
+    .navbar-center {
+      flex: 1;
+    }
+    
+    .navbar-right {
+      flex: 0 0 auto;
     }
     
     .nav-tabs {
