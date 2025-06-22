@@ -1,5 +1,7 @@
 import django_filters
 from django.db.models import Q
+from django.utils import timezone
+from datetime import datetime, time
 from .post import Thread
 
 
@@ -13,8 +15,8 @@ class ThreadFilter(django_filters.FilterSet):
     category = django_filters.CharFilter(field_name='category', lookup_expr='exact')
     
     # Date filters
-    date_from = django_filters.DateFilter(field_name='created_date', lookup_expr='gte')
-    date_to = django_filters.DateFilter(field_name='created_date', lookup_expr='lte')
+    date_from = django_filters.DateFilter(method='filter_date_from', label='Date from')
+    date_to = django_filters.DateFilter(method='filter_date_to', label='Date to')
     
     # Sort by options
     ordering = django_filters.OrderingFilter(
@@ -59,3 +61,23 @@ class ThreadFilter(django_filters.FilterSet):
         return queryset.filter(
             Q(title__icontains=value) | Q(content__icontains=value)
         )
+    
+    def filter_date_from(self, queryset, name, value):
+        """Filter threads created on or after the given date"""
+        if value:
+            # Convert date to timezone-aware datetime at start of day
+            start_datetime = timezone.make_aware(
+                datetime.combine(value, time.min)
+            )
+            return queryset.filter(created_date__gte=start_datetime)
+        return queryset
+    
+    def filter_date_to(self, queryset, name, value):
+        """Filter threads created on or before the given date"""
+        if value:
+            # Convert date to timezone-aware datetime at end of day
+            end_datetime = timezone.make_aware(
+                datetime.combine(value, time.max)
+            )
+            return queryset.filter(created_date__lte=end_datetime)
+        return queryset
