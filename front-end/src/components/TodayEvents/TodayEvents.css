@@ -98,13 +98,39 @@
   border-radius: 8px;
   border-left: 4px solid var(--primary-color);
   transition: all 0.2s ease;
-  cursor: pointer;
+  position: relative;
 }
 
 .event-item:hover {
   background-color: var(--bg-hover);
   transform: translateX(2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.event-item.completed {
+  opacity: 0.6;
+}
+
+.event-item.completed .event-title,
+.event-item.completed .event-time,
+.event-item.completed .event-meta,
+.event-item.completed .event-description {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.event-checkbox {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 2px;
+}
+
+.event-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--primary-color);
 }
 
 .event-time {
@@ -200,6 +226,12 @@
 
   .event-item {
     padding: 12px;
+    gap: 12px;
+  }
+
+  .event-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
   }
 
   .event-time {

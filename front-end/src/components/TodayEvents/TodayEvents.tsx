@@ -15,8 +15,25 @@ const TodayEvents: React.FC<TodayEventsProps> = ({ scheduleId }) => {
   const [events, setEvents] = useState<CustomCalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [completedEvents, setCompletedEvents] = useState<Set<string | number>>(new Set());
   const { i18n, t } = useTranslation();
   const locale = i18n.language === 'pl' ? pl : enUS;
+
+  // Load completed events from localStorage on mount
+  useEffect(() => {
+    const storedCompleted = localStorage.getItem('completedTodayEvents');
+    if (storedCompleted) {
+      try {
+        const parsed = JSON.parse(storedCompleted);
+        const today = format(new Date(), 'yyyy-MM-dd');
+        if (parsed.date === today && Array.isArray(parsed.events)) {
+          setCompletedEvents(new Set(parsed.events));
+        }
+      } catch (error) {
+        console.error('Failed to load completed events:', error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     fetchTodayEvents();
@@ -78,6 +95,26 @@ const TodayEvents: React.FC<TodayEventsProps> = ({ scheduleId }) => {
     return t(`calendar.category.${category}`, category);
   };
 
+  const toggleEventCompletion = (eventId: string | number) => {
+    setCompletedEvents(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(eventId)) {
+        newSet.delete(eventId);
+      } else {
+        newSet.add(eventId);
+      }
+      
+      // Save to localStorage
+      const today = format(new Date(), 'yyyy-MM-dd');
+      localStorage.setItem('completedTodayEvents', JSON.stringify({
+        date: today,
+        events: Array.from(newSet)
+      }));
+      
+      return newSet;
+    });
+  };
+
   if (loading) {
     return (
       <div className="today-events-container">
@@ -111,45 +148,59 @@ const TodayEvents: React.FC<TodayEventsProps> = ({ scheduleId }) => {
         </div>
       ) : (
         <div className="events-list">
-          {events.map((event) => (
-            <div 
-              key={event.id} 
-              className="event-item"
-              style={{ borderLeftColor: event.color }}
-            >
-              <div className="event-time">
-                <span className="start-time">{formatTime(event.start)}</span>
-                <span className="time-separator">-</span>
-                <span className="end-time">{formatTime(event.end)}</span>
-              </div>
-              
-              <div className="event-details">
-                <h3 className="event-title">{event.title}</h3>
-                
-                <div className="event-meta">
-                  <span className="event-category">
-                    {getCategoryLabel(event.category)}
-                  </span>
-                  
-                  {event.room && (
-                    <span className="event-room">
-                      <i className="icon-location"></i> {event.room}
-                    </span>
-                  )}
-                  
-                  {event.teacher && (
-                    <span className="event-teacher">
-                      <i className="icon-person"></i> {event.teacher}
-                    </span>
-                  )}
+          {events.map((event) => {
+            const isCompleted = completedEvents.has(event.id);
+            
+            return (
+              <div 
+                key={event.id} 
+                className={`event-item ${isCompleted ? 'completed' : ''}`}
+                style={{ borderLeftColor: event.color }}
+              >
+                <div className="event-checkbox">
+                  <input
+                    type="checkbox"
+                    id={`event-${event.id}`}
+                    checked={isCompleted}
+                    onChange={() => toggleEventCompletion(event.id)}
+                    aria-label={t('todayEvents.markAsDone', 'Mark as done')}
+                  />
                 </div>
                 
-                {event.description && (
-                  <p className="event-description">{event.description}</p>
-                )}
+                <div className="event-time">
+                  <span className="start-time">{formatTime(event.start)}</span>
+                  <span className="time-separator">-</span>
+                  <span className="end-time">{formatTime(event.end)}</span>
+                </div>
+                
+                <div className="event-details">
+                  <h3 className="event-title">{event.title}</h3>
+                  
+                  <div className="event-meta">
+                    <span className="event-category">
+                      {getCategoryLabel(event.category)}
+                    </span>
+                    
+                    {event.room && (
+                      <span className="event-room">
+                        <i className="icon-location"></i> {event.room}
+                      </span>
+                    )}
+                    
+                    {event.teacher && (
+                      <span className="event-teacher">
+                        <i className="icon-person"></i> {event.teacher}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {event.description && (
+                    <p className="event-description">{event.description}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
