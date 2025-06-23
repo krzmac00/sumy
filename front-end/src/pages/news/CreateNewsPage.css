@@ -48,6 +48,31 @@
   margin-bottom: 8px;
 }
 
+.event-details-section {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.event-details-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
 .form-group input[type="text"],
 .form-group input[type="datetime-local"],
 .form-group textarea {

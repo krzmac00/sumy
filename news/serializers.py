@@ -50,7 +50,8 @@ class NewsItemSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'content', 'author', 'categories', 'category_ids',
             'all_categories', 'created_at', 'updated_at', 'is_published',
-            'event_date', 'event_location', 'can_edit'
+            'event_date', 'event_location', 'event_end_date', 'event_description',
+            'event_room', 'event_teacher', 'can_edit'
         ]
         read_only_fields = ['author', 'created_at', 'updated_at']
         

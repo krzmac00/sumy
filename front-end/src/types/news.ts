@@ -33,6 +33,10 @@ export interface NewsItem {
   is_published: boolean;
   event_date: string | null;
   event_location: string | null;
+  event_end_date: string | null;
+  event_description: string | null;
+  event_room: string | null;
+  event_teacher: string | null;
   can_edit: boolean;
 }
 

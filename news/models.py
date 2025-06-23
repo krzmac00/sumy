@@ -54,6 +54,10 @@ class NewsItem(models.Model):
     # Optional fields for events
     event_date = models.DateTimeField(null=True, blank=True)
     event_location = models.CharField(max_length=255, null=True, blank=True)
+    event_end_date = models.DateTimeField(null=True, blank=True)
+    event_description = models.TextField(null=True, blank=True)
+    event_room = models.CharField(max_length=100, null=True, blank=True)
+    event_teacher = models.CharField(max_length=255, null=True, blank=True)
     
     class Meta:
         ordering = ['-created_at']

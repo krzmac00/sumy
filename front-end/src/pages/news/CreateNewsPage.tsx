@@ -21,7 +21,11 @@ const CreateNewsPage: React.FC = () => {
     content: '',
     category_ids: [] as number[],
     event_date: '',
-    event_location: ''
+    event_location: '',
+    event_end_date: '',
+    event_description: '',
+    event_room: '',
+    event_teacher: ''
   });
 
   // Check permissions
@@ -142,6 +146,20 @@ const CreateNewsPage: React.FC = () => {
       setError(t('news.errors.selectCategory'));
       return;
     }
+    
+    // Validate event fields if event category is selected
+    if (hasEventCategory) {
+      if (!formData.event_date || !formData.event_end_date || !formData.event_location.trim()) {
+        setError(t('news.errors.eventFieldsRequired'));
+        return;
+      }
+      
+      // Validate end date is after start date
+      if (new Date(formData.event_end_date) < new Date(formData.event_date)) {
+        setError(t('news.errors.invalidEventDates'));
+        return;
+      }
+    }
 
     try {
       setLoading(true);
@@ -152,7 +170,11 @@ const CreateNewsPage: React.FC = () => {
         content: formData.content,
         category_ids: formData.category_ids,
         event_date: formData.event_date || undefined,
-        event_location: formData.event_location || undefined
+        event_location: formData.event_location || undefined,
+        event_end_date: formData.event_end_date || undefined,
+        event_description: formData.event_description || undefined,
+        event_room: formData.event_room || undefined,
+        event_teacher: formData.event_teacher || undefined
       };
 
       const createdNews = await newsAPI.createNewsItem(newsData);
@@ -227,28 +249,86 @@ const CreateNewsPage: React.FC = () => {
 
           {hasEventCategory && (
             <>
-              <div className="form-group">
-                <label htmlFor="event_date">{t('news.form.eventDate')}</label>
-                <input
-                  type="datetime-local"
-                  id="event_date"
-                  name="event_date"
-                  value={formData.event_date}
-                  onChange={handleInputChange}
-                />
-              </div>
+              <div className="event-details-section">
+                <h3>{t('news.form.eventDetails')}</h3>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="event_date">{t('news.form.eventStartDate')} *</label>
+                    <input
+                      type="datetime-local"
+                      id="event_date"
+                      name="event_date"
+                      value={formData.event_date}
+                      onChange={handleInputChange}
+                      required={hasEventCategory}
+                    />
+                  </div>
 
-              <div className="form-group">
-                <label htmlFor="event_location">{t('news.form.eventLocation')}</label>
-                <input
-                  type="text"
-                  id="event_location"
-                  name="event_location"
-                  value={formData.event_location}
-                  onChange={handleInputChange}
-                  placeholder={t('news.form.eventLocationPlaceholder')}
-                  maxLength={255}
-                />
+                  <div className="form-group">
+                    <label htmlFor="event_end_date">{t('news.form.eventEndDate')} *</label>
+                    <input
+                      type="datetime-local"
+                      id="event_end_date"
+                      name="event_end_date"
+                      value={formData.event_end_date}
+                      onChange={handleInputChange}
+                      min={formData.event_date}
+                      required={hasEventCategory}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="event_location">{t('news.form.eventLocation')} *</label>
+                  <input
+                    type="text"
+                    id="event_location"
+                    name="event_location"
+                    value={formData.event_location}
+                    onChange={handleInputChange}
+                    placeholder={t('news.form.eventLocationPlaceholder')}
+                    required={hasEventCategory}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="event_room">{t('news.form.eventRoom')}</label>
+                    <input
+                      type="text"
+                      id="event_room"
+                      name="event_room"
+                      value={formData.event_room}
+                      onChange={handleInputChange}
+                      placeholder={t('news.form.eventRoomPlaceholder')}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="event_teacher">{t('news.form.eventOrganizer')}</label>
+                    <input
+                      type="text"
+                      id="event_teacher"
+                      name="event_teacher"
+                      value={formData.event_teacher}
+                      onChange={handleInputChange}
+                      placeholder={t('news.form.eventOrganizerPlaceholder')}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="event_description">{t('news.form.eventDescription')}</label>
+                  <textarea
+                    id="event_description"
+                    name="event_description"
+                    value={formData.event_description}
+                    onChange={handleInputChange}
+                    placeholder={t('news.form.eventDescriptionPlaceholder')}
+                    rows={4}
+                  />
+                </div>
               </div>
             </>
           )}

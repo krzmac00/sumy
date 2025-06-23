@@ -573,6 +573,8 @@ const resources = {
       "common.by": "by",
       "common.edited": "edited",
       "common.loading": "Loading...",
+      "common.clear": "Clear",
+      "common.goBack": "Go Back",
 
       // Pinned Threads
       "pinnedThreads.empty.title": "No Pinned Threads",
@@ -594,6 +596,13 @@ const resources = {
       "news.errors.requiredFields": "Please fill in all required fields",
       "news.errors.selectCategory": "Please select at least one category",
       "news.errors.createFailed": "Failed to create news item",
+      "news.errors.createEventFailed": "Failed to create event",
+      "news.errors.eventFieldsRequired": "Please fill in all required event fields",
+      "news.errors.invalidEventDates": "Event end date must be after start date",
+      "news.eventAlreadyCreated": "Event already created",
+      "news.createPrivateEvent": "Create private event from this news",
+      "news.eventCreated": "Event Created",
+      "news.addToCalendar": "Add to Calendar",
       
       // News Form
       "news.form.title": "Title",
@@ -605,6 +614,15 @@ const resources = {
       "news.form.eventLocation": "Event Location",
       "news.form.eventLocationPlaceholder": "Enter event location",
       "news.form.publish": "Publish News",
+      "news.form.eventDetails": "Event Details",
+      "news.form.eventStartDate": "Event Start Date",
+      "news.form.eventEndDate": "Event End Date",
+      "news.form.eventRoom": "Room",
+      "news.form.eventRoomPlaceholder": "Enter room number",
+      "news.form.eventOrganizer": "Organizer",
+      "news.form.eventOrganizerPlaceholder": "Enter organizer name",
+      "news.form.eventDescription": "Event Description",
+      "news.form.eventDescriptionPlaceholder": "Enter additional event details",
       
       // News Filters
       "news.filters.title": "Filters",
@@ -1238,6 +1256,8 @@ const resources = {
       "common.by": "przez",
       "common.edited": "edytowano",
       "common.loading": "Ładowanie...",
+      "common.clear": "Wyczyść",
+      "common.goBack": "Wróć",
 
       // Pinned Threads
       "pinnedThreads.empty.title": "Brak przypiętych wątków",
@@ -1259,6 +1279,13 @@ const resources = {
       "news.errors.requiredFields": "Proszę wypełnić wszystkie wymagane pola",
       "news.errors.selectCategory": "Proszę wybrać co najmniej jedną kategorię",
       "news.errors.createFailed": "Nie udało się utworzyć aktualności",
+      "news.errors.createEventFailed": "Nie udało się utworzyć wydarzenia",
+      "news.errors.eventFieldsRequired": "Proszę wypełnić wszystkie wymagane pola wydarzenia",
+      "news.errors.invalidEventDates": "Data zakończenia wydarzenia musi być po dacie rozpoczęcia",
+      "news.eventAlreadyCreated": "Wydarzenie już utworzone",
+      "news.createPrivateEvent": "Utwórz prywatne wydarzenie z tej aktualności",
+      "news.eventCreated": "Wydarzenie utworzone",
+      "news.addToCalendar": "Dodaj do kalendarza",
       
       // News Form
       "news.form.title": "Tytuł",
@@ -1270,6 +1297,15 @@ const resources = {
       "news.form.eventLocation": "Miejsce wydarzenia",
       "news.form.eventLocationPlaceholder": "Wprowadź miejsce wydarzenia",
       "news.form.publish": "Opublikuj aktualność",
+      "news.form.eventDetails": "Szczegóły wydarzenia",
+      "news.form.eventStartDate": "Data rozpoczęcia wydarzenia",
+      "news.form.eventEndDate": "Data zakończenia wydarzenia",
+      "news.form.eventRoom": "Sala",
+      "news.form.eventRoomPlaceholder": "Wprowadź numer sali",
+      "news.form.eventOrganizer": "Organizator",
+      "news.form.eventOrganizerPlaceholder": "Wprowadź nazwę organizatora",
+      "news.form.eventDescription": "Opis wydarzenia",
+      "news.form.eventDescriptionPlaceholder": "Wprowadź dodatkowe szczegóły wydarzenia",
       
       // News Filters
       "news.filters.title": "Filtry",

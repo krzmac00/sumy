@@ -106,12 +106,20 @@
 .news-event-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 12px;
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid #f0f0f0;
   font-size: 13px;
   color: #666;
+}
+
+.event-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
 }
 
 .event-icon {
@@ -121,6 +129,50 @@
 .event-date,
 .event-location {
   color: #333;
+}
+
+.create-event-button {
+  padding: 6px 12px;
+  background-color: #8b0002;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.create-event-button:hover:not(:disabled) {
+  background-color: #7a0001;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.create-event-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.create-event-button.event-created {
+  background-color: #4caf50;
+}
+
+.create-event-button.event-created:hover {
+  background-color: #4caf50;
+  transform: none;
+  box-shadow: none;
+}
+
+.loading-dots {
+  animation: loadingDots 1.5s infinite;
+}
+
+@keyframes loadingDots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
 }
 
 @media (max-width: 768px) {
