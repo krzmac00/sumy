@@ -192,6 +192,16 @@ const CreateNewsPage: React.FC = () => {
     return cat && cat.category_type === 'event';
   });
 
+  // Set default event organizer when event category is selected
+  useEffect(() => {
+    if (hasEventCategory && currentUser && !formData.event_teacher) {
+      setFormData(prev => ({
+        ...prev,
+        event_teacher: `${currentUser.first_name} ${currentUser.last_name}`
+      }));
+    }
+  }, [hasEventCategory, currentUser, formData.event_teacher]);
+
   return (
     <MainLayout>
       <div className="create-news-page">

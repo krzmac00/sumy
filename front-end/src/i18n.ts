@@ -573,8 +573,6 @@ const resources = {
       "common.by": "by",
       "common.edited": "edited",
       "common.loading": "Loading...",
-      "common.clear": "Clear",
-      "common.goBack": "Go Back",
 
       // Pinned Threads
       "pinnedThreads.empty.title": "No Pinned Threads",
@@ -1256,8 +1254,6 @@ const resources = {
       "common.by": "przez",
       "common.edited": "edytowano",
       "common.loading": "Ładowanie...",
-      "common.clear": "Wyczyść",
-      "common.goBack": "Wróć",
 
       // Pinned Threads
       "pinnedThreads.empty.title": "Brak przypiętych wątków",
